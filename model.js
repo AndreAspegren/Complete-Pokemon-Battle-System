@@ -18,7 +18,7 @@ const pokemon = [
         move3: 6,
         move4: 7,
         type1: 11,
-        type2: 12, 
+        type2: 12,
     },
     {
         name: "Charmander",
@@ -37,7 +37,7 @@ const pokemon = [
         move3: 9,
         move4: 10,
         type1: 1,
-        type2: 19, 
+        type2: 19,
     },
     {
         name: "Squirtle",
@@ -56,7 +56,7 @@ const pokemon = [
         move3: 12,
         move4: 13,
         type1: 2,
-        type2: 19, 
+        type2: 19,
     },
     {
         name: "Bulbasaur",
@@ -75,7 +75,7 @@ const pokemon = [
         move3: 1,
         move4: 14,
         type1: 4,
-        type2: 7, 
+        type2: 7,
     },
     {
         name: "Pikachu",
@@ -92,34 +92,42 @@ const pokemon = [
         move1: 0,
         move2: 2,
         move3: 3,
-        move4: 15, 
+        move4: 15,
         type1: 3,
-        type2: 19, 
+        type2: 19,
     }
 ];
 
 
-const types = {
-    normal: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0, 1, 1, 0.5, 1],
-    fire: [1, 0.5, 0.5, 1, 2, 2, 1, 1, 1, 1, 1, 2, 0.5, 1, 0.5, 1, 2, 1],
-    water: [1, 2, 0.5, 1, 0.5, 1, 1, 1, 2, 1, 1, 1, 2, 1, 0.5, 1, 1, 1],
-    electric: [1, 1, 2, 0.5, 0.5, 1, 1, 1, 0, 2, 1, 1, 1, 1, 0.5, 1, 1, 1],
-    grass: [1, 0.5, 2, 1, 0.5, 1, 1, 0.5, 2, 0.5, 1, 1, 0.5, 1, 0.5, 1, 0.5, 1],
-    ice: [1, 0.5, 0.5, 1, 2, 1, 1, 1, 2, 2, 1, 1, 2, 1, 0.5, 1, 0.5, 1],
-    fighting: [2, 1, 1, 1, 1, 2, 1, 0.5, 1, 0.5, 0.5, 0.5, 2, 0, 1, 2, 2, 0.5],
-    poison: [1, 1, 1, 1, 2, 1, 1, 0.5, 0.5, 1, 1, 1, 0.5, 0.5, 1, 1, 0, 2],
-    ground: [1, 2, 1, 2, 0.5, 1, 1, 2, 1, 0, 1, 1, 2, 1, 1, 1, 2, 1],
-    flying: [1, 1, 1, 0.5, 2, 1, 2, 1, 1, 1, 1, 1, 0.5, 1, 2, 1, 0.5, 1],
-    psychic: [1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 0.5, 1, 1, 1, 1, 0, 0.5, 1],
-    bug: [1, 0.5, 1, 1, 2, 1, 0.5, 0.5, 1, 0.5, 2, 1, 1, 0.5, 1, 2, 0.5, 0.5],
-    rock: [1, 2, 1, 1, 1, 2, 0.5, 1, 0.5, 2, 1, 2, 1, 1, 2, 1, 0.5, 1],
-    ghost: [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 0.5, 1, 1],
-    dragon: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 0.5, 0],
-    dark: [1, 1, 1, 1, 1, 1, 0.5, 1, 1, 1, 2, 1, 1, 2, 1, 0.5, 1, 0.5],
-    steel: [1, 0.5, 0.5, 0.5, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 0.5, 2],
-    fairy: [1, 0.5, 1, 1, 1, 1, 2, 0.5, 1, 1, 1, 1, 1, 1, 2, 2, 0.5, 1],
-    null: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+const types = [
+    /* Normal */ [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0, 1, 1, 0.5, 1],
+    /* Fire */   [1, 0.5, 0.5, 1, 2, 2, 1, 1, 1, 1, 1, 2, 0.5, 1, 0.5, 1, 2, 1],
+    /* Water */  [1, 2, 0.5, 1, 0.5, 1, 1, 1, 2, 1, 1, 1, 2, 1, 0.5, 1, 1, 1],
+    /* Electric*/[1, 1, 2, 0.5, 0.5, 1, 1, 1, 0, 2, 1, 1, 1, 1, 0.5, 1, 1, 1],
+    /* Grass */  [1, 0.5, 2, 1, 0.5, 1, 1, 0.5, 2, 0.5, 1, 1, 0.5, 1, 0.5, 1, 0.5, 1],
+    /* Ice */    [1, 0.5, 0.5, 1, 2, 1, 1, 1, 2, 2, 1, 1, 2, 1, 0.5, 1, 0.5, 1],
+    /* Fighting*/[2, 1, 1, 1, 1, 2, 1, 0.5, 1, 0.5, 0.5, 0.5, 2, 0, 1, 2, 2, 0.5],
+    /* Poison */ [1, 1, 1, 1, 2, 1, 1, 0.5, 0.5, 1, 1, 1, 0.5, 0.5, 1, 1, 0, 2],
+    /* Ground */ [1, 2, 1, 2, 0.5, 1, 1, 2, 1, 0, 1, 1, 2, 1, 1, 1, 2, 1],
+    /* Flying */ [1, 1, 1, 0.5, 2, 1, 2, 1, 1, 1, 1, 1, 0.5, 1, 2, 1, 0.5, 1],
+    /* Psychic*/ [1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 0.5, 1, 1, 1, 1, 0, 0.5, 1],
+    /* Bug */    [1, 0.5, 1, 1, 2, 1, 0.5, 0.5, 1, 0.5, 2, 1, 1, 0.5, 1, 2, 0.5, 0.5],
+    /* Rock */   [1, 2, 1, 1, 1, 2, 0.5, 1, 0.5, 2, 1, 2, 1, 1, 2, 1, 0.5, 1],
+    /* Ghost */  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 0.5, 1, 1],
+    /* Dragon */ [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 0.5, 0],
+    /* Dark */   [1, 1, 1, 1, 1, 1, 0.5, 1, 1, 1, 2, 1, 1, 2, 1, 0.5, 1, 0.5],  
+    /* Steel */  [1, 0.5, 0.5, 0.5, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 0.5, 2],  
+    /* Fairy */  [1, 0.5, 1, 1, 1, 1, 2, 0.5, 1, 1, 1, 1, 1, 1, 2, 2, 0.5, 1],  
+    /* No Type*/ [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],  
+ ]
+ 
+
+function calculatedamagemultiplier(user, opponent) {
+    dmgmultiplier = types[Object.keys(types)[user.pokemon[0].type]][opponent.pokemon[3].type1] * types[Object.keys(types)[user.pokemon[0].type]][opponent.pokemon[3].type2]
+    if (types[Object.keys(types)[moves[0].type]][pokemon[3].type1] == 0 || types[Object.keys(types)[moves[0].type]][pokemon[3].type2] == 0) dmgmultiplier = 0    
 }
+
+
 
 let statstates = [
     2 / 8, 2 / 7, 2 / 6, 2 / 5, 2 / 4, 2 / 3, 2 / 2, 3 / 2, 4 / 2, 5 / 2, 6 / 2, 7 / 2, 8 / 2
@@ -129,23 +137,49 @@ let statstates2 = [
     3 / 9, 3 / 8, 3 / 7, 3 / 6, 3 / 5, 3 / 4, 3 / 3, 4 / 3, 5 / 3, 6 / 3, 7 / 3, 8 / 3, 9 / 3
 ]
 
-let playeratk = 6
-let playerdef = 6
-let playersatk = 6
-let playersdef = 6
-let playerspe = 6
-let playeracc = 6
-let playereva = 6
+let player = {
+    atk: 6,
+    def: 6,
+    satk: 6,
+    sdef: 6,
+    spe: 6,
+    acc: 6,
+    eva: 6,
+    status: false,
+    brn: false,
+    par: false,
+    psn: false,
+    tox: false,
+    slp: false,
+    frz: false,
+    statusimage: ''
+}
 
-let rivalatk = 6
-let rivaldef = 6
-let rivalsatk = 6
-let rivalsdef = 6
-let rivalspe = 6
-let rivalacc = 6
-let rivaleva = 6
+let rival = {
+    atk: 6,
+    def: 6,
+    satk: 6,
+    sdef: 6,
+    spe: 6,
+    acc: 6,
+    eva: 6,
+    status: false,
+    brn: false,
+    par: false,
+    psn: false,
+    tox: false,
+    slp: false,
+    frz: false,
+    statusimage: ''
+}
 
-
+let statusimages = {
+    brn: '<img src="pictures/brnimage.png" style="width: 5vh; height: auto;" alt="">',
+    par: '<img src="pictures/parimage.png" style="width: 6vh; height: auto;" alt="">',
+    psn: '<img src="pictures/psnimage.png" style="width: 6vh; height: auto;" alt="">',
+    slp: '<img src="pictures/slpimage.png" style="width: 6vh; height: auto;" alt="">',
+    frz: '<img src="pictures/frzimage.png" style="width: 6vh; height: auto;" alt="">',
+}
 
 let moves = [
     {
@@ -260,13 +294,10 @@ let moves = [
     },
 ];
 
-function calculatedamagemultiplier(user, opponent) {
-    dmgmultiplier = types[Object.keys(types)[user.pokemon[0].type]][opponent.pokemon[3].type1] * types[Object.keys(types)[user.pokemon[0].type]][opponent.pokemon[3].type2]
-    if (types[Object.keys(types)[moves[0].type]][pokemon[3].type1] == 0 || types[Object.keys(types)[moves[0].type]][pokemon[3].type2] == 0) dmgmultiplier = 0
-    console.log(dmgmultiplier)
-}
+let battlemessage = ''
 
-player = {
+
+player1 = {
     name: 'Red',
     avatar: `<div>
     <img style="height: 20vh; width: auto" src="https://archives.bulbagarden.net/media/upload/thumb/d/d3/Lets_Go_Pikachu_Eevee_Red.png/250px-Lets_Go_Pikachu_Eevee_Red.png" alt="}">
@@ -274,7 +305,7 @@ player = {
     pokemon: [pokemon[0]]
 }
 
-rival = {
+player2 = {
     name: 'Cynthia',
     avatar: `
     <img style="height: 20vh; width: auto" src="https://www.serebii.net/pokemonmasters/syncpairs/cynthia.png" alt="">`,
