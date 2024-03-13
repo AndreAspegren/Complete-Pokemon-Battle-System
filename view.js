@@ -7,7 +7,8 @@ function updateview() {
         </div>  
         <div style="position: fixed; bottom: 25%; left: 25%">
         ${genavatar(player1)}
-        </div>  
+        </div>
+        <div style="position: fixed; top: 10%; left: 10%">${weather}</div>
         
         <div style="position: fixed; top: 5%; right: 5%">
         ${player2.avatar}

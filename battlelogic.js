@@ -16,23 +16,40 @@ function battlemanager(playermove) {
 
 function movedecider(playermove, rivalmove) {
     if (moves[playermove].movetype == 'damage') damagemove(moves[playermove])
+    if (moves[playermove].movetype == 'status') statusmove(moves[playermove])
+    if (moves[playermove].movetype == 'weather') weathermove(moves[playermove])
+    if (moves[playermove].movetype == 'statchange') statchangemove(moves[playermove])
 }
+
 
 function damagemove(move) {
     whoismoving('friend')
-    ohp -= moves[player1.pokemon[0].move1].dmg
+    ohp -= move.dmg
     if (ohp <= 0) ohp = 0
     battlemessage = uname + ' brukte ' + moves[player1.pokemon[0].move1].name + '!'
+    updatestats('foe', 'hp', ohp)
+    updateview()
+}
+function statusmove(move) {
+    whoismoving('friend')
+    value = move
+    battlemessage = uname + ' brukte ' + move.name + '!'
+    updatestats('foe', 'slp', value)
+    updateview()
+}
+function weathermove(move) {
+    whoismoving('friend')
+    battlemessage = uname + ' brukte ' + move.name + '!'
     updatestats('foe', 'slp', true)
     updateview()
 }
-
-function test() {
+function statchangemove(move) {
     whoismoving('friend')
-    updatestats('foe', 'brn', true)
+    odefstage--
+    battlemessage = uname + ' brukte ' + move.name + '!'
+    updatestats('foe', 'def', odefstage)
     updateview()
 }
-
 
 function updatestats(who, what, value) {                                        // endrer på enten hp, stat stages eller status conditions basert på hva 
     let target = (who === 'friend') ? player1.pokemon[0] : player2.pokemon[0]   // parameterene er
@@ -120,6 +137,3 @@ function whoismoving(who) {                 // Define variables for the one usin
         oevastage = statstates2[player.eva]
     }
 }
-
-
-// damage = ((((2 * level / 5) + 2)) * (dmg * uatk / adef)) / 50 + 2 * multiplier * crit * random

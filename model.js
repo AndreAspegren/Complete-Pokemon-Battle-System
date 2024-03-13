@@ -1,10 +1,102 @@
 buttonsenabled = false
+let battlemessage = ''
+
+const types = [
+    /* Normal */ [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0, 1, 1, 0.5, 1],
+    /* Fire */   [1, 0.5, 0.5, 1, 2, 2, 1, 1, 1, 1, 1, 2, 0.5, 1, 0.5, 1, 2, 1],
+    /* Water */  [1, 2, 0.5, 1, 0.5, 1, 1, 1, 2, 1, 1, 1, 2, 1, 0.5, 1, 1, 1],
+    /* Electric*/[1, 1, 2, 0.5, 0.5, 1, 1, 1, 0, 2, 1, 1, 1, 1, 0.5, 1, 1, 1],
+    /* Grass */  [1, 0.5, 2, 1, 0.5, 1, 1, 0.5, 2, 0.5, 1, 1, 0.5, 1, 0.5, 1, 0.5, 1],
+    /* Ice */    [1, 0.5, 0.5, 1, 2, 1, 1, 1, 2, 2, 1, 1, 2, 1, 0.5, 1, 0.5, 1],
+    /* Fighting*/[2, 1, 1, 1, 1, 2, 1, 0.5, 1, 0.5, 0.5, 0.5, 2, 0, 1, 2, 2, 0.5],
+    /* Poison */ [1, 1, 1, 1, 2, 1, 1, 0.5, 0.5, 1, 1, 1, 0.5, 0.5, 1, 1, 0, 2],
+    /* Ground */ [1, 2, 1, 2, 0.5, 1, 1, 2, 1, 0, 1, 1, 2, 1, 1, 1, 2, 1],
+    /* Flying */ [1, 1, 1, 0.5, 2, 1, 2, 1, 1, 1, 1, 1, 0.5, 1, 2, 1, 0.5, 1],
+    /* Psychic*/ [1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 0.5, 1, 1, 1, 1, 0, 0.5, 1],
+    /* Bug */    [1, 0.5, 1, 1, 2, 1, 0.5, 0.5, 1, 0.5, 2, 1, 1, 0.5, 1, 2, 0.5, 0.5],
+    /* Rock */   [1, 2, 1, 1, 1, 2, 0.5, 1, 0.5, 2, 1, 2, 1, 1, 2, 1, 0.5, 1],
+    /* Ghost */  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 0.5, 1, 1],
+    /* Dragon */ [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 0.5, 0],
+    /* Dark */   [1, 1, 1, 1, 1, 1, 0.5, 1, 1, 1, 2, 1, 1, 2, 1, 0.5, 1, 0.5],  
+    /* Steel */  [1, 0.5, 0.5, 0.5, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 0.5, 2],  
+    /* Fairy */  [1, 0.5, 1, 1, 1, 1, 2, 0.5, 1, 1, 1, 1, 1, 1, 2, 2, 0.5, 1],  
+    /* No Type*/ [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],  
+ ]
+ 
+
+function calculatedamagemultiplier(user, opponent) {
+    dmgmultiplier = types[Object.keys(types)[user.pokemon[0].type]][opponent.pokemon[3].type1] * types[Object.keys(types)[user.pokemon[0].type]][opponent.pokemon[3].type2]
+    if (types[Object.keys(types)[moves[0].type]][pokemon[3].type1] == 0 || types[Object.keys(types)[moves[0].type]][pokemon[3].type2] == 0) dmgmultiplier = 0    
+}
+
+
+
+let statstates = [
+    2 / 8, 2 / 7, 2 / 6, 2 / 5, 2 / 4, 2 / 3, 2 / 2, 3 / 2, 4 / 2, 5 / 2, 6 / 2, 7 / 2, 8 / 2
+]
+
+let statstates2 = [
+    3 / 9, 3 / 8, 3 / 7, 3 / 6, 3 / 5, 3 / 4, 3 / 3, 4 / 3, 5 / 3, 6 / 3, 7 / 3, 8 / 3, 9 / 3
+]
+
+let player = {
+    atk: 6,
+    def: 6,
+    satk: 6,
+    sdef: 6,
+    spe: 6,
+    acc: 6,
+    eva: 6,
+    status: false,
+    brn: false,
+    par: false,
+    psn: false,
+    tox: false,
+    slp: false,
+    frz: false,
+    statusimage: ''
+}
+
+let rival = {
+    atk: 6,
+    def: 6,
+    satk: 6,
+    sdef: 6,
+    spe: 6,
+    acc: 6,
+    eva: 6,
+    status: false,
+    brn: false,
+    par: false,
+    psn: false,
+    tox: false,
+    slp: false,
+    frz: false,
+    statusimage: ''
+}
+
+let statusimages = {
+    brn: '<img src="pictures/status/brnimage.png" style="width: 5vh; height: auto;" alt="">',
+    par: '<img src="pictures/status/parimage.png" style="width: 6vh; height: auto;" alt="">',
+    psn: '<img src="pictures/status/psnimage.png" style="width: 6vh; height: auto;" alt="">',
+    slp: '<img src="pictures/status/slpimage.png" style="width: 6vh; height: auto;" alt="">',
+    frz: '<img src="pictures/status/frzimage.png" style="width: 6vh; height: auto;" alt="">',
+}
+
+let weatherimages = {
+    sun: '<img src="pictures/status/sun.png" style="width: 5vh; height: auto;" alt="">',
+    rain: '<img src="pictures/status/rain.png" style="width: 5vh; height: auto;" alt="">',
+    sandstorm: '<img src="pictures/status/sandstorm.png" style="width: 5vh; height: auto;" alt="">',
+    snow: '<img src="pictures/status/snow.png" style="width: 5vh; height: auto;" alt="">',
+}
+
+let weather = weatherimages.rain
 
 const pokemon = [
     {
         name: "Dwebble",
         image: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/557.png',
-        avatar: `<img style="height: auto; width: 20vh" src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/557.png" alt="">`,
+        avatar: `<img style="height: auto; width: 20vh" src="pictures/pokemon/dwebble.png" alt="">`,
         maxhp: 10,
         hp: 10,
         attack: 10,
@@ -14,9 +106,9 @@ const pokemon = [
         speed: 10,
         statuscondition: null,
         move1: 4,
-        move2: 5,
-        move3: 6,
-        move4: 7,
+        move2: 2,
+        move3: 16,
+        move4: 17,
         type1: 11,
         type2: 12,
     },
@@ -98,90 +190,7 @@ const pokemon = [
     }
 ];
 
-
-const types = [
-    /* Normal */ [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0, 1, 1, 0.5, 1],
-    /* Fire */   [1, 0.5, 0.5, 1, 2, 2, 1, 1, 1, 1, 1, 2, 0.5, 1, 0.5, 1, 2, 1],
-    /* Water */  [1, 2, 0.5, 1, 0.5, 1, 1, 1, 2, 1, 1, 1, 2, 1, 0.5, 1, 1, 1],
-    /* Electric*/[1, 1, 2, 0.5, 0.5, 1, 1, 1, 0, 2, 1, 1, 1, 1, 0.5, 1, 1, 1],
-    /* Grass */  [1, 0.5, 2, 1, 0.5, 1, 1, 0.5, 2, 0.5, 1, 1, 0.5, 1, 0.5, 1, 0.5, 1],
-    /* Ice */    [1, 0.5, 0.5, 1, 2, 1, 1, 1, 2, 2, 1, 1, 2, 1, 0.5, 1, 0.5, 1],
-    /* Fighting*/[2, 1, 1, 1, 1, 2, 1, 0.5, 1, 0.5, 0.5, 0.5, 2, 0, 1, 2, 2, 0.5],
-    /* Poison */ [1, 1, 1, 1, 2, 1, 1, 0.5, 0.5, 1, 1, 1, 0.5, 0.5, 1, 1, 0, 2],
-    /* Ground */ [1, 2, 1, 2, 0.5, 1, 1, 2, 1, 0, 1, 1, 2, 1, 1, 1, 2, 1],
-    /* Flying */ [1, 1, 1, 0.5, 2, 1, 2, 1, 1, 1, 1, 1, 0.5, 1, 2, 1, 0.5, 1],
-    /* Psychic*/ [1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 0.5, 1, 1, 1, 1, 0, 0.5, 1],
-    /* Bug */    [1, 0.5, 1, 1, 2, 1, 0.5, 0.5, 1, 0.5, 2, 1, 1, 0.5, 1, 2, 0.5, 0.5],
-    /* Rock */   [1, 2, 1, 1, 1, 2, 0.5, 1, 0.5, 2, 1, 2, 1, 1, 2, 1, 0.5, 1],
-    /* Ghost */  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 0.5, 1, 1],
-    /* Dragon */ [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 0.5, 0],
-    /* Dark */   [1, 1, 1, 1, 1, 1, 0.5, 1, 1, 1, 2, 1, 1, 2, 1, 0.5, 1, 0.5],  
-    /* Steel */  [1, 0.5, 0.5, 0.5, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 0.5, 2],  
-    /* Fairy */  [1, 0.5, 1, 1, 1, 1, 2, 0.5, 1, 1, 1, 1, 1, 1, 2, 2, 0.5, 1],  
-    /* No Type*/ [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],  
- ]
- 
-
-function calculatedamagemultiplier(user, opponent) {
-    dmgmultiplier = types[Object.keys(types)[user.pokemon[0].type]][opponent.pokemon[3].type1] * types[Object.keys(types)[user.pokemon[0].type]][opponent.pokemon[3].type2]
-    if (types[Object.keys(types)[moves[0].type]][pokemon[3].type1] == 0 || types[Object.keys(types)[moves[0].type]][pokemon[3].type2] == 0) dmgmultiplier = 0    
-}
-
-
-
-let statstates = [
-    2 / 8, 2 / 7, 2 / 6, 2 / 5, 2 / 4, 2 / 3, 2 / 2, 3 / 2, 4 / 2, 5 / 2, 6 / 2, 7 / 2, 8 / 2
-]
-
-let statstates2 = [
-    3 / 9, 3 / 8, 3 / 7, 3 / 6, 3 / 5, 3 / 4, 3 / 3, 4 / 3, 5 / 3, 6 / 3, 7 / 3, 8 / 3, 9 / 3
-]
-
-let player = {
-    atk: 6,
-    def: 6,
-    satk: 6,
-    sdef: 6,
-    spe: 6,
-    acc: 6,
-    eva: 6,
-    status: false,
-    brn: false,
-    par: false,
-    psn: false,
-    tox: false,
-    slp: false,
-    frz: false,
-    statusimage: ''
-}
-
-let rival = {
-    atk: 6,
-    def: 6,
-    satk: 6,
-    sdef: 6,
-    spe: 6,
-    acc: 6,
-    eva: 6,
-    status: false,
-    brn: false,
-    par: false,
-    psn: false,
-    tox: false,
-    slp: false,
-    frz: false,
-    statusimage: ''
-}
-
-let statusimages = {
-    brn: '<img src="pictures/brnimage.png" style="width: 5vh; height: auto;" alt="">',
-    par: '<img src="pictures/parimage.png" style="width: 6vh; height: auto;" alt="">',
-    psn: '<img src="pictures/psnimage.png" style="width: 6vh; height: auto;" alt="">',
-    slp: '<img src="pictures/slpimage.png" style="width: 6vh; height: auto;" alt="">',
-    frz: '<img src="pictures/frzimage.png" style="width: 6vh; height: auto;" alt="">',
-}
-
-let moves = [
+const moves = [
     {
         name: 'Thunder Shock',
         type: 3,
@@ -292,10 +301,19 @@ let moves = [
         movetype: 'plain damage',
         dmg: 60
     },
-];
-
-let battlemessage = ''
-
+    {
+        name: 'Will o Wisp',
+        type: 1,
+        movetype: 'status',
+        dmg: 60
+    },
+    {
+        name: 'Sandstorm',
+        type: 3,
+        movetype: 'weather',
+        dmg: 60
+    },
+]
 
 player1 = {
     name: 'Red',
