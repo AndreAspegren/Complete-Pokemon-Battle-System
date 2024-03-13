@@ -1,0 +1,44 @@
+Hva trengs
+
+Ett array med pokemon objekter 
+
+De objektene skal ha:
+Navn
+Bilde
+Hp og max Hp
+attack stat
+defense stat
+special attack stat
+special defense stat
+speed stat
+status condition stat
+4 moves
+Typing til pokemon
+
+En user karakter som har opptil 6 pokemon objekter
+
+En rival computer karakter som har opptil 6 pokemon objekter
+
+Sekvenser:
+User move input starter runden
+Begge spillere sine moves blir deklarert
+Sjekke hvem som går først
+Raskeste pokemon annouoncer og gjør movet
+dead check
+Tregeste pokemon announcer og gjør movet
+dead check
+End of turn ting 
+dead check
+check om noen er tomme for pokemon og fight er over eller ny fight skal starter
+sende inn ny pokemon hvis noen døde
+runde over
+
+Move typer:
+Plain damage moves
+Damage moves med secondary effect
+Stat endrende moves
+Priority moves
+Suicide moves
+Moves som gjør ut user må hvile neste runde
+Status condition moves
+Weather moves
