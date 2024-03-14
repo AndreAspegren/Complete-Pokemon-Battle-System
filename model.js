@@ -1,32 +1,34 @@
 buttonsenabled = false
 let battlemessage = ''
+let turncounter = 0
+let random
 
 const types = [
-    /* Normal */ [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0, 1, 1, 0.5, 1],
-    /* Fire */   [1, 0.5, 0.5, 1, 2, 2, 1, 1, 1, 1, 1, 2, 0.5, 1, 0.5, 1, 2, 1],
-    /* Water */  [1, 2, 0.5, 1, 0.5, 1, 1, 1, 2, 1, 1, 1, 2, 1, 0.5, 1, 1, 1],
+    /* Normal */[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0, 1, 1, 0.5, 1],
+    /* Fire */[1, 0.5, 0.5, 1, 2, 2, 1, 1, 1, 1, 1, 2, 0.5, 1, 0.5, 1, 2, 1],
+    /* Water */[1, 2, 0.5, 1, 0.5, 1, 1, 1, 2, 1, 1, 1, 2, 1, 0.5, 1, 1, 1],
     /* Electric*/[1, 1, 2, 0.5, 0.5, 1, 1, 1, 0, 2, 1, 1, 1, 1, 0.5, 1, 1, 1],
-    /* Grass */  [1, 0.5, 2, 1, 0.5, 1, 1, 0.5, 2, 0.5, 1, 1, 0.5, 1, 0.5, 1, 0.5, 1],
-    /* Ice */    [1, 0.5, 0.5, 1, 2, 1, 1, 1, 2, 2, 1, 1, 2, 1, 0.5, 1, 0.5, 1],
+    /* Grass */[1, 0.5, 2, 1, 0.5, 1, 1, 0.5, 2, 0.5, 1, 1, 0.5, 1, 0.5, 1, 0.5, 1],
+    /* Ice */[1, 0.5, 0.5, 1, 2, 1, 1, 1, 2, 2, 1, 1, 2, 1, 0.5, 1, 0.5, 1],
     /* Fighting*/[2, 1, 1, 1, 1, 2, 1, 0.5, 1, 0.5, 0.5, 0.5, 2, 0, 1, 2, 2, 0.5],
-    /* Poison */ [1, 1, 1, 1, 2, 1, 1, 0.5, 0.5, 1, 1, 1, 0.5, 0.5, 1, 1, 0, 2],
-    /* Ground */ [1, 2, 1, 2, 0.5, 1, 1, 2, 1, 0, 1, 1, 2, 1, 1, 1, 2, 1],
-    /* Flying */ [1, 1, 1, 0.5, 2, 1, 2, 1, 1, 1, 1, 1, 0.5, 1, 2, 1, 0.5, 1],
-    /* Psychic*/ [1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 0.5, 1, 1, 1, 1, 0, 0.5, 1],
-    /* Bug */    [1, 0.5, 1, 1, 2, 1, 0.5, 0.5, 1, 0.5, 2, 1, 1, 0.5, 1, 2, 0.5, 0.5],
-    /* Rock */   [1, 2, 1, 1, 1, 2, 0.5, 1, 0.5, 2, 1, 2, 1, 1, 2, 1, 0.5, 1],
-    /* Ghost */  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 0.5, 1, 1],
-    /* Dragon */ [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 0.5, 0],
-    /* Dark */   [1, 1, 1, 1, 1, 1, 0.5, 1, 1, 1, 2, 1, 1, 2, 1, 0.5, 1, 0.5],  
-    /* Steel */  [1, 0.5, 0.5, 0.5, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 0.5, 2],  
-    /* Fairy */  [1, 0.5, 1, 1, 1, 1, 2, 0.5, 1, 1, 1, 1, 1, 1, 2, 2, 0.5, 1],  
-    /* No Type*/ [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],  
- ]
- 
+    /* Poison */[1, 1, 1, 1, 2, 1, 1, 0.5, 0.5, 1, 1, 1, 0.5, 0.5, 1, 1, 0, 2],
+    /* Ground */[1, 2, 1, 2, 0.5, 1, 1, 2, 1, 0, 1, 1, 2, 1, 1, 1, 2, 1],
+    /* Flying */[1, 1, 1, 0.5, 2, 1, 2, 1, 1, 1, 1, 1, 0.5, 1, 2, 1, 0.5, 1],
+    /* Psychic*/[1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 0.5, 1, 1, 1, 1, 0, 0.5, 1],
+    /* Bug */[1, 0.5, 1, 1, 2, 1, 0.5, 0.5, 1, 0.5, 2, 1, 1, 0.5, 1, 2, 0.5, 0.5],
+    /* Rock */[1, 2, 1, 1, 1, 2, 0.5, 1, 0.5, 2, 1, 2, 1, 1, 2, 1, 0.5, 1],
+    /* Ghost */[0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 0.5, 1, 1],
+    /* Dragon */[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 0.5, 0],
+    /* Dark */[1, 1, 1, 1, 1, 1, 0.5, 1, 1, 1, 2, 1, 1, 2, 1, 0.5, 1, 0.5],
+    /* Steel */[1, 0.5, 0.5, 0.5, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 0.5, 2],
+    /* Fairy */[1, 0.5, 1, 1, 1, 1, 2, 0.5, 1, 1, 1, 1, 1, 1, 2, 2, 0.5, 1],
+    /* No Type*/[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+]
+
 
 function calculatedamagemultiplier(user, opponent) {
     dmgmultiplier = types[Object.keys(types)[user.pokemon[0].type]][opponent.pokemon[3].type1] * types[Object.keys(types)[user.pokemon[0].type]][opponent.pokemon[3].type2]
-    if (types[Object.keys(types)[moves[0].type]][pokemon[3].type1] == 0 || types[Object.keys(types)[moves[0].type]][pokemon[3].type2] == 0) dmgmultiplier = 0    
+    if (types[Object.keys(types)[moves[0].type]][pokemon[3].type1] == 0 || types[Object.keys(types)[moves[0].type]][pokemon[3].type2] == 0) dmgmultiplier = 0
 }
 
 
@@ -52,6 +54,7 @@ let player = {
     par: false,
     psn: false,
     tox: false,
+    toxcounter: 1,
     slp: false,
     frz: false,
     statusimage: ''
@@ -70,28 +73,32 @@ let rival = {
     par: false,
     psn: false,
     tox: false,
+    toxcounter: 1,
     slp: false,
     frz: false,
     statusimage: ''
+}
+
+let weather = {
+    weather: '',
+    image: '',
+    images: {
+        sun: '<img src="pictures/status/sun.png" style="width: 5vh; height: auto;" alt="">',
+        rain: '<img src="pictures/status/rain.png" style="width: 5vh; height: auto;" alt="">',
+        sandstorm: '<img src="pictures/status/sandstorm.png" style="width: 5vh; height: auto;" alt="">',
+        snow: '<img src="pictures/status/snow.png" style="width: 5vh; height: auto;" alt="">',
+    }
 }
 
 let statusimages = {
     brn: '<img src="pictures/status/brnimage.png" style="width: 5vh; height: auto;" alt="">',
     par: '<img src="pictures/status/parimage.png" style="width: 6vh; height: auto;" alt="">',
     psn: '<img src="pictures/status/psnimage.png" style="width: 6vh; height: auto;" alt="">',
+    tox: '<img src="pictures/status/psnimage.png" style="width: 6vh; height: auto;" alt="">',
     slp: '<img src="pictures/status/slpimage.png" style="width: 6vh; height: auto;" alt="">',
     frz: '<img src="pictures/status/frzimage.png" style="width: 6vh; height: auto;" alt="">',
 }
 
-let weatherimages = {
-    sun: '<img src="pictures/status/sun.png" style="width: 5vh; height: auto;" alt="">',
-    rain: '<img src="pictures/status/rain.png" style="width: 5vh; height: auto;" alt="">',
-    sandstorm: '<img src="pictures/status/sandstorm.png" style="width: 5vh; height: auto;" alt="">',
-    snow: '<img src="pictures/status/snow.png" style="width: 5vh; height: auto;" alt="">',
-}
-
-let currentweather = 'sun'
-let weatherimage = weatherimages.rain
 
 const pokemon = [
     {
@@ -106,10 +113,10 @@ const pokemon = [
         specialdefense: 10,
         speed: 10,
         statuscondition: null,
-        move1: 4,
-        move2: 2,
-        move3: 16,
-        move4: 17,
+        move1: 2,
+        move2: 1,
+        move3: 3,
+        move4: 9,
         type1: 11,
         type2: 12,
     },
@@ -123,107 +130,65 @@ const pokemon = [
         defense: 8,
         specialattack: 13,
         specialdefense: 9,
-        speed: 13,
+        speed: 0,
         statuscondition: null,
-        move1: 8,
-        move2: 2,
-        move3: 9,
-        move4: 10,
+        move1: 0,
+        move2: 1,
+        move3: 2,
+        move4: 11,
         type1: 1,
         type2: 19,
     },
-    {
-        name: "Squirtle",
-        image: 'https://p1.hiclipart.com/preview/255/94/461/squirtle-with-a-default-happy-face-png-clipart.jpg',
-        avatar: `<img style="height: auto; width: 20vh" src="https://p1.hiclipart.com/preview/255/94/461/squirtle-with-a-default-happy-face-png-clipart.jpg" alt="">`,
-        maxhp: 14,
-        hp: 14,
-        attack: 10,
-        defense: 13,
-        specialattack: 10,
-        specialdefense: 12,
-        speed: 9,
-        statuscondition: null,
-        move1: 4,
-        move2: 11,
-        move3: 12,
-        move4: 13,
-        type1: 2,
-        type2: 19,
-    },
-    {
-        name: "Bulbasaur",
-        image: 'https://p1.hiclipart.com/preview/500/67/774/dinosaur-bulbasaur-ivysaur-venusaur-drawing-poison-green-cartoon-png-clipart-thumbnail.jpg',
-        avatar: `<img style="height: auto; width: 20vh" src="https://p1.hiclipart.com/preview/500/67/774/dinosaur-bulbasaur-ivysaur-venusaur-drawing-poison-green-cartoon-png-clipart-thumbnail.jpg" alt="">`,
-        maxhp: 13,
-        hp: 13,
-        attack: 9,
-        defense: 10,
-        specialattack: 12,
-        specialdefense: 12,
-        speed: 10,
-        statuscondition: null,
-        move1: 4,
-        move2: 2,
-        move3: 1,
-        move4: 14,
-        type1: 4,
-        type2: 7,
-    },
-    {
-        name: "Pikachu",
-        image: 'https://p7.hiclipart.com/preview/585/436/845/icon-pikachu-transparent-background.jpg',
-        avatar: `<img style="height: auto; width: 20vh" src="https://p7.hiclipart.com/preview/585/436/845/icon-pikachu-transparent-background.jpg" alt="">`,
-        maxhp: 11,
-        hp: 11,
-        attack: 10,
-        defense: 8,
-        specialattack: 11,
-        specialdefense: 9,
-        speed: 15,
-        statuscondition: null,
-        move1: 0,
-        move2: 2,
-        move3: 3,
-        move4: 15,
-        type1: 3,
-        type2: 19,
-    }
-];
+]
 
 const moves = [
     {
-        name: 'Thunder Shock',
-        type: 3,
+        name: 'Tackle',
+        type: 0,
+        acc: 100,
         movetype: 'damage',
         dmg: 40,
         accuracy: 100
     },
     {
-        name: 'Vine Whip',
-        type: 4,
+        name: 'Curse',
+        type: 13,
+        acc: 0,
+        movetype: 'stat',
+        effecttype: ['spe', 'atk', 'def'],
+        effect: [-1, 1, 1],
+        who: ['me', 'me', 'me'],
+    },
+    {
+        name: 'Power Up Punch',
+        type: 6,
+        acc: 100,
         movetype: 'damage',
-        dmg: 45,
-        accuracy: 100
+        dmg: 40,
+        effect2: 'stat',
+        effecttype: ['atk'],
+        effect: [1],
+    },
+    {
+        name: 'Recover',
+        type: 0,
+        acc: 0,
+        movetype: 'heal',
+        heal: 'uhp + umaxhp * 0.5'
     },
     {
         name: 'Growl',
         type: 0,
-        movetype: 'statchange',
-        who: 'foe',
-        stateffect: 'atk',
-        effect: -1,
+        acc: 0,
+        movetype: 'stat',
+        effecttype: ['atk'],
+        effect: [-1],
+        who: ['you'],
     },
     {
         name: 'Quick Attack',
         type: 0,
-        movetype: 'prioritydamage',
-        dmg: 40,
-        accuracy: 100
-    },
-    {
-        name: 'Tackle',
-        type: 0,
+        acc: 100,
         movetype: 'damage',
         dmg: 40,
         accuracy: 100
@@ -231,13 +196,15 @@ const moves = [
     {
         name: 'Swords Dance',
         type: 0,
-        movetype: 'statchange',
-        usereffect: 'aup2',
-        opposingeffect: 0
+        acc: 0,
+        movetype: 'stat',
+        effecttype: 'aup2',
+        ueffect: 2
     },
     {
         name: 'Explosion',
         type: 0,
+        acc: 100,
         movetype: 'suicide',
         dmg: 250,
         accuracy: 100
@@ -245,67 +212,25 @@ const moves = [
     {
         name: 'Rock Blast',
         type: 12,
+        acc: 90,
         movetype: 'multihit',
         dmg: 25,
         accuracy: 100
     },
     {
-        name: 'Scratch',
-        type: 0,
-        movetype: 'damage',
-        dmg: 40,
-        accuracy: 100
-    },
-    {
-        name: 'Ember',
-        type: 1,
-        movetype: 'damage',
-        dmg: 40,
-        accuracy: 100
-    },
-    {
         name: 'Smokescreen',
         type: 1,
-        movetype: 'statchange',
-        usereffect: 0,
+        acc: 100,
+        movetype: 'stat',
+        stateffect: 'acc',
+        who: 'foe',
+        effect: -1,
         opposingeffect: 'accdown1'
-    },
-    {
-        name: 'Tail Whip',
-        type: 0,
-        movetype: 'statchange',
-        usereffect: 0,
-        opposingeffect: 'ddown1'
-    },
-    {
-        name: 'Water Gun',
-        type: 2,
-        movetype: 'damage',
-        dmg: 40,
-        accuracy: 100
-    },
-    {
-        name: 'Withdraw',
-        type: 2,
-        movetype: 'statchange',
-        usereffect: 'dup1',
-    },
-    {
-        name: 'Recover',
-        type: 0,
-        movetype: 'status',
-        usereffect: 'heal',
-        heal: 0.5
-    },
-    {
-        name: 'Spark',
-        type: 3,
-        movetype: 'plain damage',
-        dmg: 60
     },
     {
         name: 'Will o Wisp',
         type: 1,
+        acc: 85,
         movetype: 'status',
         statustype: 'brn',
         effect: true,
@@ -313,8 +238,24 @@ const moves = [
     {
         name: 'Sandstorm',
         type: 3,
-        movetype: 'weather',
+        acc: 0,
+        movetype: 'weatherchange',
         weather: 'sandstorm'
+    },
+    {
+        name: 'Rain Dance',
+        type: 3,
+        acc: 0,
+        movetype: 'weatherchange',
+        weather: 'rain'
+    },
+    {
+        name: 'Lunar Dance',
+        type: 0,
+        acc: 0,
+        movetype: 'statusheal',
+        statustype: 'all',
+        effect: false,
     },
 ]
 
@@ -332,3 +273,5 @@ player2 = {
     <img style="height: 20vh; width: auto" src="https://www.serebii.net/pokemonmasters/syncpairs/cynthia.png" alt="">`,
     pokemon: [pokemon[1]]
 }
+
+// damage = ((((2 * level / 5) + 2)) * (dmg * uatk / adef)) / 50 + 2 * multiplier * crit * random
