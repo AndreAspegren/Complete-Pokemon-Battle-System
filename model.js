@@ -90,7 +90,8 @@ let weatherimages = {
     snow: '<img src="pictures/status/snow.png" style="width: 5vh; height: auto;" alt="">',
 }
 
-let weather = weatherimages.rain
+let currentweather = 'sun'
+let weatherimage = weatherimages.rain
 
 const pokemon = [
     {
@@ -209,8 +210,9 @@ const moves = [
         name: 'Growl',
         type: 0,
         movetype: 'statchange',
-        usereffect: 0,
-        opposingeffect: 'adown1'
+        who: 'foe',
+        stateffect: 'atk',
+        effect: -1,
     },
     {
         name: 'Quick Attack',
@@ -305,13 +307,14 @@ const moves = [
         name: 'Will o Wisp',
         type: 1,
         movetype: 'status',
-        dmg: 60
+        statustype: 'brn',
+        effect: true,
     },
     {
         name: 'Sandstorm',
         type: 3,
         movetype: 'weather',
-        dmg: 60
+        weather: 'sandstorm'
     },
 ]
 

@@ -6,11 +6,19 @@ function battlemanager(playermove) {
     if (random == 2) rivalmove = moves[player2.pokemon[0].move3]
     if (random == 3) rivalmove = moves[player2.pokemon[0].move4]
 
-    if (player1.pokemon[0].speed > player2.pokemon[0].speed) playerisfaster = true     // definere hvem som skal gå først
-    if (player1.pokemon[0].speed == player2.pokemon[0].speed) playerisfaster = playerisfaster = Math.floor(Math.random() * 2) == 1
-    if (playermove.type == 'priority') playerisfaster = true
-    if (playermove.type == 'priority') playerisfaster = true
-    if (playermove.type == 'priority' && rivalmove.type == 'priority') playerisfaster = Math.floor(Math.random() * 2) == 1
+    if (playermove.type === 'priority' && rivalmove.type !== 'priority') playerIsFaster = true
+    else if (playermove.type !== 'priority' && rivalmove.type === 'priority') playerIsFaster = false
+    else if (playermove.type === 'priority' && rivalmove.type === 'priority') {
+        if (playermove.prioritystage > rivalmove.prioritystage) playerIsFaster = true
+        else if (playermove.prioritystage < rivalmove.prioritystage) playerIsFaster = false
+        else playerIsFaster = Math.random() < 0.5
+    } else {
+        if (player1.pokemon[0].speed > player2.pokemon[0].speed) {
+            playerIsFaster = true
+        } else if (player1.pokemon[0].speed < player2.pokemon[0].speed) {
+            playerIsFaster = false
+        } else playerIsFaster = Math.random() < 0.5
+    }
     movedecider(playermove, rivalmove)
 }
 
@@ -26,28 +34,31 @@ function damagemove(move) {
     whoismoving('friend')
     ohp -= move.dmg
     if (ohp <= 0) ohp = 0
-    battlemessage = uname + ' brukte ' + moves[player1.pokemon[0].move1].name + '!'
+    battlemessage = uname + ' brukte ' + move.name + '!'
     updatestats('foe', 'hp', ohp)
     updateview()
 }
+
 function statusmove(move) {
     whoismoving('friend')
-    value = move
     battlemessage = uname + ' brukte ' + move.name + '!'
-    updatestats('foe', 'slp', value)
+    updatestats('foe', move.statustype, move.effect)
     updateview()
 }
+
 function weathermove(move) {
     whoismoving('friend')
     battlemessage = uname + ' brukte ' + move.name + '!'
-    updatestats('foe', 'slp', true)
+    weatherimage = weatherimages.sandstorm
+    updatestats('foe', 'brn', true)
     updateview()
 }
+
 function statchangemove(move) {
     whoismoving('friend')
-    odefstage--
+    oatkstage = oatkstage + move.effect
     battlemessage = uname + ' brukte ' + move.name + '!'
-    updatestats('foe', 'def', odefstage)
+    updatestats(move.who, move.stateffect, oatkstage)
     updateview()
 }
 
@@ -80,10 +91,10 @@ function whoismoving(who) {                 // Define variables for the one usin
         usdefstage = player.sdef
         uspe = statstates[player.spe]
         uspestage = player.spe
-        uacc = player.acc
-        uaccstage = statstates2[player.acc]
-        ueva = player.eva
-        uevastage = statstates2[player.eva]
+        uacc = statstates2[player.acc]
+        uaccstage = player.acc
+        ueva = statstates2[player.eva]
+        uevastage = player.eva
 
         oname = player2.pokemon[0].name
         ohp = player2.pokemon[0].hp
@@ -97,10 +108,10 @@ function whoismoving(who) {                 // Define variables for the one usin
         osdefstage = rival.sdef
         ospe = statstates[rival.spe]
         ospestage = rival.spe
-        oacc = rival.acc
-        oaccstage = statstates2[rival.acc]
-        oeva = rival.eva
-        oevastage = statstates2[rival.eva]
+        oacc = statstates2[rival.acc]
+        oaccstage = rival.acc
+        oeva = statstates2[rival.eva]
+        oevastage = rival.eva
     } else {
         uname = player2.pokemon[0].name
         uhp = player2.pokemon[0].hp
@@ -114,10 +125,10 @@ function whoismoving(who) {                 // Define variables for the one usin
         usdefstage = rival.sdef
         uspe = statstates[rival.spe]
         uspestage = rival.spe
-        uacc = rival.acc
-        uaccstage = statstates2[rival.acc]
-        ueva = rival.eva
-        uevastage = statstates2[rival.eva]
+        uacc = statstates2[rival.acc]
+        uaccstage = rival.acc
+        ueva = statstates2[rival.eva]
+        uevastage = rival.eva
 
         oname = player1.pokemon[0].name
         ohp = player1.pokemon[0].hp
@@ -131,9 +142,9 @@ function whoismoving(who) {                 // Define variables for the one usin
         osdefstage = player.sdef
         ospe = statstates[player.spe]
         ospestage = player.spe
-        oacc = player.acc
-        oaccstage = statstates2[player.acc]
-        oeva = player.eva
-        oevastage = statstates2[player.eva]
+        oacc = statstates2[player.acc]
+        oaccstage = player.acc
+        oeva = statstates2[player.eva]
+        oevastage = player.eva
     }
 }
