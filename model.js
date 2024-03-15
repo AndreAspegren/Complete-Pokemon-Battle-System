@@ -148,7 +148,6 @@ const moves = [
         acc: 100,
         movetype: 'damage',
         dmg: 40,
-        accuracy: 100
     },
     {
         name: 'Curse',
@@ -162,12 +161,14 @@ const moves = [
     {
         name: 'Power Up Punch',
         type: 6,
-        acc: 100,
+        acc: 0,
         movetype: 'damage',
         dmg: 40,
         effect2: 'stat',
+        acc2: 100,
         effecttype: ['atk'],
         effect: [1],
+        who: ['me'],
     },
     {
         name: 'Recover',

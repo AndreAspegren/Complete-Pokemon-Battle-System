@@ -1,12 +1,12 @@
 function damage(move, move2, randomacc) {
-    console.log(move)
     if (move.acc * uacc >= randomacc && !upar || move.acc * uacc * 0.75 >= randomacc && upar || move.acc == 0) {
         currenthp = ohp
         ohp -= move.dmg
         if (ohp < 0) ohp = 0
         battlemessage = 'Det gjorde ' + (currenthp - ohp) + ' damage!'
         updatestats(you, 'hp', ohp)
-        if (move.effect2) eval(move.movetype + '()')
+        console.log(move.movetype)
+        if (move.effect2) eval(move.effect2 + '(move, move2, randomacc)')
     } else {
         battlemessage = uname + ' bommet!'
         setTimeout(() => (moveannouncement(move, move2)), 2000)
@@ -65,7 +65,9 @@ function stat(move, move2, randomacc) {
             who = me == 'friend' ? player : rival 
             updatestats(move.who[i], move.effecttype[i], (who[move.effecttype[i]] += move.effect[i]))
         }
-    } else battlemessage = uname + ' bommet!'
+    } else {
+        battlemessage = uname + ' bommet!'
+    } 
     updateview()
     setTimeout(() => (moveannouncement(move, move2)), 2000)
 }
