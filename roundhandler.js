@@ -26,30 +26,36 @@ function battlemanager(player1move) {
 function moveannouncement(player1move, player2move, random) {
     randomacc = Math.ceil(Math.random() * 100)
     if (playerisfaster && turncounter == 0 || playerisfaster && turncounter <= 1) {
-        if (playerisfaster && turncounter == 0) {
+        if (playerisfaster && turncounter == 0 && player1.pokemon[0].hp != 0 && !player1moved) {
+            player1moved = true
             whoismoving('friend')
             battlemessage = uname + ' brukte ' + player1move.name + '!'
             setTimeout(() => eval(player1move.movetype + "(player1move, player2move, randomacc)"), 2000)
-        } else if (playerisfaster && turncounter <= 1) {
+        } else turncounter++
+        if (playerisfaster && turncounter == 1 && player2.pokemon[0].hp != 0 && !player2moved) {
+            player2moved = true
             whoismoving('foe')
             battlemessage = uname + ' brukte ' + player2move.name + '!'
             setTimeout(() => eval(player2move.movetype + "(player2move, player1move)"), 2000)
-        }
+        } else turncounter ++
         updateview()
     }
-    if (!playerisfaster && turncounter == 0 || !playerisfaster && turncounter <= 1) {
-        if (!playerisfaster && turncounter == 0) {
+    else if (!playerisfaster && turncounter == 0 || !playerisfaster && turncounter <= 1) {
+        if (!playerisfaster && turncounter == 0 && player2.pokemon[0].hp != 0 && !player2moved) {
+            player2moved = true
             whoismoving('foe')
             battlemessage = uname + ' brukte ' + player2move.name + '!'
             setTimeout(() => eval(player2move.movetype + "(player2move, player1move)"), 2000)
-        } else if (!playerisfaster && turncounter <= 1) {
+        } else turncounter ++ 
+        if (!playerisfaster && turncounter == 1 && player2.pokemon[0].hp != 0 && !playermoved) {
+            player1moved = true
             whoismoving('friend')
             battlemessage = uname + ' brukte ' + player1move.name + '!'
             setTimeout(() => eval(player1move.movetype + "(player1move, player2move)"), 2000)
-        }
+        } else turncounter ++
         updateview()
     }
-    if (turncounter >= 2) {
+    if (turncounter == 2) {
         endofroundevents()
     }
     turncounter++
@@ -59,32 +65,48 @@ async function endofroundevents() {
     if (player.brn || rival.brn) await endofrounddamage('brn', 0.125)
     if (player.psn || rival.psn) await endofrounddamage('psn', 0.125)
     if (player.tox || rival.tox) await endofrounddamage('tox', 0.125)
-    if (weather.weather == 'sandstorm') await endofrounddamage('sandstorm', 0.125)  
+    if (weather.weather == 'sandstorm') await endofrounddamage('sandstorm', 0.125)
+    endround()  
+}
+
+function endround(){
+    console.log('hei')
+    if (player1.pokemon[0].hp == 0){
+        const item = player1.pokemon.splice(0, 1)[0]
+        player1.pokemon.unshift(item)
+        updateview()  
+    }
+    if (player2.pokemon[0].hp == 0){
+        console.log('på')
+        const item = player2.pokemon.splice(0, 1)[0]
+        player2.pokemon.push(item)
+        updateview()  
+    }
 }
 
 function endofrounddamage(what, value) {
     return new Promise(resolve => {
         let timer = 0
-        if (playerisfaster && player[what] || playerisfaster && what == 'sandstorm' && ![8, 12, 16].includes(player1.pokemon[0].type1) && 
-        ![8, 12, 16].includes(player1.pokemon[0].type2)) {
+        if (playerisfaster && player[what] && player1.pokemon[0].hp != 0 || playerisfaster && what == 'sandstorm' && ![8, 12, 16].includes(player1.pokemon[0].type1) && 
+        ![8, 12, 16].includes(player1.pokemon[0].type2) && player1.pokemon[0].hp != 0) {
             player1.pokemon[0].hp -= player1.pokemon[0].maxhp * value
             updateview()
             timer += 2000
-        } else if (!playerisfaster && rival[what] || !playerisfaster && what == 'sandstorm' && ![8, 12, 16].includes(player2.pokemon[0].type1) && 
-        ![8, 12, 16].includes(player2.pokemon[0].type2)) {
+        } else if (!playerisfaster && rival[what] && player2.pokemon[0].hp != 0 || !playerisfaster && what == 'sandstorm' && ![8, 12, 16].includes(player2.pokemon[0].type1) && 
+        ![8, 12, 16].includes(player2.pokemon[0].type2) && player2.pokemon[0].hp != 0) {
             player2.pokemon[0].hp -= player2.pokemon[0].maxhp * value
             updateview()
             timer += 2000
         }
-        if (!playerisfaster && player[what] || !playerisfaster && what == 'sandstorm' && ![8, 12, 16].includes(player1.pokemon[0].type1) && 
+        if (!playerisfaster && player[what] && player1.pokemon[0].hp != 0 || !playerisfaster && what == 'sandstorm' && ![8, 12, 16].includes(player1.pokemon[0].type1) && 
         ![8, 12, 16].includes(player1.pokemon[0].type2)) {
             setTimeout(function () {
                 player1.pokemon[0].hp -= player1.pokemon[0].maxhp * value
                 updateview()
             }, timer)
             timer += 2000
-        } else if (playerisfaster && rival[what] || playerisfaster && what == 'sandstorm' && ![8, 12, 16].includes(player2.pokemon[0].type1) && 
-        ![8, 12, 16].includes(player2.pokemon[0].type1)) {
+        } else if (playerisfaster && rival[what] && player2.pokemon[0].hp != 0 || playerisfaster && what == 'sandstorm' && ![8, 12, 16].includes(player2.pokemon[0].type1) && 
+        ![8, 12, 16].includes(player2.pokemon[0].type1) && player2.pokemon[0].hp != 0) {
             setTimeout(function () {
                 player2.pokemon[0].hp -= player2.pokemon[0].maxhp * value
                 updateview()

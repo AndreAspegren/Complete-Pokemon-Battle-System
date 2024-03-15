@@ -5,15 +5,16 @@ function damage(move, move2, randomacc) {
         if (ohp < 0) ohp = 0
         battlemessage = 'Det gjorde ' + (currenthp - ohp) + ' damage!'
         updatestats(you, 'hp', ohp)
-        console.log(move.movetype)
-        if (move.effect2) eval(move.effect2 + '(move, move2, randomacc)')
-    } else {
-        battlemessage = uname + ' bommet!'
-        setTimeout(() => (moveannouncement(move, move2)), 2000)
-    } 
-    updateview()
+        if (move.effect2 && move.acc2 >= randomacc) eval(move.effect2 + '(move, move2, randomacc)')
+        else setTimeout(() => (moveannouncement(move, move2)), 2000)
+} else {
+    battlemessage = uname + ' bommet!'
+    setTimeout(() => (moveannouncement(move, move2)), 2000)
+} 
+updateview()
 }
 
+// damage = ((((2 * level / 5) + 2)) * (dmg * uatk / adef)) / 50 + 2 * multiplier * crit * random
 function heal(move, move2, randomacc) {
     if (move.acc * uacc >= randomacc && !upar || move.acc * uacc * 0.75 >= randomacc && upar || move.acc == 0) {
         currenthp = uhp
@@ -84,6 +85,7 @@ function updatestats(who, what, value) {                                        
         if (what != 'allstatus'){
             stattarget[what] = value
             stattarget.status = value
+            if (what == 'tox' && !value) stattarget['toxcounter'] = 1
             stattarget.statusimage = value ? statusimages[what] : ''
         }
         else {
@@ -91,6 +93,7 @@ function updatestats(who, what, value) {                                        
             stattarget['par'] = value
             stattarget['psn'] = value
             stattarget['tox'] = value
+            stattarget['toxcounter'] = 1
             stattarget['slp'] = value
             stattarget['frz'] = value
             stattarget.status = value
@@ -99,112 +102,124 @@ function updatestats(who, what, value) {                                        
     }
 }
 
-function whoismoving(who) {  
-    u = 'u'
-    o = 'o'
-    if (who == 'friend') {
-        me = 'friend'              
-        uname = player1.pokemon[0].name
-        uhp = player1.pokemon[0].hp
-        umaxhp = player1.pokemon[0].maxhp
-        uatk = statstates[player.atk]
-        uatkstage = player.atk
-        udef = statstates[player.def]
-        udefstage = player.def
-        usatk = statstates[player.satk]
-        usatkstage = player.satk
-        usdef = statstates[player.sdef]
-        usdefstage = player.sdef
-        uspe = statstates[player.spe]
-        uspestage = player.spe
-        uacc = statstates2[player.acc]
-        uaccstage = player.acc
-        ueva = statstates2[player.eva]
-        uevastage = player.eva
-        ustatus = player.status
-        ubrn = player.brn
-        upar = player.par
-        upsn = player.psn
-        utox = player.tox
-        uslp = player.slp
-        ufrz = player.frz
 
-        you = 'foe'
-        oname = player2.pokemon[0].name
-        ohp = player2.pokemon[0].hp
-        omaxhp = player2.pokemon[0].maxhp
-        oatk = statstates[rival.atk]
-        oatkstage = rival.atk
-        odef = statstates[rival.def]
-        odefstage = rival.def
-        osatk = statstates[rival.satk]
-        osatkstage = rival.satk
-        osdef = statstates[rival.sdef]
-        osdefstage = rival.sdef
-        ospe = statstates[rival.spe]
-        ospestage = rival.spe
-        oacc = statstates2[rival.acc]
-        oaccstage = rival.acc
-        oeva = statstates2[rival.eva]
-        oevastage = rival.eva
-        ostatus = player.status
-        obrn = player.brn
-        opar = rival.par
-        opsn = player.psn
-        otox = player.tox
-        oslp = player.slp
-        ofrz = player.frz
+function whoismoving(who) {
+    if (who === 'friend') {
+
+        me = 'friend';
+        uname = player1.pokemon[0].name;
+        uhp = player1.pokemon[0].hp;
+        umaxhp = player1.pokemon[0].maxhp;
+        uatk = statstates[player.atk];
+        uatkstat = player1.pokemon[0].atk;
+        uatkstage = player.atk;
+        udef = statstates[player.def];
+        udefstat = player1.pokemon[0].def;
+        udefstage = player.def;
+        usatk = statstates[player.satk];
+        usatkstat = player1.pokemon[0].satk;
+        usatkstage = player.satk;
+        usdef = statstates[player.sdef];
+        usdefstat = player1.pokemon[0].sdef;
+        usdefstage = player.sdef;
+        uspe = statstates[player.spe];
+        uspestat = player1.pokemon[0].spe;
+        uspestage = player.spe;
+        uacc = statstates2[player.acc];
+        uaccstat = player.acc;
+        uaccstage = player.acc;
+        ueva = statstates2[player.eva];
+        uevastat = player.eva; 
+        uevastage = player.eva;
+        ustatus = player.status;
+        utype1 = player1.pokemon[0].type1;
+        utype2 = player1.pokemon[0].type2;
+
+        you = 'foe';
+        oname = player2.pokemon[0].name;
+        ohp = player2.pokemon[0].hp;
+        omaxhp = player2.pokemon[0].maxhp;
+        oatk = statstates[rival.atk];
+        oatkstat = player2.pokemon[0].atk;
+        oatkstage = rival.atk;
+        odef = statstates[rival.def];
+        odefstat = player2.pokemon[0].def;
+        odefstage = rival.def;
+        osatk = statstates[rival.satk];
+        osatkstat = player2.pokemon[0].satk;
+        osatkstage = rival.satk;
+        osdef = statstates[rival.sdef];
+        osdefstat = player2.pokemon[0].sdef;
+        osdefstage = rival.sdef;
+        ospe = statstates[rival.spe];
+        ospestat = player2.pokemon[0].spe;
+        ospestage = rival.spe;
+        oacc = statstates2[rival.acc];
+        oaccstat = rival.acc; 
+        oaccstage = rival.acc;
+        oeva = statstates2[rival.eva];
+        oevastat = rival.eva; 
+        oevastage = rival.eva;
+        ostatus = rival.status;
+        otype1 = player2.pokemon[0].type1;
+        otype2 = player2.pokemon[0].type2;
     } else {
-        me = 'foe'
-        uname = player2.pokemon[0].name
-        uhp = player2.pokemon[0].hp
-        umaxhp = player2.pokemon[0].maxhp
-        uatk = statstates[rival.atk]
-        uatkstage = rival.atk
-        udef = statstates[rival.def]
-        udefstage = rival.def
-        usatk = statstates[rival.satk]
-        usatkstage = rival.satk
-        usdef = statstates[rival.sdef]
-        usdefstage = rival.sdef
-        uspe = statstates[rival.spe]
-        uspestage = rival.spe
-        uacc = statstates2[rival.acc]
-        uaccstage = rival.acc
-        ueva = statstates2[rival.eva]
-        uevastage = rival.eva
-        ustatus = player.status
-        ubrn = rival.brn
-        upar = rival.brn
-        upsn = rival.psn
-        utox = rival.tox
-        uslp = rival.slp
-        ufrz = rival.frz
+        me = 'foe';
+        uname = player2.pokemon[0].name;
+        uhp = player2.pokemon[0].hp;
+        umaxhp = player2.pokemon[0].maxhp;
+        uatk = statstates[rival.atk];
+        uatkstat = player2.pokemon[0].atk;
+        uatkstage = rival.atk;
+        udef = statstates[rival.def];
+        udefstat = player2.pokemon[0].def;
+        udefstage = rival.def;
+        usatk = statstates[rival.satk];
+        usatkstat = player2.pokemon[0].satk;
+        usatkstage = rival.satk;
+        usdef = statstates[rival.sdef];
+        usdefstat = player2.pokemon[0].sdef;
+        usdefstage = rival.sdef;
+        uspe = statstates[rival.spe];
+        uspestat = player2.pokemon[0].spe;
+        uspestage = rival.spe;
+        uacc = statstates2[rival.acc];
+        uaccstage = player.acc;
+        ueva = statstates2[rival.eva];
+        uevastage = rival.eva;
+        ustatus = rival.status;
+        utype1 = player2.pokemon[0].type1;
+        utype2 = player2.pokemon[0].type2;
 
-        you = 'friend'
-        oname = player1.pokemon[0].name
-        ohp = player1.pokemon[0].hp
-        omaxhp = player1.pokemon[0].maxhp
-        oatk = statstates[player.atk]
-        oatkstage = player.atk
-        odef = statstates[player.def]
-        odefstage = player.def
-        osatk = statstates[player.satk]
-        osatkstage = player.satk
-        osdef = statstates[player.sdef]
-        osdefstage = player.sdef
-        ospe = statstates[player.spe]
-        ospestage = player.spe
-        oacc = statstates2[player.acc]
-        oaccstage = player.acc
-        oeva = statstates2[player.eva]
-        oevastage = player.eva
-        ostatus = player.status
-        obrn = player.brn
-        opar = player.par
-        opsn = player.psn
-        otox = player.tox
-        oslp = player.slp
-        ofrz = player.frz
+       
+        you = 'friend';
+        oname = player1.pokemon[0].name;
+        ohp = player1.pokemon[0].hp;
+        omaxhp = player1.pokemon[0].maxhp;
+        oatk = statstates[player.atk];
+        oatkstat = player1.pokemon[0].atk;
+        oatkstage = player.atk;
+        odef = statstates[player.def];
+        odefstat = player1.pokemon[0].def;
+        odefstage = player.def;
+        osatk = statstates[rival.satk];
+        osatkstat = player1.pokemon[0].satk;
+        osatkstage = player.satk;
+        osdef = statstates[player.sdef];
+        osdefstat = player1.pokemon[0].sdef;
+        osdefstage = player.sdef;
+        ospe = statstates[player.spe];
+        ospestat = player1.pokemon[0].spe;
+        ospestage = player.spe;
+        oacc = statstates2[player.acc];
+        oaccstat = player.acc;
+        oaccstage = player.acc;
+        oeva = statstates2[player.eva];
+        oevastat = player.eva; y
+        oevastage = player.eva;
+        ostatus = player.status;
+        otype1 = player1.pokemon[0].type1;
+        otype2 = player1.pokemon[0].type2;
     }
 }
+
