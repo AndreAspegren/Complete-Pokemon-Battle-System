@@ -132,7 +132,7 @@ const pokemon = [
         defense: 8,
         specialattack: 13,
         specialdefense: 9,
-        speed: 0,
+        speed: 1,
         statuscondition: null,
         move1: 0,
         move2: 1,
@@ -142,6 +142,8 @@ const pokemon = [
         type2: 19,
     },
 ]
+let me 
+let you
 
 const moves = [
     {
@@ -158,7 +160,7 @@ const moves = [
         movetype: 'stat',
         effecttype: ['spe', 'atk', 'def'],
         effect: [-1, 1, 1],
-        who: ['me', 'me', 'me'],
+        who: [me, me, me],
     },
     {
         name: 'Power Up Punch',
@@ -267,14 +269,14 @@ player1 = {
     avatar: `<div>
     <img style="height: 20vh; width: auto" src="https://archives.bulbagarden.net/media/upload/thumb/d/d3/Lets_Go_Pikachu_Eevee_Red.png/250px-Lets_Go_Pikachu_Eevee_Red.png" alt="}">
     `,
-    pokemon: [pokemon[0], pokemon[1], pokemon[1], pokemon[0], pokemon[1], pokemon[0]]
+    pokemon: [pokemon[0], pokemon[1], pokemon[1], pokemon[0], pokemon[1], pokemon[0]].map(p => JSON.parse(JSON.stringify(p)))
 }
 
 player2 = {
     name: 'Cynthia',
     avatar: `
     <img style="height: 20vh; width: auto" src="https://www.serebii.net/pokemonmasters/syncpairs/cynthia.png" alt="">`,
-    pokemon: [pokemon[1], pokemon[0]]
+    pokemon: [pokemon[1], pokemon[0]].map(p => JSON.parse(JSON.stringify(p)))
 }
 
 // damage = ((((2 * level / 5) + 2)) * (dmg * uatk / adef)) / 50 + 2 * multiplier * crit * random
