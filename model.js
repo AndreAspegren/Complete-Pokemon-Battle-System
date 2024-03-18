@@ -7,6 +7,8 @@ let player2moved = false
 let protectactive
 let p1protect
 let p2protect 
+let p1movehistory = []
+let p2movehistory = []
 
 const types = [
     /* Normal */[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0, 1, 1, 0.5, 1, 1],
@@ -139,6 +141,7 @@ const moves = [
         type: 0,
         acc: 0,
         movetype: 'protect',
+        priority: 4
     },
     {
         name: 'Rock Blast',

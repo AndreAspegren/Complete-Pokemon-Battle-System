@@ -3,14 +3,16 @@ async function battlemanager(p1move) {
     buttonsenabled = false
     p1move = moves[p1move]
     p2move = moves[p2.pokemon[0].move[randommove()]]
-    if (p1move.type === 'priority' && p2move.type !== 'priority') p1isfaster = true
-    else if (p1move.type !== 'priority' && p2move.type === 'priority') p1isfaster = false
-    else if (p1move.type === 'priority' && p2move.type === 'priority') {
-        if (p1move.prioritystage > p2move.prioritystage) p1isfaster = true
-        else if (p1move.prioritystage < p2move.prioritystage) p1isfaster = false
+    p1movehistory.push(p1move)
+    p2movehistory.push(p2move)
+    if (p1move.priority && !p2move.priority) p1isfaster = true
+    else if (!p1move.priority && p2move.priority) p1isfaster = false
+    else if (p1move.priority && p2move.priority) {
+        if (p1move.priority > p2move.priority) p1isfaster = true
+        else if (p1move.priority < p2move.priority) p1isfaster = false
         else p1isfaster = Math.random() < 0.5
     }
-    if (p1move.type !== 'priority' && p2move.type != 'priority') {
+    if (!p1move.priority && !p2move.priority) {
         if (p1faster()) p1isfaster = true
         else if (!p1faster()) p1isfaster = false
     }
@@ -130,7 +132,6 @@ function resetstats(isp1) {
     })
     target.toxcounter = 1
 }
-
 
 async function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))

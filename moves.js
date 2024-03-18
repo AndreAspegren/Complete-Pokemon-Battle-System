@@ -1,7 +1,7 @@
 async function damage() {
     if (checkacc()) {
         const sound = movesounds[move.name.toLowerCase().split(' ').join('')]
-        sound.play(); 
+        sound.play() 
         await delay(sound.duration / 2 * 1000)
         currenthp = ohp
         ohp -= dmgcalc()
@@ -23,7 +23,6 @@ async function protect(){
         uprotect *= 0.67   
     }
 }
-
 
 function dmgcalc() {
     return ((((((2 * 10 / 5) + 2)) * (move.dmg * uatk / odef)) / 12 + 2) *
@@ -132,7 +131,7 @@ function determinemessage(type, movement){
 }
 
 function updatestats(who, what, value) {
-    let target = (who === 'friend') ? p1.pokemon[0] : p1.pokemon[0]
+    let target = (who === 'friend') ? p1.pokemon[0] : p2.pokemon[0]
     let stattarget = (who === 'friend') ? player : rival
     let hvem = (who === 'friend') ? p1 : p2
     if (what === 'hp') {
