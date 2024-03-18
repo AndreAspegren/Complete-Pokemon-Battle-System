@@ -1,38 +1,34 @@
-buttonsenabled = false
+buttonsenabled = true
 let battlemessage = ''
 let turncounter = 0
 let random
-let player1moved = false
+let p1moved = false
 let player2moved = false
+let protectactive
+let p1protect
+let p2protect 
 
 const types = [
-    /* Normal */[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0, 1, 1, 0.5, 1],
-    /* Fire */[1, 0.5, 0.5, 1, 2, 2, 1, 1, 1, 1, 1, 2, 0.5, 1, 0.5, 1, 2, 1],
-    /* Water */[1, 2, 0.5, 1, 0.5, 1, 1, 1, 2, 1, 1, 1, 2, 1, 0.5, 1, 1, 1],
-    /* Electric*/[1, 1, 2, 0.5, 0.5, 1, 1, 1, 0, 2, 1, 1, 1, 1, 0.5, 1, 1, 1],
-    /* Grass */[1, 0.5, 2, 1, 0.5, 1, 1, 0.5, 2, 0.5, 1, 1, 0.5, 1, 0.5, 1, 0.5, 1],
-    /* Ice */[1, 0.5, 0.5, 1, 2, 1, 1, 1, 2, 2, 1, 1, 2, 1, 0.5, 1, 0.5, 1],
-    /* Fighting*/[2, 1, 1, 1, 1, 2, 1, 0.5, 1, 0.5, 0.5, 0.5, 2, 0, 1, 2, 2, 0.5],
-    /* Poison */[1, 1, 1, 1, 2, 1, 1, 0.5, 0.5, 1, 1, 1, 0.5, 0.5, 1, 1, 0, 2],
-    /* Ground */[1, 2, 1, 2, 0.5, 1, 1, 2, 1, 0, 1, 1, 2, 1, 1, 1, 2, 1],
-    /* Flying */[1, 1, 1, 0.5, 2, 1, 2, 1, 1, 1, 1, 1, 0.5, 1, 2, 1, 0.5, 1],
-    /* Psychic*/[1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 0.5, 1, 1, 1, 1, 0, 0.5, 1],
-    /* Bug */[1, 0.5, 1, 1, 2, 1, 0.5, 0.5, 1, 0.5, 2, 1, 1, 0.5, 1, 2, 0.5, 0.5],
-    /* Rock */[1, 2, 1, 1, 1, 2, 0.5, 1, 0.5, 2, 1, 2, 1, 1, 2, 1, 0.5, 1],
-    /* Ghost */[0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 0.5, 1, 1],
-    /* Dragon */[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 0.5, 0],
-    /* Dark */[1, 1, 1, 1, 1, 1, 0.5, 1, 1, 1, 2, 1, 1, 2, 1, 0.5, 1, 0.5],
-    /* Steel */[1, 0.5, 0.5, 0.5, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 0.5, 2],
-    /* Fairy */[1, 0.5, 1, 1, 1, 1, 2, 0.5, 1, 1, 1, 1, 1, 1, 2, 2, 0.5, 1],
-    /* No Type*/[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    /* Normal */[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0, 1, 1, 0.5, 1, 1],
+    /* Fire */[1, 0.5, 0.5, 1, 2, 2, 1, 1, 1, 1, 1, 2, 0.5, 1, 0.5, 1, 2, 1, 1],
+    /* Water */[1, 2, 0.5, 1, 0.5, 1, 1, 1, 2, 1, 1, 1, 2, 1, 0.5, 1, 1, 1, 1],
+    /* Electric*/[1, 1, 2, 0.5, 0.5, 1, 1, 1, 0, 2, 1, 1, 1, 1, 0.5, 1, 1, 1, 1],
+    /* Grass */[1, 0.5, 2, 1, 0.5, 1, 1, 0.5, 2, 0.5, 1, 1, 0.5, 1, 0.5, 1, 0.5, 1, 1],
+    /* Ice */[1, 0.5, 0.5, 1, 2, 1, 1, 1, 2, 2, 1, 1, 2, 1, 0.5, 1, 0.5, 1, 1],
+    /* Fighting*/[2, 1, 1, 1, 1, 2, 1, 0.5, 1, 0.5, 0.5, 0.5, 2, 0, 1, 2, 2, 0.5, 1],
+    /* Poison */[1, 1, 1, 1, 2, 1, 1, 0.5, 0.5, 1, 1, 1, 0.5, 0.5, 1, 1, 0, 2, 1],
+    /* Ground */[1, 2, 1, 2, 0.5, 1, 1, 2, 1, 0, 1, 1, 2, 1, 1, 1, 2, 1, 1],
+    /* Flying */[1, 1, 1, 0.5, 2, 1, 2, 1, 1, 1, 1, 1, 0.5, 1, 2, 1, 0.5, 1, 1],
+    /* Psychic*/[1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 0.5, 1, 1, 1, 1, 0, 0.5, 1, 1],
+    /* Bug */[1, 0.5, 1, 1, 2, 1, 0.5, 0.5, 1, 0.5, 2, 1, 1, 0.5, 1, 2, 0.5, 0.5, 1],
+    /* Rock */[1, 2, 1, 1, 1, 2, 0.5, 1, 0.5, 2, 1, 2, 1, 1, 2, 1, 0.5, 1, 1],
+    /* Ghost */[0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 0.5, 1, 1, 1],
+    /* Dragon */[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 0.5, 0, 1],
+    /* Dark */[1, 1, 1, 1, 1, 1, 0.5, 1, 1, 1, 2, 1, 1, 2, 1, 0.5, 1, 0.5, 1],
+    /* Steel */[1, 0.5, 0.5, 0.5, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 0.5, 2, 1],
+    /* Fairy */[1, 0.5, 1, 1, 1, 1, 2, 0.5, 1, 1, 1, 1, 1, 1, 2, 2, 0.5, 1, 1],
+    /* No Type*/[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ]
-
-
-function calculatedamagemultiplier(user, opponent) {
-    dmgmultiplier = types[Object.keys(types)[user.pokemon[0].type]][opponent.pokemon[3].type1] * types[Object.keys(types)[user.pokemon[0].type]][opponent.pokemon[3].type2]
-    if (types[Object.keys(types)[moves[0].type]][pokemon[3].type1] == 0 || types[Object.keys(types)[moves[0].type]][pokemon[3].type2] == 0) dmgmultiplier = 0
-}
-
 
 
 let statstates = [
@@ -46,39 +42,23 @@ let statstates2 = [
 let player = {
     atk: 6,
     def: 6,
-    satk: 6,
-    sdef: 6,
+    spa: 6,
+    spd: 6,
     spe: 6,
     acc: 6,
     eva: 6,
-    status: false,
-    brn: false,
-    par: false,
-    psn: false,
-    tox: false,
     toxcounter: 1,
-    slp: false,
-    frz: false,
-    statusimage: ''
 }
 
 let rival = {
     atk: 6,
     def: 6,
-    satk: 6,
-    sdef: 6,
+    spa: 6,
+    spd: 6,
     spe: 6,
     acc: 6,
     eva: 6,
-    status: false,
-    brn: false,
-    par: false,
-    psn: false,
-    tox: false,
     toxcounter: 1,
-    slp: false,
-    frz: false,
-    statusimage: ''
 }
 
 let weather = {
@@ -92,7 +72,7 @@ let weather = {
     }
 }
 
-let statusimages = {
+const statusimages = {
     brn: '<img src="pictures/status/brnimage.png" style="width: 5vh; height: auto;" alt="">',
     par: '<img src="pictures/status/parimage.png" style="width: 6vh; height: auto;" alt="">',
     psn: '<img src="pictures/status/psnimage.png" style="width: 6vh; height: auto;" alt="">',
@@ -101,51 +81,79 @@ let statusimages = {
     frz: '<img src="pictures/status/frzimage.png" style="width: 6vh; height: auto;" alt="">',
 }
 
+const typecolors = ['hsl(58, 20%, 56%)',
+    'hsl(25, 84%, 56%)',
+    'hsl(220, 82%, 66%)',
+    'hsl(48, 92%, 57%)',
+    'hsl(97, 52%, 53%)',
+    'hsl(177, 46%, 71%)',
+    'hsl(2, 65%, 45%)',
+    'hsl(301, 44%, 44%)',
+    'hsl(43, 68%, 64%)',
+    'hsl(255, 80%, 75%)',
+    'hsl(341, 93%, 65%)',
+    'hsl(67, 75%, 41%)',
+    'hsl(50, 54%, 46%)',
+    'hsl(266, 26%, 46%)',
+    'hsl(257, 97%, 59%)',
+    'hsl(24, 23%, 35%)',
+    'hsl(240, 19%, 76%)',
+    'hsl(330, 49%, 68%)']
 
 const pokemon = [
     {
         name: "Dwebble",
-        image: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/557.png',
         avatar: `<img style="height: auto; width: 20vh" src="pictures/pokemon/dwebble.png" alt="">`,
-        maxhp: 10,
-        hp: 10,
-        attack: 10,
-        defense: 10,
-        specialattack: 10,
-        specialdefense: 10,
-        speed: 10,
-        statuscondition: null,
-        move1: 2,
-        move2: 1,
-        move3: 3,
-        move4: 9,
+        maxhp: 1000000,
+        hp: 1000000,
+        atk: 10,
+        def: 10,
+        spa: 10,
+        spd: 10,
+        spe: 10,
+        status: '',
+        move: [3, 1, 2, 14],
         type1: 11,
         type2: 12,
     },
     {
         name: "Charmander",
-        image: 'https://p1.hiclipart.com/preview/935/447/707/pokemon-charmander-character-png-clipart.jpg',
-        avatar: `<img style="height: auto; width: 20vh" src="https://p1.hiclipart.com/preview/935/447/707/pokemon-charmander-character-png-clipart.jpg" alt="">`,
+        avatar: `<img style="height: auto; width: 20vh" src="pictures/pokemon/charmander.png" alt="">`,
         maxhp: 12,
         hp: 12,
-        attack: 11,
-        defense: 8,
-        specialattack: 13,
-        specialdefense: 9,
-        speed: 1,
-        statuscondition: null,
-        move1: 0,
-        move2: 1,
-        move3: 2,
-        move4: 11,
+        atk: 11,
+        def: 8,
+        spa: 13,
+        spd: 1,
+        spe: 1,
+        status: '',
+        move: [3, 3, 3, 3],
         type1: 1,
-        type2: 19,
+        type2: 18,
     },
 ]
-let me 
-let you
 
 const moves = [
+    {
+        name: 'Protect',
+        type: 0,
+        acc: 0,
+        movetype: 'protect',
+    },
+    {
+        name: 'Rock Blast',
+        type: 12,
+        acc: 90,
+        movetype: 'multihit',
+        dmg: 25,
+    },
+    {
+        name: 'Giga Impact',
+        type: 0,
+        acc: 90,
+        movetype: 'movethencd',
+        dmg: 150,
+    },
     {
         name: 'Tackle',
         type: 0,
@@ -154,13 +162,12 @@ const moves = [
         dmg: 40,
     },
     {
-        name: 'Curse',
-        type: 13,
+        name: 'Toxic',
+        type: 7,
         acc: 0,
-        movetype: 'stat',
-        effecttype: ['spe', 'atk', 'def'],
-        effect: [-1, 1, 1],
-        who: [me, me, me],
+        movetype: 'status',
+        statustype: 'tox',
+        effect: true,
     },
     {
         name: 'Power Up Punch',
@@ -172,7 +179,7 @@ const moves = [
         acc2: 100,
         effecttype: ['atk'],
         effect: [1],
-        who: ['me'],
+        who: ['u'],
     },
     {
         name: 'Recover',
@@ -188,7 +195,7 @@ const moves = [
         movetype: 'stat',
         effecttype: ['atk'],
         effect: [-1],
-        who: ['you'],
+        who: ['o'],
     },
     {
         name: 'Quick Attack',
@@ -215,22 +222,13 @@ const moves = [
         accuracy: 100
     },
     {
-        name: 'Rock Blast',
-        type: 12,
-        acc: 90,
-        movetype: 'multihit',
-        dmg: 25,
-        accuracy: 100
-    },
-    {
         name: 'Smokescreen',
-        type: 1,
-        acc: 100,
+        type: 13,
+        acc: 0,
         movetype: 'stat',
-        stateffect: 'acc',
-        who: 'foe',
-        effect: -1,
-        opposingeffect: 'accdown1'
+        effecttype: ['acc'],
+        effect: [-1],
+        who: ['o'],
     },
     {
         name: 'Will o Wisp',
@@ -249,7 +247,7 @@ const moves = [
     },
     {
         name: 'Rain Dance',
-        type: 3,
+        type: 2,
         acc: 0,
         movetype: 'weatherchange',
         weather: 'rain'
@@ -259,12 +257,21 @@ const moves = [
         type: 0,
         acc: 0,
         movetype: 'statusheal',
-        statustype: 'all',
+        statustype: '',
         effect: false,
+    },
+    {
+        name: 'Curse',
+        type: 13,
+        acc: 0,
+        movetype: 'stat',
+        effecttype: ['spe', 'atk', 'def'],
+        effect: [-1, 1, 1],
+        who: ['u', 'u', 'u'],
     },
 ]
 
-player1 = {
+p1 = {
     name: 'Red',
     avatar: `<div>
     <img style="height: 20vh; width: auto" src="https://archives.bulbagarden.net/media/upload/thumb/d/d3/Lets_Go_Pikachu_Eevee_Red.png/250px-Lets_Go_Pikachu_Eevee_Red.png" alt="}">
@@ -272,11 +279,27 @@ player1 = {
     pokemon: [pokemon[0], pokemon[1], pokemon[1], pokemon[0], pokemon[1], pokemon[0]].map(p => JSON.parse(JSON.stringify(p)))
 }
 
-player2 = {
+p2 = {
     name: 'Cynthia',
     avatar: `
     <img style="height: 20vh; width: auto" src="https://www.serebii.net/pokemonmasters/syncpairs/cynthia.png" alt="">`,
     pokemon: [pokemon[1], pokemon[0]].map(p => JSON.parse(JSON.stringify(p)))
 }
 
-// damage = ((((2 * level / 5) + 2)) * (dmg * uatk / adef)) / 50 + 2 * multiplier * crit * random
+const movesounds = {
+    tackle: new Audio('sounds/moves/tackle.mp3'),
+    curse: new Audio('sounds/moves/curse.mp3'),
+    smokescreen: new Audio('sounds/moves/smokescreen.mp3'),
+    statup: new Audio('sounds/moves/statup.mp3'),
+    statdown: new Audio('sounds/moves/statdown.mp3'),
+    statup: new Audio('sounds/moves/statup.mp3'),
+    tackle: new Audio('sounds/moves/tackle.mp3'),
+    protect: new Audio('sounds/moves/protect.mp3'),
+    gigaimpact: new Audio('sounds/moves/gigaimpact.mp3'),
+    rockblast: new Audio('sounds/moves/rockblast.mp3'),
+    raindance: new Audio('sounds/moves/raindance.mp3'),
+}
+
+
+
+
