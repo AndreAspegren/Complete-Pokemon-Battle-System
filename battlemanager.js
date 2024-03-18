@@ -9,12 +9,12 @@ async function battlemanager(p1move) {
         if (p1move.prioritystage > p2move.prioritystage) p1isfaster = true
         else if (p1move.prioritystage < p2move.prioritystage) p1isfaster = false
         else p1isfaster = Math.random() < 0.5
-    } 
+    }
     if (p1move.type !== 'priority' && p2move.type != 'priority') {
         if (p1faster()) p1isfaster = true
         else if (!p1faster()) p1isfaster = false
     }
-   
+
     if (p1isfaster) {
         p1moved = true
         whoismoving('friend')
@@ -22,7 +22,7 @@ async function battlemanager(p1move) {
         updateview()
         await delay(2000)
         move = p1move
-        await eval(p1move.movetype + "()") 
+        await eval(p1move.movetype + "()")
         await delay(2000)
     } else {
         whoismoving('foe')
@@ -32,25 +32,25 @@ async function battlemanager(p1move) {
         move = p2move
         await eval(p2move.movetype + "(p2move)")
         await delay(2000)
+        protect()
     }
-    if (!protectactive){
-        if (p1moved && p2.pokemon[0].hp != 0) {
-            whoismoving('foe')
-            battlemessage = p2.pokemon[0].name + ' brukte ' + p2move.name + '!'
-            updateview()
-            await delay(2000)
-            move = p2move
-            await eval(p2move.movetype + "(p2move)")
-            await delay(2000)
-        } else if (!p1moved && p1.pokemon[0].hp != 0) {
-            whoismoving('friend')
-            battlemessage = p1.pokemon[0].name + ' brukte ' + p1move.name + '!'
-            updateview()
-            await delay(2000)
-            move = p1move
-            await eval(p1move.movetype + "(p1move)")
-            await delay(2000)
-        }
+    if (protectactive) return
+    if (p1moved && p2.pokemon[0].hp != 0) {
+        whoismoving('foe')
+        battlemessage = p2.pokemon[0].name + ' brukte ' + p2move.name + '!'
+        updateview()
+        await delay(2000)
+        move = p2move
+        await eval(p2move.movetype + "(p2move)")
+        await delay(2000)
+    } else if (!p1moved && p1.pokemon[0].hp != 0) {
+        whoismoving('friend')
+        battlemessage = p1.pokemon[0].name + ' brukte ' + p1move.name + '!'
+        updateview()
+        await delay(2000)
+        move = p1move
+        await eval(p1move.movetype + "(p1move)")
+        await delay(2000)
     }
     endofround()
 }
@@ -91,14 +91,14 @@ async function endofrounddamage(what, value) {
 
     if (p1faster() && p1status && p1.pokemon[0].hp > 0 || p1faster() && what == 'sandstorm' && ![8, 12, 16].includes(p1.pokemon[0].type1) &&
         ![8, 12, 16].includes(p1.pokemon[0].type2) && p1.pokemon[0].hp > 0) {
-            p1.pokemon[0].hp -= p1.pokemon[0].maxhp * (what == 'tox' ? value * player.toxcounter : value)
+        p1.pokemon[0].hp -= p1.pokemon[0].maxhp * (what == 'tox' ? value * player.toxcounter : value)
         if (p1.pokemon[0].hp < 0) p1.pokemon[0].hp = 0
         if (what == 'tox') player.toxcounter++
         updateview()
         timer += 2000
     } else if (!p1faster() && p2status && p2.pokemon[0].hp > 0 || !p1faster() && what == 'sandstorm' && ![8, 12, 16].includes(p2.pokemon[0].type1) &&
         ![8, 12, 16].includes(p2.pokemon[0].type2) && p2.pokemon[0].hp > 0) {
-            p2.pokemon[0].hp -= p2.pokemon[0].maxhp * (what == 'tox' ? value * rival.toxcounter : value)
+        p2.pokemon[0].hp -= p2.pokemon[0].maxhp * (what == 'tox' ? value * rival.toxcounter : value)
         if (p2.pokemon[0].hp < 0) p2.pokemon[0].hp = 0
         if (what == 'tox') rival.toxcounter++
         updateview()
@@ -133,7 +133,7 @@ function resetstats(isp1) {
 
 
 async function delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms))
 }
 
 function randomacc() {
@@ -149,4 +149,14 @@ function p1faster() {
     else if (p2.pokemon[0].spe > p1.pokemon[0].spe) return false
     return Math.random() < 0.5
 }
+
+function checkacc() {
+    if (move.acc * uacc >= randomacc() * (ustatus == 'par' ? 0.75 : 1) || move.acc == 0) return true
+    else return false
+}
+function checkacc2() {
+    if (move.effect2 && move.acc2 >= randomacc()) return true
+    else return false
+}
+
 

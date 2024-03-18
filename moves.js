@@ -16,7 +16,7 @@ async function damage() {
 }
 
 async function protect(){
-    if (uprotect >= randomacc()){
+    if (uprotect >= randomacc() ){
         const sound = movesounds[move.name.toLowerCase().split(' ').join('')]
         sound.play(); setTimeout(updateview, sound.duration / 2 * 1000)
         protectactive = true
@@ -25,19 +25,6 @@ async function protect(){
 }
 
 
-
-
-
-function checkacc() {
-    if (move.acc * uacc >= randomacc() * (ustatus == 'par' ? 0.75 : 1) || move.acc == 0) return true
-    else return false
-}
-function checkacc2() {
-    if (move.effect2 && move.acc2 >= randomacc()) return true
-    else return false
-}
-
-let protectactive
 function dmgcalc() {
     return ((((((2 * 10 / 5) + 2)) * (move.dmg * uatk / odef)) / 12 + 2) *
         1 *
@@ -47,7 +34,6 @@ function dmgcalc() {
         (ustatus == 'brn' ? 0.5 : 1) *
         ((Math.floor(Math.random() * 16) + 85) / 100))
 }
-
 
 async function heal() {
     if (checkacc()) {
