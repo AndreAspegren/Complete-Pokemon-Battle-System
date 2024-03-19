@@ -1,21 +1,10 @@
-async function battlemanager(p1move) {
-    turncounter = 0
+async function battlemanager(move) {
     buttonsenabled = false
-    p1move = moves[p1move]
+    p1move = moves[move]
     p2move = moves[p2.pokemon[0].move[randommove()]]
     p1movehistory.push(p1move)
     p2movehistory.push(p2move)
-    if (p1move.priority && !p2move.priority) p1isfaster = true
-    else if (!p1move.priority && p2move.priority) p1isfaster = false
-    else if (p1move.priority && p2move.priority) {
-        if (p1move.priority > p2move.priority) p1isfaster = true
-        else if (p1move.priority < p2move.priority) p1isfaster = false
-        else p1isfaster = Math.random() < 0.5
-    }
-    if (!p1move.priority && !p2move.priority) {
-        if (p1faster()) p1isfaster = true
-        else if (!p1faster()) p1isfaster = false
-    }
+    p1isfaster = determinemoveorder()
 
     if (p1isfaster) {
         p1moved = true
@@ -23,7 +12,6 @@ async function battlemanager(p1move) {
         battlemessage = p1.pokemon[0].name + ' brukte ' + p1move.name + '!'
         updateview()
         await delay(2000)
-        move = p1move
         await eval(p1move.movetype + "()")
         await delay(2000)
     } else {
@@ -31,7 +19,6 @@ async function battlemanager(p1move) {
         battlemessage = p1.pokemon[0].name + ' brukte ' + p2move.name + '!'
         updateview()
         await delay(2000)
-        move = p2move
         await eval(p2move.movetype + "(p2move)")
         await delay(2000)
         protect()
@@ -42,7 +29,6 @@ async function battlemanager(p1move) {
         battlemessage = p2.pokemon[0].name + ' brukte ' + p2move.name + '!'
         updateview()
         await delay(2000)
-        move = p2move
         await eval(p2move.movetype + "(p2move)")
         await delay(2000)
     } else if (!p1moved && p1.pokemon[0].hp != 0) {
@@ -50,7 +36,6 @@ async function battlemanager(p1move) {
         battlemessage = p1.pokemon[0].name + ' brukte ' + p1move.name + '!'
         updateview()
         await delay(2000)
-        move = p1move
         await eval(p1move.movetype + "(p1move)")
         await delay(2000)
     }
@@ -62,7 +47,6 @@ async function endofround() {
     if (p1.pokemon[0].status == 'psn' || p2.pokemon[0].status == 'brn') await endofrounddamage('psn', 0.125)
     if (p1.pokemon[0].status == 'tox' || p2.pokemon[0].status == 'tox') await endofrounddamage('tox', 0.125)
     if (weather.weather == 'sandstorm') await endofrounddamage('sandstorm', 0.125)
-
 
     if (p1.pokemon[0].hp == 0) {
         changepokemon('dead')
@@ -152,12 +136,30 @@ function p1faster() {
 }
 
 function checkacc() {
-    if (move.acc * uacc >= randomacc() * (ustatus == 'par' ? 0.75 : 1) || move.acc == 0) return true
-    else return false
+    if (p1move.acc * statstates[player.acc] >= randomacc() * (p1.pokemon[0].status == 'par' ? 0.75 : 1) || p1move.acc == 0) p1movehit = true
+    else p1movehit = true
+    if (p1move.acc * statstates[player.acc] >= randomacc() * (p1.pokemon[0].status == 'par' ? 0.75 : 1) || p1move.acc == 0) p2movehit = true
+    else p2movehit = false
 }
 function checkacc2() {
     if (move.effect2 && move.acc2 >= randomacc()) return true
     else return false
+}
+
+function determinemoveorder(){
+    console.log(p1move)
+    if (p1move.priority && !p2move.priority) return true
+    else if (!p1move.priority && p2move.priority) return false
+    else if (p1move.priority && p2move.priority) {
+        if (p1move.priority > p2move.priority) return true
+        else if (p1move.priority < p2move.priority) return false
+        else return Math.random() < 0.5
+    }
+    else if (!p1move.priority && !p2move.priority) {
+        if (p1.pokemon[0].spe > p2.pokemon[0].spe) return true
+    else if (p2.pokemon[0].spe > p1.pokemon[0].spe) return false
+    return Math.random() < 0.5
+    }
 }
 
 

@@ -3,12 +3,16 @@ let battlemessage = ''
 let turncounter = 0
 let random
 let p1moved = false
+let p1move = ''
+let p2move = ''
 let player2moved = false
-let protectactive
-let p1protect
-let p2protect 
+let protectactive = false
+let p1protect = 1
+let p2protect = 1
 let p1movehistory = []
 let p2movehistory = []
+let p1movehit = null
+let p2movehit = null
 
 const types = [
     /* Normal */[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0, 1, 1, 0.5, 1, 1],
@@ -114,7 +118,7 @@ const pokemon = [
         spd: 10,
         spe: 10,
         status: '',
-        move: [3, 1, 2, 14],
+        move: [0, 1, 2, 14],
         type1: 11,
         type2: 12,
     },

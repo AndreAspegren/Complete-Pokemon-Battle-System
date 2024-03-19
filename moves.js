@@ -1,6 +1,6 @@
 async function damage() {
-    if (checkacc()) {
-        const sound = movesounds[move.name.toLowerCase().split(' ').join('')]
+    if (umovehit) {
+        sound = movesounds[move.name.toLowerCase().split(' ').join('')]
         sound.play() 
         await delay(sound.duration / 2 * 1000)
         currenthp = ohp
@@ -15,10 +15,49 @@ async function damage() {
     }
 }
 
+async function heal() {
+    if (umovehit) {
+        sound = movesounds[move.name.toLowerCase().split(' ').join('')]
+        sound.play()
+        await delay(sound.duration / 2 * 1000)
+        currenthp = uhp
+        uhp += eval(move.heal)
+        if (uhp > umaxhp) uhp = umaxhp
+        battlemessage = uname + ' healet ' + (uhp - currenthp) + ' hp!'
+        updatestats(me, 'hp', uhp)
+    } else{
+        battlemessage = uname + ' bommet!'
+        updateview()
+    } 
+}
+
+async function endofturndmg(){
+    if (umovehit && umovecd) {
+        sound = movesounds[move.name.toLowerCase().split(' ').join('')]
+        sound.play() 
+        await delay(sound.duration / 2 * 1000)
+        currenthp = ohp
+        ohp -= dmgcalc()
+        if (ohp < 0) ohp = 0
+        battlemessage = 'Det gjorde ' + (currenthp - ohp) + ' damage!'
+        updatestats(you, 'hp', ohp)
+        if (checkacc2()) eval(move.effect2 + '()')
+    } else if (!umovehit) {
+        battlemessage = uname + ' bommet!'
+        updateview()
+    }
+    else {
+        battlemessage = uname + ' må hvile!'
+        updateview()
+    }
+}
+
 async function protect(){
-    if (uprotect >= randomacc() ){
-        const sound = movesounds[move.name.toLowerCase().split(' ').join('')]
-        sound.play(); setTimeout(updateview, sound.duration / 2 * 1000)
+    console.log(uprotect, olastmove.dmg, olastmove.effect == true)
+    if (uprotect >= randomacc() && olastmove.dmg || olastmove.who?.some(entry => entry.includes('u')) || olastmove.effect == true){
+        sound = movesounds[move.name.toLowerCase().split(' ').join('')]
+        sound.play() 
+        await delay(sound.duration / 2 * 1000)
         protectactive = true
         uprotect *= 0.67   
     }
@@ -34,27 +73,13 @@ function dmgcalc() {
         ((Math.floor(Math.random() * 16) + 85) / 100))
 }
 
-async function heal() {
-    if (checkacc()) {
-        const sound = movesounds[move.name.toLowerCase().split(' ').join('')]
-        sound.play(); setTimeout(updateview, sound.duration / 2)
-        currenthp = uhp
-        uhp += eval(move.heal)
-        if (uhp > umaxhp) uhp = umaxhp
-        battlemessage = uname + ' healet ' + (uhp - currenthp) + ' hp!'
-        updatestats(me, 'hp', uhp)
-    } else{
-        battlemessage = uname + ' bommet!'
-        updateview()
-    } 
-}
-
 async function status() {
-    if (checkacc()) {
+    if (umovehit) {
         if (you == 'foe' && p2.pokemon[0].status != '' || you == 'friend' && p1.pokemon[0].status != '') battlemessage = oname + ' har allerede en statustilstand!'
         else {
-            const sound = movesounds[move.name.toLowerCase().split(' ').join('')]
-            sound.play(); setTimeout(updateview, sound.duration / 2)
+            sound = movesounds[move.name.toLowerCase().split(' ').join('')]
+            sound.play()
+            await delay(sound.duration / 2 * 1000)
             battlemessage = oname + ' ble ' + move.statustype
             updatestats(you, move.statustype)
         }
@@ -65,11 +90,12 @@ async function status() {
 }
 
 async function statusheal() {
-    if (checkacc()) {
+    if (umovehit) {
         if (u == 'friend' && p1.pokemon[0].status == '' || u == 'foe' && p2.pokemon[0].status == '') battlemessage = uname + ' har ikke en statustilstand!'
         else {
-            const sound = movesounds[move.name.toLowerCase().split(' ').join('')]
-            sound.play(); setTimeout(updateview, sound.duration / 2)
+            sound = movesounds[move.name.toLowerCase().split(' ').join('')]
+            sound.play() 
+            await delay(sound.duration / 2 * 1000)
             battlemessage = uname + ' ble ' + move.statustype
             updatestats(me, move.statustype, move.effect)
         }
@@ -80,9 +106,10 @@ async function statusheal() {
 }
 
 async function weatherchange() {
-    if (checkacc()) {
-        const sound = movesounds[move.name.toLowerCase().split(' ').join('')]
-        sound.play(); setTimeout(updateview, sound.duration / 2)
+    if (umovehit) {
+        sound = movesounds[move.name.toLowerCase().split(' ').join('')]
+        sound.play() 
+        await delay(sound.duration / 2 * 1000)
         weather.weather = move.weather
         weather.image = weather.images[move.weather]
     } else {
@@ -92,8 +119,8 @@ async function weatherchange() {
 }
 
 async function stat() {    
-    if (checkacc()) {
-        const sound = movesounds[move.name.toLowerCase().split(' ').join('')]
+    if (umovehit) {
+        sound = movesounds[move.name.toLowerCase().split(' ').join('')]
         sound.play()
         await delay(sound.duration * 1000)
         let length = move.effect.length
@@ -126,7 +153,6 @@ function determinemessage(type, movement){
     typemap = { 'atk': 0, 'def': 1, 'spa': 2, 'spd': 3, 'spe': 4, 'acc': 5, 'eva': 6 }
     stats = [' sitt angrep', ' sitt forsvar', ' sitt spesielle angrep', ' sitt spesielle forsvar', ' sin hastighet', ' sin treffsikkerthet', ' sin unnvikelse']
     statsmovement = [' falt betraktelig!', ' falt!', '', ' økte!', ' økte netraktelig!']
-    console.log(targetname + stats[typemap[type]] + statsmovement[movement+2])
     return battlemessage = targetname + stats[typemap[type]] + statsmovement[movement+2]
 }
 
@@ -149,6 +175,7 @@ function whoismoving(who) {
     current = who === 'friend' ? p1.pokemon[0] : p2.pokemon[0]
     ustat = who === 'friend' ? player : rival
     me = who === 'friend' ? 'friend' : 'foe'
+    move = who == 'friend' ? p1move : p2move
     uprotect = who == 'friend' ? p1protect : p2protect
     uname = current.name
     uhp = current.hp
@@ -175,6 +202,8 @@ function whoismoving(who) {
     utype1 = current.type1
     utype2 = current.type2
     ustatus = current.status
+    umovehit = who == 'friend' ? p1movehit : p2movehit
+    umovecd = 
     
     o = who === 'friend' ? p2.pokemon[0] : p1.pokemon[0]
     ostat = who === 'friend' ? rival : player
@@ -204,5 +233,6 @@ function whoismoving(who) {
     otype1 = o.type1
     otype2 = o.type2
     ostatus = o.status
+    olastmove = who == 'foe' ? p1movehistory[-1] ? p1movehistory[-1] : p1movehistory[0] : p2movehistory[-1] ? p2movehistory[-1] : p2movehistory[0]
 }
 
