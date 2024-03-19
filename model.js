@@ -11,8 +11,8 @@ let p1protect = 1
 let p2protect = 1
 let p1movehistory = []
 let p2movehistory = []
-let p1movehit = null
-let p2movehit = null
+let p1movehit = true
+let p2movehit = true
 
 const types = [
     /* Normal */[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0, 1, 1, 0.5, 1, 1],
@@ -117,8 +117,8 @@ const pokemon = [
         spa: 10,
         spd: 10,
         spe: 10,
-        status: '',
-        move: [0, 1, 2, 14],
+        status: 'brn',
+        move: [3, 13, 2, 14],
         type1: 11,
         type2: 12,
     },
@@ -132,7 +132,7 @@ const pokemon = [
         spa: 13,
         spd: 1,
         spe: 1,
-        status: '',
+        status: 'tox',
         move: [3, 3, 3, 3],
         type1: 1,
         type2: 18,

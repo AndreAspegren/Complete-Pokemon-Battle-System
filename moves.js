@@ -2,6 +2,7 @@ async function damage() {
     if (umovehit) {
         sound = movesounds[move.name.toLowerCase().split(' ').join('')]
         sound.play() 
+        console.log(move.name)
         await delay(sound.duration / 2 * 1000)
         currenthp = ohp
         ohp -= dmgcalc()
@@ -109,6 +110,7 @@ async function weatherchange() {
     if (umovehit) {
         sound = movesounds[move.name.toLowerCase().split(' ').join('')]
         sound.play() 
+        console.log(sound)
         await delay(sound.duration / 2 * 1000)
         weather.weather = move.weather
         weather.image = weather.images[move.weather]
@@ -176,6 +178,7 @@ function whoismoving(who) {
     ustat = who === 'friend' ? player : rival
     me = who === 'friend' ? 'friend' : 'foe'
     move = who == 'friend' ? p1move : p2move
+    console.log(move)
     uprotect = who == 'friend' ? p1protect : p2protect
     uname = current.name
     uhp = current.hp
@@ -233,6 +236,6 @@ function whoismoving(who) {
     otype1 = o.type1
     otype2 = o.type2
     ostatus = o.status
-    olastmove = who == 'foe' ? p1movehistory[-1] ? p1movehistory[-1] : p1movehistory[0] : p2movehistory[-1] ? p2movehistory[-1] : p2movehistory[0]
+    ocurrentmove = who == 'foe' ? p1movehistory[-1] ? p1movehistory[-1] : p1movehistory[0] : p2movehistory[-1] ? p2movehistory[-1] : p2movehistory[0]
 }
 
