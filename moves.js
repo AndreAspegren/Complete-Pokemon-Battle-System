@@ -1,8 +1,8 @@
 async function damage() {
     if (umovehit) {
         sound = movesounds[move.name.toLowerCase().split(' ').join('')]
+        console.log(move)
         sound.play() 
-        console.log(move.name)
         await delay(sound.duration / 2 * 1000)
         currenthp = ohp
         ohp -= dmgcalc()
@@ -12,8 +12,8 @@ async function damage() {
         if (checkacc2()) eval(move.effect2 + '()')
     } else {
         battlemessage = uname + ' bommet!'
-        updateview()
     }
+    updateview()
 }
 
 async function heal() {

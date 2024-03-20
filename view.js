@@ -34,20 +34,19 @@ function genavatar(who) {
     return avatar
 }
 
-
 function genbuttons() {
     let button = ''
     for (let i = 0; i < 4; i++) {
-        move = p1.pokemon.length > 0 ? moves[p1.pokemon[0].move[i]] : null;
-        button += `<button style="width: 16vh; height: 8vh; font-size: 100%; background-color: ${typecolors[move.type]};"
+        movez = p1.pokemon.length > 0 ? moves[p1.pokemon[0].move[i]] : null
+        button += `<button style="width: 16vh; height: 8vh; font-size: 100%; background-color: ${typecolors[movez.type]};"
             ${buttonsenabled ? '' : 'disabled'} onclick="battlemanager(${p1.pokemon.length > 0 ? p1.pokemon[0].move[i] : ''})">
-            ${move ? move.name : ''}</button>`
+            ${movez ? movez.name : ''}</button>`
     }
-    const buttons = `
+    buttons = `
     <div style="background-color: orange; display: flex; align-items: center; justify-content: center; width: 32vh; height: 6vh">${battlemessage}</div>
     <div style="display: flex"><div style="display: grid; grid-template-columns: repeat(2, 1fr)">${button}</div>
     <img onclick="changepokemon()" style="width: auto; height: 16vh;" src="pictures/misc/bag.png" alt=""></div>`
-    return buttons;
+    return buttons
 }
 
 function changepokemon() {
@@ -74,8 +73,6 @@ function changepokemon() {
     onclick="updateview()">Gå tilbake</button>`
 }
 
-
-
 async function changeto(who) {
     if (who != 0 && p1.pokemon[who].hp != 0 && p1.pokemon[0].hp != 0) {
         battlemessage = p1.name + ' byttet ut ' + p1.pokemon[0].name + ' med ' + p1.pokemon[who].name + '!'
@@ -91,7 +88,7 @@ async function changeto(who) {
         battlemessage = uname + ' brukte ' + p2move.name + '!'
         updateview()
         await delay(2000)
-        eval(p2move.movetype + "(player2move)")
+        eval(p2move.movetype + "(p2move)")
         await delay(2000)
         endofround()
     }

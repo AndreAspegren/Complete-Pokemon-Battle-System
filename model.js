@@ -1,6 +1,5 @@
 buttonsenabled = true
 let battlemessage = ''
-let turncounter = 0
 let random
 let p1moved = false
 let p1move = ''
@@ -117,7 +116,7 @@ const pokemon = [
         spa: 10,
         spd: 10,
         spe: 10,
-        status: 'brn',
+        status: 'tox',
         move: [3, 13, 2, 14],
         type1: 11,
         type2: 12,
@@ -300,7 +299,6 @@ const movesounds = {
     statup: new Audio('sounds/moves/statup.mp3'),
     statdown: new Audio('sounds/moves/statdown.mp3'),
     statup: new Audio('sounds/moves/statup.mp3'),
-    tackle: new Audio('sounds/moves/tackle.mp3'),
     protect: new Audio('sounds/moves/protect.mp3'),
     gigaimpact: new Audio('sounds/moves/gigaimpact.mp3'),
     rockblast: new Audio('sounds/moves/rockblast.mp3'),
