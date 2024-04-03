@@ -1,123 +1,85 @@
-async function battlemanager(test) {
-    buttonsenabled = false
-    p1move = moves[test]
-    p2move = moves[p2.pokemon[0].move[randommove()]]
-    p1movehistory.push(p1move)
-    p2movehistory.push(p2move)
-    p1faster = determinemoveorder()
+async function battlemanager(moveinput, pp) {
+    prelimfunctions(moveinput, pp)
 
-    whoismoving(p1faster ? 'friend' : 'foe')
-    battlemessage = uname + ' brukte ' + (p1faster ? p1move.name : p2move.name) + '!'
-    updateview()
-    await delay(2000)
-    await eval(p1faster ? p1move.movetype + '()' : p2move.movetype + "()")
-    await delay(2000)
-   
-    
-    endofround()
-    return 
-
-    whoismoving(!p1faster ? 'friend' : 'foe')
-    battlemessage = uname + ' brukte ' + (!p1faster ? p1move.name : p2move.name) + '!'
-    updateview()
-    await delay(2000)
-    await eval(!p1faster ? p1move.movetype + '()'  : p2move.movetype + "()")
-    await delay(2000)
+    for (let i = 0; i < 2; i++) {
+        checkacc(user[4 + i])
+        whoismoving(user[0 + i], i)
+        await moveevents(i)
+    }
     endofround()
 }
 
 async function endofround() {
     if (p1.pokemon[0].status == 'brn' || p2.pokemon[0].status == 'brn') await endofrounddamage('brn', 0.125)
-    if (p1.pokemon[0].status == 'psn' || p2.pokemon[0].status == 'brn') await endofrounddamage('psn', 0.125)
-    if (p1.pokemon[0].status == 'tox' || p2.pokemon[0].status == 'tox') await endofrounddamage('tox', 0.125)
-    if (weather.weather == 'sandstorm') await endofrounddamage('sandstorm', 0.125)
-    faster = p1faster ? p1 : p2
-    slower = !p1faster ? p1 : p2
+    if (p1.pokemon[0].status == 'psn' || p2.pokemon[0].status == 'psn') await endofrounddamage('psn', 0.0625)
+    if (p1.pokemon[0].status == 'tox' || p2.pokemon[0].status == 'tox') await endofrounddamage('tox', 0.0625)
+    if (weather.weather == 'sandstorm') await endofrounddamage('sandstorm', 0.0625)
 
-    if (faster.pokemon[0].hp == 0) deathmanager(faster == p1 ? true : false)
-    if (slower.pokemon[0].hp == 0) deathmanager(faster != p1 ? true : false)
-
+    if (p1movehistory.length != 0) p1movehistory[p1movehistory.length - 1]['hit'] = p1movehit
+    if (p2movehistory.length != 0) p2movehistory[p2movehistory.length - 1]['hit'] = p2movehit
+    await changemanager()
     battlemessage = p2.pokemon.every(pokemon => pokemon.hp === 0) ? 'Du vant!' : p1.pokemon.every(pokemon => pokemon.hp === 0) ? 'Du tapte!' : '';
-    buttonsenabled = true
+    buttonsenabled = battlemessage == '' ? true : false
     updateview()
+    protected = false
+}
+
+async function changemanager() {
+    for (let i = 0; i < 2; i++) {
+        if (p1.pokemon[0].hp == 0 && !p1.pokemon.every(pokemon => pokemon.hp == 0) && ((p1faster && i == 0) || (!p1faster && i == 1))) {
+            await changepokemon()
+            battlemessage = p1.name + ' sendte ut ' + p1.pokemon[0].name + '!'
+            updateview()
+            await delay(3000)
+        }
+        if (p2.pokemon[0].hp == 0 && !p2.pokemon.every(pokemon => pokemon.hp == 0) && ((!p1faster && i == 0) || (p1faster && i == 1))) {
+            index = 0
+            for (let i = 0; i < p2.pokemon.length; i++) {
+                if (p2.pokemon[i].hp == 0) index++
+                else break
+            }
+            newpokemon = p2.pokemon.splice(index, 1)[0]
+            p2.pokemon.unshift(newpokemon)
+            battlemessage = p2.name + ' sendte ut ' + p2.pokemon[0].name + '!'
+            updateview()
+            await delay(3000)
+        }
+    }
 }
 
 async function endofrounddamage(what, value) {
-    let faster = p1faster ? p1.pokemon[0] : p2.pokemon[0]
-    let slower = !p1faster ? p1.pokemon[0] : p2.pokemon[0]
-    let fasterstat = p1faster ? player : rival
-    let slowerstat = !p1faster ? player : rival
-
-    if (faster.status == what && faster.hp > 0 || what == 'sandstorm' && ![8, 12, 16].includes(faster.type1) &&
-        ![8, 12, 16].includes(faster.type2) && faster.hp > 0) {
-        faster.hp -= faster.maxhp * (what == 'tox' ? value * fasterstat.toxcounter : value)
-        if (faster.hp < 0) faster.hp = 0
-        if (what == 'tox') fasterstat.toxcounter++
-        updateview()
-    }
-    await delay(2000)
-    if (slower.status == what && slower.hp > 0 || what == 'sandstorm' && ![8, 12, 16].includes(slower.type1) &&
-        ![8, 12, 16].includes(slower.type2) && slower.hp > 0) {
-        slower.hp -= slower.maxhp * (what == 'tox' ? value * slowerstat.toxcounter : value)
-        if (slower.hp < 0) slower.hp = 0
-        if (what == 'tox') slowerstat.toxcounter++
-        updateview()
-    }
-    await delay(2000)
-}
-
-async function delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms))
-}
-
-function randomacc() {
-    return Math.ceil(Math.random() * 100)
-}
-
-function randommove() {
-    return Math.floor(Math.random() * 4)
-}
-
-
-function checkacc() {
-    if (p1move.acc * statstates[player.acc] >= randomacc() * (p1.pokemon[0].status == 'par' ? 0.75 : 1) || p1move.acc == 0) p1movehit = true
-    else p1movehit = true
-    if (p1move.acc * statstates[player.acc] >= randomacc() * (p1.pokemon[0].status == 'par' ? 0.75 : 1) || p1move.acc == 0) p2movehit = true
-    else p2movehit = false
-}
-function checkacc2() {
-    if (move.effect2 && move.acc2 >= randomacc()) return true
-    else return false
-}
-
-function determinemoveorder() {
-    if (p1move.priority && !p2move.priority) return true
-    else if (!p1move.priority && p2move.priority) return false
-    else if (p1move.priority && p2move.priority) {
-        if (p1move.priority > p2move.priority) return true
-        else if (p1move.priority < p2move.priority) return false
-        else return Math.random() < 0.5
-    }
-    else if (!p1move.priority && !p2move.priority) {
-        if (p1.pokemon[0].spe > p2.pokemon[0].spe) return true
-        else if (p2.pokemon[0].spe > p1.pokemon[0].spe) return false
-        return Math.random() < 0.5
+    for (let i = 0; i < 2; i++) {
+        if (user[6 + i].status == what && user[6 + i].hp > 0 || what == 'sandstorm' && ![8, 12, 16].includes(user[6 + i].type1) &&
+            ![8, 12, 16].includes(user[6 + i].type2) && user[6 + i].hp > 0) {
+            effect = Math.round((user[6 + i].maxhp * (what == 'tox' ? value * user[8 + i].toxcounter : value)))
+            user[6 + i].hp -= effect < 1 ? effect = 1 : effect
+            if (user[6 + i].hp < 0) user[6 + i].hp = 0
+            if (what == 'tox') user[8 + i].toxcounter++
+            endofroundmsg(what, user[6 + i])
+            updateview()
+            await delay(2000)
+        }
     }
 }
 
-function deathmanager(who) {
-    target = who ? player : rival
-    stats = ['atk', 'def', 'satk', 'sdef', 'spe', 'acc', 'eva']
-    stats.forEach(stat => {
-        target[stat] = 6
-    })
-    target.toxcounter = 1
-    if (who) changepokemon('dead')
-    else {
-        item = p2.pokemon.splice(0, 1)[0]
-        p2.pokemon.push(item)
-    }
+function prelimfunctions(moveinput, pp) {
+    buttonsenabled = false
+    p1.pokemon[0].currentpp[pp]--
+    p1move = moveinput != 'switch' ? moves[moveinput] : 'switch'
+    p2move = moves[p2.pokemon[0].move[randommove()]]
+    p1movehistory.push(JSON.parse(JSON.stringify(p1move)))
+    p2movehistory.push(JSON.parse(JSON.stringify(p2move)))
+    p1firstMO = determinespeed('moveorder')
+    p1faster = determinespeed()
+
+    user = [p1firstMO ? 'friend' : 'foe', !p1firstMO ? 'friend' : 'foe',                      // whoismoving 0-1
+    p1firstMO ? p1move : p2move, p1firstMO ? p2move : p1move,                                 // move 2-3
+    p1firstMO ? p1.pokemon[0] : p2.pokemon[0], p1firstMO ? p2.pokemon[0] : p1.pokemon[0],     // pokemon move speed 4-5
+    p1faster ? p1.pokemon[0] : p2.pokemon[0], p1faster ? p2.pokemon[0] : p1.pokemon[0],       // pokemon speed 6-7
+    p1firstMO ? player : rival, p1firstMO ? rival : player,                                   // stats 8-9
+    p1firstMO ? p1movehistory : p2movehistory, p1firstMO ? p2movehistory : p1movehistory]     // historie 10-11          
 }
+
 
 
 
