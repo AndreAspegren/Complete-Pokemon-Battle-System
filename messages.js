@@ -1,6 +1,6 @@
 
 function endofroundmsg(what, who) {
-    options = { brn: 'tok brannskade', psn: 'tok giftskade', tox: 'tok giftskade', sandstorm: 'ble skadet av sandstormen' }
+    const options = { brn: 'tok brannskade', psn: 'tok giftskade', tox: 'tok giftskade', sandstorm: 'ble skadet av sandstormen' }
     return battlemessage = (who == p1.pokemon[0] ? p1.pokemon[0].name : p2.pokemon[0].name) + ' ' + options[what]
 }
 
@@ -12,8 +12,22 @@ async function effectivenessmsg() {
 }
 
 function statmsg(type, change) {
-    typemap = { 'atk': 0, 'def': 1, 'spa': 2, 'spd': 3, 'spe': 4, 'acc': 5, 'eva': 6 }
+    const typemap = { 'atk': 0, 'def': 1, 'spa': 2, 'spd': 3, 'spe': 4, 'acc': 5, 'eva': 6 }
     stats = [' sitt angrep', ' sitt forsvar', ' sitt spesielle angrep', ' sitt spesielle forsvar', ' sin hastighet', ' sin treffsikkerthet', ' sin unnvikelse']
     statsmovement = [' falt betraktelig!', ' falt!', '', ' økte!', ' økte netraktelig!']
     return battlemessage = targetname + stats[typemap[type]] + statsmovement[change + 2]
+}
+
+function weathermsg(){
+    const weathermessages = {
+        rain: 'Det begynte å reine!',
+        sandstorm: 'En sandstorm brygget!',
+        sun: 'Sollyset ble hardt!',
+        snow: 'Det begynte å hagle!',
+    }
+    return battlemessage = weathermessages[move.weather]
+}
+
+function missed(){
+    return battlemessage = uname + ' bommet!'
 }

@@ -27,7 +27,8 @@ async function endofround() {
 async function changemanager() {
     for (let i = 0; i < 2; i++) {
         if (p1.pokemon[0].hp == 0 && !p1.pokemon.every(pokemon => pokemon.hp == 0) && ((p1faster && i == 0) || (!p1faster && i == 1))) {
-            await changepokemon()
+            await changepokemonview()
+            deadmon = null
             battlemessage = p1.name + ' sendte ut ' + p1.pokemon[0].name + '!'
             updateview()
             await delay(3000)
@@ -41,6 +42,7 @@ async function changemanager() {
             newpokemon = p2.pokemon.splice(index, 1)[0]
             p2.pokemon.unshift(newpokemon)
             battlemessage = p2.name + ' sendte ut ' + p2.pokemon[0].name + '!'
+            deadmon = null
             updateview()
             await delay(3000)
         }

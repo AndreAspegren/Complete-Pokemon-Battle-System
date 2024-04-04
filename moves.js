@@ -1,13 +1,13 @@
 async function damage() {
-    if (umovehit) {
-        playsound()
+    if (umovehit && ohp != 0) {
+        await playsound()
         currenthp = ohp
         ohp -= dmgcalc()
         if (ohp < 0) ohp = 0
         effectivenessmsg()
         updatestats(you, 'hp', ohp)
-        if (checkacc2()) eval(move.effect2 + '()')
-    } else battlemessage = uname + ' bommet!'
+        if (checkacc2()) await eval(move.effect2 + '()')
+    } else missed()
 }
 
 async function heal() {
@@ -18,35 +18,15 @@ async function heal() {
         if (uhp > umaxhp) uhp = umaxhp
         battlemessage = uname + ' healet ' + (uhp - currenthp) + ' hp!'
         updatestats(me, 'hp', uhp)
-    } else battlemessage = uname + ' bommet!'
+    } else missed()
 }
 
 async function suicide() {
-    if (umovehit) {
-        playsound()
-        currenthp = ohp
-        ohp -= dmgcalc()
-        if (ohp < 0) ohp = 0
-        effectivenessmsg()
-        updatestats(you, 'hp', ohp)
-        updateview()
-        await delay(2000)
-        battlemessage = uname + ' døde!'
-        uhp = 0
-        updatestats(me, 'hp', uhp)
-    } else battlemessage = uname + ' bommet!'
-}
-
-async function movethencd() {
-    if (umovehit) {
-        playsound()
-        currenthp = ohp
-        ohp -= dmgcalc()
-        if (ohp < 0) ohp = 0
-        effectivenessmsg()
-        updatestats(you, 'hp', ohp)
-        if (checkacc2()) eval(move.effect2 + '()')
-    } else battlemessage = uname + ' bommet!'
+    await delay(2000)
+    battlemessage = uname + ' døde!'
+    updateview()
+    updatestats(me, 'hp', 0)
+    await delay(2000)
 }
 
 async function protect() {
@@ -65,7 +45,7 @@ async function status() {
             battlemessage = oname + ' ble ' + move.statustype
             updatestats(you, move.statustype)
         }
-    } else battlemessage = uname + ' bommet!'
+    } else missed()
 
 }
 
@@ -77,7 +57,7 @@ async function statusheal() {
             battlemessage = uname + ' ble ' + move.statustype
             updatestats(me, move.statustype, move.effect)
         }
-    } else battlemessage = uname + ' bommet!'
+    } else missed()
 }
 
 async function weatherchange() {
@@ -85,28 +65,29 @@ async function weatherchange() {
         playsound()
         weather.weather = move.weather
         weather.image = weather.images[move.weather]
-    } else battlemessage = uname + ' bommet!'
+        weathermsg()
+    } else missed()
 }
 
 async function stat() {
-    if (umovehit) {
-        playsound()
+    if (umovehit || move.movetype != 'stat') {
+        if (move.movetype == 'stat') await playsound()
         let length = move.effect.length
         for (let i = 0; i < length; i++) {
             target = (me == 'friend' && move.who[i] == 'u') || (me == 'foe' && move.who[i] == 'o') ? [player, 'friend'] : [rival, 'foe']
             targetname = me == 'friend' && move.who[i] == 'u' || me == 'foe' && move.who[i] == 'u' ? uname : oname
             currentstat = target[0][move.effecttype[i]]
             newstat = target[0][move.effecttype[i]] + move.effect[i]
+
             if (newstat < 0) newstat = 0
             else if (newstat > 12) newstat = 12
             if (currentstat == newstat) battlemessage = (newstat == 12 ? uname + ' sin ' + move.effecttype[i] + ' kan ikke gå høyere' :
                 uname + ' sin ' + move.effecttype[i] + ' kan ikke gå lavere')
+
+            if (move.effect[i] == move.effect[0] && move.effect[i] < 0) await playsound('statdown')
+            else if (move.effect[i] == move.effect[0] && move.effect[i] > 0 || move.effect[i] > 0 && move.effect[i - 1] < 0) await playsound('statup')
+
             updatestats(target[1], move.effecttype[i], newstat)
-            if (move.effect[i] == move.effect[0] && move.effect[i] < 0) {
-                movesounds.statdown.play();
-            } else if (move.effect[i] == move.effect[0] && move.effect[i] > 0 || move.effect[i] > 0 && move.effect[i - 1] < 0) {
-                movesounds.statup.play();
-            }
             statmsg(move.effecttype[i], move.effect[i])
             updateview()
             await delay(1100)
@@ -114,38 +95,13 @@ async function stat() {
     } else battlemessage = uname + ' bommet!'
 }
 
-async function stat2() {
-    let length = move.effect.length
-    for (let i = 0; i < length; i++) {
-        target = (me == 'friend' && move.who[i] == 'u') || (me == 'foe' && move.who[i] == 'o') ? [player, 'friend'] : [rival, 'foe']
-        targetname = me == 'friend' && move.who[i] == 'u' || me == 'foe' && move.who[i] == 'u' ? uname : oname
-        currentstat = target[0][move.effecttype[i]]
-        newstat = target[0][move.effecttype[i]] + move.effect[i]
-        if (newstat < 0) newstat = 0
-        else if (newstat > 12) newstat = 12
-        if (currentstat == newstat) battlemessage = (newstat == 12 ? uname + ' sin ' + move.effecttype[i] + ' kan ikke gå høyere' :
-            uname + ' sin ' + move.effecttype[i] + ' kan ikke gå lavere')
-        updatestats(target[1], move.effecttype[i], newstat)
-        if (move.effect[i] == move.effect[0] && move.effect[i] < 0) {
-            movesounds.statdown.play();
-        } else if (move.effect[i] == move.effect[0] && move.effect[i] > 0 || move.effect[i] > 0 && move.effect[i - 1] < 0) {
-            movesounds.statup.play();
-        }
-        statmsg(move.effecttype[i], move.effect[i])
-        updateview()
-        await delay(1100)
-    }
-}
-
 function updatestats(who, what, value) {
     let target = (who === 'friend') ? p1.pokemon[0] : p2.pokemon[0]
     let stattarget = (who === 'friend') ? player : rival
     let hvem = (who === 'friend') ? p1 : p2
-    if (what === 'hp') {
-        target.hp = value
-    } else if (['atk', 'def', 'spa', 'spd', 'spe', 'acc', 'eva'].includes(what)) {
-        stattarget[what] = value
-    }
+
+    if (what === 'hp') target.hp = value
+    else if (['atk', 'def', 'spa', 'spd', 'spe', 'acc', 'eva'].includes(what)) stattarget[what] = value
     else {
         hvem.pokemon[0].status = what
         if (what == 'tox' && !value) stattarget['toxcounter'] = 1

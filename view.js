@@ -21,7 +21,7 @@ function updateview() {
 }
 
 function genavatar(who) {
-    if (who == p1 && p1.pokemon[0].hp == 0 || who == p2 && p2.pokemon[0].hp == 0) return ''
+    if (who == p1 && deadmon == 'friend') return ''
     avatar = /*HTML*/`
     <div style="position: relative;"> 
     <div style="display: flex; justify-content: space-between">
@@ -82,8 +82,13 @@ async function changepokemon() {
 }
 
 async function changeto(who) {
-    console.log(who)
-    if (who != 0 && p1.pokemon[who].hp != 0) {
+    if (who != 0 && p1.pokemon[0].hp == 0) {
+        p1.pokemon[0].status = ''
+        element = p1.pokemon.splice(who, 1)[0]
+        p1.pokemon.unshift(element)
+        resolvechange()
+    }
+    else if (who != 0 && p1.pokemon[who].hp != 0) {
         battlemessage = p1.name + ' byttet ut ' + p1.pokemon[0].name + ' med ' + p1.pokemon[who].name + '!'
         buttonsenabled = false
         updateview()
@@ -93,12 +98,6 @@ async function changeto(who) {
         updateview()
         await delay(2000)
         battlemanager('switch')
-    }
-    else if (who != 0) {
-        p1.pokemon[0].status = ''
-        element = p1.pokemon.splice(who, 1)[0]
-        p1.pokemon.unshift(element)
-        resolvechange()
     }
 }
 

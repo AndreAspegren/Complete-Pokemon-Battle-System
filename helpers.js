@@ -21,11 +21,16 @@ function randommove() {
 }
 
 function checkacc2() {
-    if (move.effect2 && move.acc2 >= randomacc()) return true
+    if (move.effect2 && move.acc2 >= randomacc() || move.acc2 == 0) return true
     return false
 }
 
-async function playsound() {
+async function playsound(what) {
+    if (what){
+        movesounds[what].play()
+        await delay(movesounds[what].duration * 1000)
+        return
+    }
     sound = movesounds[move.name.toLowerCase().split(' ').join('')]
     sound.play()
     await delay(sound.duration / 2 * 1000)

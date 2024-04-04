@@ -5,6 +5,7 @@ let p1movehistory = []
 let p2movehistory = []
 let p1movehit = null
 let p2movehit = null
+let deadmon = null
 
 const types = [
     /* Normal 0*/[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0, 1, 1, 0.5, 1, 1],
@@ -123,7 +124,7 @@ const moves = [
             type: 0,
             acc: 90,
             movetype: 'damage',
-            effect: 'cd',
+            effect2: 'cd',
             dmg: 150,
             pp: 35,
         },
@@ -191,7 +192,9 @@ const moves = [
             name: 'Explosion',
             type: 0,
             acc: 100,
-            movetype: 'suicide',
+            acc2: 0,
+            movetype: 'damage',
+            effect2: 'suicide',
             dmg: 250,
             accuracy: 100
         },
@@ -255,23 +258,6 @@ const moves = [
 
 const pokemon = [
     {
-        name: "",
-        avatar: ``,
-        maxhp: '',
-        hp: '',
-        atk: 0,
-        def: 0,
-        spa: 0,
-        spd: 0,
-        spe: 0,
-        status: '',
-        move: [],
-        currentpp: [],
-        maxpp: [],
-        type1: 19,
-        type2: 19,
-    },
-    {
         name: "Dwebble",
         avatar: `<img style="height: auto; width: 20vh" src="pictures/pokemon/dwebble.png" alt="">`,
         maxhp: 10000,
@@ -282,7 +268,7 @@ const pokemon = [
         spd: 10,
         spe: 10,
         status: '',
-        move: [10, 14, 3, 2],
+        move: [13, 14, 3, 2],
         currentpp: [moves[3].pp, moves[14].pp, moves[0].pp, moves[2].pp],
         maxpp: [moves[3].pp, moves[14].pp, moves[0].pp, moves[2].pp],
         type1: 11,
@@ -296,7 +282,7 @@ const pokemon = [
         atk: 11,
         def: 8,
         spa: 13,
-        spd: 1,
+        spd: 10,
         spe: 1,
         status: '',
         move: [3, 3, 3, 3],
@@ -314,14 +300,14 @@ p1 = {
     avatar: `<div>
     <img style="height: 20vh; width: auto" src="https://archives.bulbagarden.net/media/upload/thumb/d/d3/Lets_Go_Pikachu_Eevee_Red.png/250px-Lets_Go_Pikachu_Eevee_Red.png" alt="}">
     `,
-    pokemon: [pokemon[1], pokemon[1], pokemon[1], pokemon[0]].map(p => JSON.parse(JSON.stringify(p)))
+    pokemon: [pokemon[0], pokemon[1], pokemon[0]].map(p => JSON.parse(JSON.stringify(p)))
 }
 
 p2 = {
     name: 'Cynthia',
     avatar: `
     <img style="height: 20vh; width: auto" src="https://www.serebii.net/pokemonmasters/syncpairs/cynthia.png" alt="">`,
-    pokemon: [pokemon[2], pokemon[2], pokemon[0]].map(p => JSON.parse(JSON.stringify(p)))
+    pokemon: [pokemon[1], pokemon[1], pokemon[0]].map(p => JSON.parse(JSON.stringify(p)))
 }
 
 const movesounds = {
