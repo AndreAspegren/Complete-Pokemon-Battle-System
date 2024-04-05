@@ -21,24 +21,23 @@ function updateview() {
 }
 
 function genavatar(who) {
-    if (who == p1 && deadmon == 'friend') return ''
+    if (who == p1 && deadmon == 'friend' || who == p2 && deadmon == 'foe') return ''
     avatar = /*HTML*/`
     <div style="position: relative;"> 
     <div style="display: flex; justify-content: space-between">
     <div style="text-align: left; justify-content: left">${who.pokemon.length > 0 ? who.pokemon[0].name : ''}</div>
     <div>${statusimages[who.pokemon[0].status] ?? ''}</div> </div>
-    <div>${who.pokemon.length > 0 ? who.pokemon[0].hp : ''}${who.pokemon.length > 0 && who.pokemon[0].name ? '/ ' : ''}
-    ${who.pokemon.length > 0 ? who.pokemon[0].maxhp : ''}${who.pokemon.length > 0 && who.pokemon[0].name ? ' HP' : ''}</div><div style="display: flex; height: 2.3vh;">
-    <div style="width: ${who.pokemon.length > 0 ? (who.pokemon[0].hp / who.pokemon[0].maxhp * 100).toString() : ''}%; 
-    background-color: green;"></div>
+    <div>${who.pokemon.length > 0 && who.pokemon[0].name ? `${who.pokemon[0].hp} / ${who.pokemon[0].maxhp} HP` : ''}</div>
+    <div style="display: flex; height: 2.3vh;">
+    <div style="width: ${who.pokemon.length > 0 ? (who.pokemon[0].hp / who.pokemon[0].maxhp * 100).toString() : ''}%; background-color: green;"></div>
     <div style="flex-grow: 1; background-color: red;"></div></div>${who.pokemon.length > 0 ? who.pokemon[0].avatar : ''}</div>`
     return avatar
 }
 
 function genbuttons() {
-    let button = '';
+    let button = ''
     for (let i = 0; i < 4; i++) {
-        let p1moves = p1.pokemon.length > 0 ? moves[p1.pokemon[0].move[i]] : null;
+        let p1moves = p1.pokemon.length > 0 ? moves[p1.pokemon[0].move[i]] : null
         button += /*HTML*/`<button style="width: 16vh; height: 8vh; font-size: 100%; position: relative; background-color: ${typecolors[p1moves?.type]};"
             ${buttonsenabled ? '' : 'disabled'} ${p1.pokemon[0].currentpp[i] <= 0 ? 'Disabled' : ''} onclick="battlemanager(${p1.pokemon.length > 0 ? `'${p1.pokemon[0].move[i]}'` : ''}, ${i});">
             <div style="position: relative; height: 100%; width: 100%; display: flex; justify-content: center; align-items: center;">
@@ -52,7 +51,6 @@ function genbuttons() {
     return buttons
 }
 
-
 async function changepokemon() {
     let caughtpokemon = ''
     for (let i = 0; i < p1.pokemon.length; i++) {
@@ -63,7 +61,7 @@ async function changepokemon() {
             <div style="text-align: left;">${p1.pokemon[i].name}</div>
             <div>${statusimages[p1.pokemon[i].status[1]] ?? ''}</div>
             </div>
-            <div>${p1.pokemon.length > 0 ? p1.pokemon[i].hp : ''}${p1.pokemon.length > 0 ? ' / ' : ''}${p1.pokemon[i].maxhp} HP</div>
+            <div>${p1.pokemon.length > 0 ? `${p1.pokemon[i].hp} / ${p1.pokemon[i].maxhp} HP` : ''}</div>
             <div style="display: flex; height: 30px;">
             <div style="width: ${p1.pokemon.length > 0 ? (p1.pokemon[i].hp / p1.pokemon[i].maxhp * 100).toString() : ''}%; background-color: green;"></div>
             <div style="flex-grow: 1; background-color: red;"></div>
@@ -78,17 +76,17 @@ async function changepokemon() {
     translate(-50%, -50%); gap: 5vh;">${caughtpokemon}<button style="position: fixed; bottom: -5vh; left: 50vw" 
     onclick="updateview()">Gå tilbake</button>`
     
-    return new Promise(resolve => {window.resolvechange = resolve})
+    return new Promise(resolve => window.resolvechange = resolve)
 }
 
 async function changeto(who) {
-    if (who != 0 && p1.pokemon[0].hp == 0) {
+    if (who != 0 && p1.pokemon[0].hp == 0) {            // død bytte
         p1.pokemon[0].status = ''
         element = p1.pokemon.splice(who, 1)[0]
         p1.pokemon.unshift(element)
         resolvechange()
     }
-    else if (who != 0 && p1.pokemon[who].hp != 0) {
+    else if (who != 0 && p1.pokemon[who].hp != 0) {     // levende bytte 
         battlemessage = p1.name + ' byttet ut ' + p1.pokemon[0].name + ' med ' + p1.pokemon[who].name + '!'
         buttonsenabled = false
         updateview()

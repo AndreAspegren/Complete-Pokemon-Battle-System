@@ -1,4 +1,3 @@
-
 function endofroundmsg(what, who) {
     const options = { brn: 'tok brannskade', psn: 'tok giftskade', tox: 'tok giftskade', sandstorm: 'ble skadet av sandstormen' }
     return battlemessage = (who == p1.pokemon[0] ? p1.pokemon[0].name : p2.pokemon[0].name) + ' ' + options[what]

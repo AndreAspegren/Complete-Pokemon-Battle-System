@@ -1,4 +1,4 @@
-buttonsenabled = true
+let buttonsenabled = true
 let battlemessage = ''
 let protected = false
 let p1movehistory = []
@@ -11,8 +11,8 @@ const types = [
     /* Normal 0*/[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0, 1, 1, 0.5, 1, 1],
     /* Fire 1*/[1, 0.5, 0.5, 1, 2, 2, 1, 1, 1, 1, 1, 2, 0.5, 1, 0.5, 1, 2, 1, 1],
     /* Water 2*/[1, 2, 0.5, 1, 0.5, 1, 1, 1, 2, 1, 1, 1, 2, 1, 0.5, 1, 1, 1, 1],
-    /* Electric 3*/[1, 1, 2, 0.5, 0.5, 1, 1, 1, 0, 2, 1, 1, 1, 1, 0.5, 1, 1, 1, 1],
-    /* Grass 4*/[1, 0.5, 2, 1, 0.5, 1, 1, 0.5, 2, 0.5, 1, 1, 0.5, 1, 0.5, 1, 0.5, 1, 1],
+    /* Grass 3*/[1, 0.5, 2, 1, 0.5, 1, 1, 0.5, 2, 0.5, 1, 1, 0.5, 1, 0.5, 1, 0.5, 1, 1],
+    /* Electric 4*/[1, 1, 2, 0.5, 0.5, 1, 1, 1, 0, 2, 1, 1, 1, 1, 0.5, 1, 1, 1, 1],
     /* Ice 5*/[1, 0.5, 0.5, 1, 2, 1, 1, 1, 2, 2, 1, 1, 2, 1, 0.5, 1, 0.5, 1, 1],
     /* Fighting 6*/[2, 1, 1, 1, 1, 2, 1, 0.5, 1, 0.5, 0.5, 0.5, 2, 0, 1, 2, 2, 0.5, 1],
     /* Poison 7*/[1, 1, 1, 1, 2, 1, 1, 0.5, 0.5, 1, 1, 1, 0.5, 0.5, 1, 1, 0, 2, 1],
@@ -30,11 +30,11 @@ const types = [
 ]
 
 
-let statstates = [
+const statstates = [
     2 / 8, 2 / 7, 2 / 6, 2 / 5, 2 / 4, 2 / 3, 2 / 2, 3 / 2, 4 / 2, 5 / 2, 6 / 2, 7 / 2, 8 / 2
 ]
 
-let statstates2 = [
+const statstates2 = [
     3 / 9, 3 / 8, 3 / 7, 3 / 6, 3 / 5, 3 / 4, 3 / 3, 4 / 3, 5 / 3, 6 / 3, 7 / 3, 8 / 3, 9 / 3
 ]
 
@@ -46,8 +46,12 @@ let player = {
     spe: 6,
     acc: 6,
     eva: 6,
-    confused: false,
-    toxcounter: 1,
+    spk: false,  // Spikes
+    tspk: false, // Toxic Spikes
+    strk: false, // Stealth Rock
+    stwb: false, // Sticky Web
+    cnf: false,  // Confused
+    txc: 1,      // toxic
 }
 
 let rival = {
@@ -58,8 +62,12 @@ let rival = {
     spe: 6,
     acc: 6,
     eva: 6,
-    confused: false,
-    toxcounter: 1,
+    spk: false,  
+    tspk: false, 
+    strk: false, 
+    stwb: false, 
+    cnf: false,  
+    txc: 1,     
 }
 
 let weather = {
@@ -216,7 +224,7 @@ const moves = [
             effect: true,
         },
         {
-            name: 'Sandstorm',
+            name: 'Darude Sandstorm',
             type: 3,
             acc: 0,
             movetype: 'weatherchange',
@@ -252,11 +260,11 @@ const moves = [
             type: 12,
             acc: 90,
             movetype: 'damage',
-            dmg: 5,
+            dmg: 50,
         },
-    ]
+]
 
-const pokemon = [
+let pokemon = [
     {
         name: "Dwebble",
         avatar: `<img style="height: auto; width: 20vh" src="pictures/pokemon/dwebble.png" alt="">`,
@@ -268,7 +276,7 @@ const pokemon = [
         spd: 10,
         spe: 10,
         status: '',
-        move: [13, 14, 3, 2],
+        move: [0, 14, 3, 2],
         currentpp: [moves[3].pp, moves[14].pp, moves[0].pp, moves[2].pp],
         maxpp: [moves[3].pp, moves[14].pp, moves[0].pp, moves[2].pp],
         type1: 11,
@@ -277,8 +285,8 @@ const pokemon = [
     {
         name: "Charmander",
         avatar: `<img style="height: auto; width: 20vh" src="pictures/pokemon/charmander.png" alt="">`,
-        maxhp: 10000000,
-        hp: 10000000,
+        maxhp: 1,
+        hp: 1,
         atk: 11,
         def: 8,
         spa: 13,
@@ -293,9 +301,7 @@ const pokemon = [
     },
 ]
 
-
-
-p1 = {
+let p1 = {
     name: 'Red',
     avatar: `<div>
     <img style="height: 20vh; width: auto" src="https://archives.bulbagarden.net/media/upload/thumb/d/d3/Lets_Go_Pikachu_Eevee_Red.png/250px-Lets_Go_Pikachu_Eevee_Red.png" alt="}">
@@ -303,7 +309,7 @@ p1 = {
     pokemon: [pokemon[0], pokemon[1], pokemon[0]].map(p => JSON.parse(JSON.stringify(p)))
 }
 
-p2 = {
+let p2 = {
     name: 'Cynthia',
     avatar: `
     <img style="height: 20vh; width: auto" src="https://www.serebii.net/pokemonmasters/syncpairs/cynthia.png" alt="">`,
@@ -316,7 +322,6 @@ const movesounds = {
     smokescreen: new Audio('sounds/moves/smokescreen.mp3'),
     statup: new Audio('sounds/moves/statup.mp3'),
     statdown: new Audio('sounds/moves/statdown.mp3'),
-    statup: new Audio('sounds/moves/statup.mp3'),
     protect: new Audio('sounds/moves/protect.mp3'),
     gigaimpact: new Audio('sounds/moves/gigaimpact.mp3'),
     rockblast: new Audio('sounds/moves/rockblast.mp3'),

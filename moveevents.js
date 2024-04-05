@@ -9,18 +9,14 @@ async function moveevents(i) {
         }
     }
     if (protected && user[4 + i].hp != 0) {                 // protect 
-        battlemessage = uname + ' beskyttet seg selv!'
-        completed = true
-    }
-    if (user[4 + i].hp == 0) {                              // death display 
-        resetstats(user[8 + i])
-        completed = true
+        battlemessage = user[4 + i].name + ' brutke ' + user[2 + i].name + '!'
         updateview()
         await delay(2000)
-        battlemessage = user[4 + i].name + ' døde!'
-        await delay(2000)
-        deadmon = user[0 + i]
+        battlemessage = oname + ' beskyttet seg selv!'
+        completed = true
+        protected = false
     }
+    if (user[4 + i].hp == 0) await deathdisplay(i)           // death display
     if (!completed) {                                       // hvis ikke noe annet, så dette
         battlemessage = user[4 + i].name + ' brutke ' + user[2 + i].name + '!'
         updateview()
@@ -30,3 +26,15 @@ async function moveevents(i) {
     updateview()
     await delay(2000)
 } 
+
+async function deathdisplay(i){
+    resetstats(user[8 + i])
+    completed = true
+    updateview()
+    await delay(2000)
+    battlemessage = user[4 + i].name + ' døde!'
+    updateview()
+    await delay(2000)
+    deadmon = user[0 + i]
+}
+

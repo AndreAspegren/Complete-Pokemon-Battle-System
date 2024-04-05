@@ -1,9 +1,8 @@
 function resetstats(who){
     stats = ['atk', 'def', 'satk', 'sdef', 'spe', 'acc', 'eva']
-    stats.forEach(stat => {
-        who[stat] = 6
-    })
+    stats.forEach(stat => who[stat] = 6)
     who.toxcounter = 1
+    who.confused = false
     if (who == player) p1movehistory = []
     if (who == rival) p2movehistory = []
 }
@@ -18,6 +17,13 @@ function randomacc() {
 
 function randommove() {
     return Math.floor(Math.random() * 4)
+}
+
+function checkacc(who, i) {
+    console.log(who)
+hit = user[2 + i].acc * statstates[user[8 + i].acc] >= randomacc() * (user[4 + i].status === 'par' ? 0.75 : 1) || user[8 + i].acc == 0
+who == p1.pokemon[0] ? p1movehit = hit : p1movehit = hit
+user[10 + i][user[10 + i].length - 1]['hit'] = hit
 }
 
 function checkacc2() {
@@ -37,13 +43,13 @@ async function playsound(what) {
 }
 
 function determinespeed(what){
-    if (p1move.priority != p2move.priority && what == 'moveorder') return p1move.priority > p2move.priority
+    if (what == 'moveorder') return (typeof p1move.priority === 'number' && !(typeof p2move.priority === 'number')) || (p1move.priority > p2move.priority)
     if (p1.pokemon[0].spe * statstates[player.spe] != p2.pokemon[0].spe * statstates[rival.spe]) return p1.pokemon[0].spe * statstates[player.spe] > p2.pokemon[0].spe * statstates[rival.spe]
     return Math.random() > 0.5
 }
 
 function dmgcalc() {
-    if (types[move.type][otype1] == 0 || types[move.type][otype2] == 0) return 0
+    if (types[move.type][otype1] * types[move.type][otype2] == 0) return 0
     return Math.round(((((((2 * 10 / 5) + 2)) * (move.dmg * (move.dmgtype == 'phy' ? uatk / odef : uspa / ospd))) / 12 + 2) *
         1 *
         ((Math.floor(Math.random() * 16) == 0) ? 2 : 1) *
@@ -53,10 +59,6 @@ function dmgcalc() {
         ((Math.floor(Math.random() * 16) + 85) / 100)))
 }
 
-function checkacc(who) {
-    if (who == p1.pokemon[0]) p1movehit = p1move.acc * statstates[player.acc] >= randomacc() * (p1.pokemon[0].status === 'par' ? 0.75 : 1) || p1move.acc == 0
-    if (who == p2.pokemon[0]) p2movehit = p2move.acc * statstates[rival.acc] >= randomacc() * (p2.pokemon[0].status === 'par' ? 0.75 : 1) || p2move.acc == 0
-}
 
 function checkprotect() {
     let using = me == 'friend' ? p1.pokemon[0] : p2.pokemon[0]
@@ -66,10 +68,15 @@ function checkprotect() {
         let count = 0
         if (history.length > 0) {
             for (let i = history.length - 1; i >= 0; i--) {
+                console.log(history[i].movetype, history[i].hit)
                 if (history[i].movetype && history[i].movetype == 'protect' && history[i].hit) count++
                 else break
             }
         }
         return 100 * Math.pow(0.67, count) > randomacc()
     } else return false
+}
+
+function indexcheck() {
+    return p2.pokemon.findIndex(pokemon => pokemon.hp !== 0)
 }

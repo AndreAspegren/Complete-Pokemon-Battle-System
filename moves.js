@@ -23,9 +23,9 @@ async function heal() {
 
 async function suicide() {
     await delay(2000)
+    updatestats(me, 'hp', 0)
     battlemessage = uname + ' døde!'
     updateview()
-    updatestats(me, 'hp', 0)
     await delay(2000)
 }
 
@@ -46,7 +46,6 @@ async function status() {
             updatestats(you, move.statustype)
         }
     } else missed()
-
 }
 
 async function statusheal() {
@@ -92,7 +91,7 @@ async function stat() {
             updateview()
             await delay(1100)
         }
-    } else battlemessage = uname + ' bommet!'
+    } else missed()
 }
 
 function updatestats(who, what, value) {
@@ -104,7 +103,7 @@ function updatestats(who, what, value) {
     else if (['atk', 'def', 'spa', 'spd', 'spe', 'acc', 'eva'].includes(what)) stattarget[what] = value
     else {
         hvem.pokemon[0].status = what
-        if (what == 'tox' && !value) stattarget['toxcounter'] = 1
+        if (what == 'tox' && !value) stattarget['txc'] = 1
     }
 }
 
