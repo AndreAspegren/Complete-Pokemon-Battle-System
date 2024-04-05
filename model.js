@@ -51,7 +51,7 @@ let player = {
     strk: false, // Stealth Rock
     stwb: false, // Sticky Web
     cnf: false,  // Confused
-    txc: 1,      // toxic
+    txc: 1,      // toxic counter
 }
 
 let rival = {

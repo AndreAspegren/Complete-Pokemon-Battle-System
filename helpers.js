@@ -20,9 +20,8 @@ function randommove() {
 }
 
 function checkacc(who, i) {
-    console.log(who)
-hit = user[2 + i].acc * statstates[user[8 + i].acc] >= randomacc() * (user[4 + i].status === 'par' ? 0.75 : 1) || user[8 + i].acc == 0
-who == p1.pokemon[0] ? p1movehit = hit : p1movehit = hit
+hit = user[2 + i].acc * statstates[user[8 + i].acc] >= randomacc() * (user[4 + i].status === 'par' ? 0.75 : 1) || user[2 + i].acc == 0
+who == p1.pokemon[0] ? p1movehit = hit : p2movehit = hit
 user[10 + i][user[10 + i].length - 1]['hit'] = hit
 }
 
@@ -43,8 +42,12 @@ async function playsound(what) {
 }
 
 function determinespeed(what){
-    if (what == 'moveorder') return (typeof p1move.priority === 'number' && !(typeof p2move.priority === 'number')) || (p1move.priority > p2move.priority)
-    if (p1.pokemon[0].spe * statstates[player.spe] != p2.pokemon[0].spe * statstates[rival.spe]) return p1.pokemon[0].spe * statstates[player.spe] > p2.pokemon[0].spe * statstates[rival.spe]
+    if (what == 'moveorder' && p1move.priority != p2move.priority){
+    return (typeof p1move.priority === 'number' && !(typeof p2move.priority === 'number')) || (p1move.priority > p2move.priority)
+    } 
+    if (p1.pokemon[0].spe * statstates[player.spe] != p2.pokemon[0].spe * statstates[rival.spe]){
+        return p1.pokemon[0].spe * statstates[player.spe] > p2.pokemon[0].spe * statstates[rival.spe]
+    } 
     return Math.random() > 0.5
 }
 
@@ -59,8 +62,8 @@ function dmgcalc() {
         ((Math.floor(Math.random() * 16) + 85) / 100)))
 }
 
-
 function checkprotect() {
+
     let using = me == 'friend' ? p1.pokemon[0] : p2.pokemon[0]
     let history = me == 'friend' ? p1movehistory : p2movehistory
 
@@ -68,12 +71,16 @@ function checkprotect() {
         let count = 0
         if (history.length > 0) {
             for (let i = history.length - 1; i >= 0; i--) {
-                console.log(history[i].movetype, history[i].hit)
                 if (history[i].movetype && history[i].movetype == 'protect' && history[i].hit) count++
                 else break
             }
         }
-        return 100 * Math.pow(0.67, count) > randomacc()
+        hit = 100 * Math.pow(0.67, count) > randomacc()
+        user[10 + turn][user[10 + turn].length - 1]['hit'] = hit
+        if (user[10 + turn].length > 1){
+            if (user[10 + turn][user[10 + turn].length - 2].movetype == 'protect' && user[10 + turn][user[10 + turn].length - 2].hit == false) return true
+        }
+        return hit
     } else return false
 }
 

@@ -30,11 +30,12 @@ async function suicide() {
 }
 
 async function protect() {
-    if (!checkprotect() && turn != 0) battlemessage = 'Men det feilet'
-    else playsound()
-    if (('dmg' in ocurrentmove ||
-        (Array.isArray(ocurrentmove.who) && ocurrentmove.who.some(entry => typeof entry === 'string' && entry.includes('u'))) ||
-        ocurrentmove.effect === true)) protected = true
+    ithit = checkprotect()
+    if (((ocurrentmove.dmg ||
+        ocurrentmove.who.some(str => str.includes('u')) ||
+        ocurrentmove.effect === true)) && ithit) protected = true
+    if (ithit) playsound()
+    if (!ithit) battlemessage = 'Men det feilet'
 }
 
 async function status() {
