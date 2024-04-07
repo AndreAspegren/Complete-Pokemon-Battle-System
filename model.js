@@ -118,7 +118,7 @@ const moves = [
             acc: 0,
             movetype: 'protect',
             priority: 4,
-            pp: 10
+            pp: 10,
         },
         {
             name: 'Rock Blast',
@@ -126,7 +126,8 @@ const moves = [
             acc: 90,
             movetype: 'multihit',
             dmg: 25,
-            dmgtype: 'phy'
+            dmgtype: 'phy',
+            pp: 10,
         },
         {
             name: 'Giga Impact',
@@ -136,7 +137,8 @@ const moves = [
             effect2: 'cd',
             dmg: 150,
             pp: 35,
-            dmgtype: 'phy'
+            dmgtype: 'phy',
+            pp: 10,
         },
         {
             name: 'Tackle',
@@ -146,6 +148,7 @@ const moves = [
             dmg: 40,
             pp: 35,
             dmgtype: 'phy',
+            pp: 10,
         },
         {
             name: 'Toxic',
@@ -154,6 +157,7 @@ const moves = [
             movetype: 'status',
             statustype: 'tox',
             effect: true,
+            pp: 10,
         },
         {
             name: 'Power Up Punch',
@@ -166,14 +170,16 @@ const moves = [
             effecttype: ['atk'],
             effect: [1],
             who: ['u'],
-            dmgtype: 'phy'
+            dmgtype: 'phy',
+            pp: 10,
         },
         {
             name: 'Recover',
             type: 0,
             acc: 0,
             movetype: 'heal',
-            heal: 'uhp + umaxhp * 0.5'
+            heal: 'uhp + umaxhp * 0.5',
+            pp: 10,
         },
         {
             name: 'Growl',
@@ -183,6 +189,7 @@ const moves = [
             effecttype: ['atk'],
             effect: [-1],
             who: ['o'],
+            pp: 10,
         },
         {
             name: 'Quick Attack',
@@ -191,7 +198,8 @@ const moves = [
             movetype: 'damage',
             dmg: 40,
             acc: 100,
-            dmgtype: 'phy'
+            dmgtype: 'phy',
+            pp: 10,
         },
         {
             name: 'Swords Dance',
@@ -201,6 +209,7 @@ const moves = [
             effecttype: ['atk'],
             effect: [2],
             who: ['o'],
+            pp: 10,
         },
         {
             name: 'Explosion',
@@ -211,6 +220,7 @@ const moves = [
             movetype: 'damage',
             effect2: 'suicide',
             dmgtype: 'phy',
+            pp: 10,
         },
         {
             name: 'Smokescreen',
@@ -220,6 +230,7 @@ const moves = [
             effecttype: ['acc'],
             effect: [-1],
             who: ['o'],
+            pp: 10,
         },
         {
             name: 'Will o Wisp',
@@ -228,13 +239,15 @@ const moves = [
             movetype: 'status',
             statustype: 'brn',
             effect: true,
+            pp: 10,
         },
         {
             name: 'Sandstorm',
             type: 3,
             acc: 0,
             movetype: 'weatherchange',
-            weather: 'sandstorm'
+            weather: 'sandstorm',
+            pp: 10,
         },
         {
             name: 'Rain Dance',
@@ -251,6 +264,7 @@ const moves = [
             movetype: 'statusheal',
             statustype: '',
             effect: false,
+            pp: 10,
         },
         {
             name: 'Curse',
@@ -260,6 +274,7 @@ const moves = [
             effecttype: ['spe', 'atk', 'def'],
             effect: [-1, 1, 1],
             who: ['u', 'u', 'u'],
+            pp: 10,
         },
         {
             name: 'Rock Throw',
@@ -268,6 +283,7 @@ const moves = [
             movetype: 'damage',
             dmg: 50,
             dmgtype: 'phy',
+            pp: 10,
         },
         {
             name: 'Bite',
@@ -278,6 +294,7 @@ const moves = [
             effect2: 'flinch',
             acc2: 20,
             dmgtype: 'phy',
+            pp: 10,
         },
         {
             name: 'Spikes',
@@ -285,6 +302,7 @@ const moves = [
             acc: 0,
             movetype: 'sethazard',
             effect: 'spk',
+            pp: 10,
         },
         {
             name: 'Toxic Spikes',
@@ -292,6 +310,7 @@ const moves = [
             acc: 0,
             movetype: 'sethazard',
             effect: 'tspk',
+            pp: 10,
         },
         {
             name: 'Stealth Rock',
@@ -299,6 +318,7 @@ const moves = [
             acc: 0,
             movetype: 'sethazard',
             effect: 'strk',
+            pp: 10,
         },
         {
             name: 'Sticky Web',
@@ -306,6 +326,7 @@ const moves = [
             acc: 0,
             movetype: 'sethazard',
             effect: 'stwb',
+            pp: 10,
         },
 ]
 
@@ -322,8 +343,7 @@ let pokemon = [
         spe: 10,
         status: '',
         move: [20, 13, 12, 2],
-        currentpp: [moves[3].pp, moves[14].pp, moves[0].pp, moves[2].pp],
-        maxpp: [moves[3].pp, moves[14].pp, moves[0].pp, moves[2].pp],
+        pp: [moves[3].pp, moves[14].pp, moves[0].pp, moves[2].pp],
         type1: 11,
         type2: 12,
     },
@@ -339,8 +359,7 @@ let pokemon = [
         spe: 1,
         status: '',
         move: [3, 3, 3, 3],
-        currentpp: [moves[3].pp, moves[3].pp, moves[3].pp, moves[3].pp],
-        maxpp: [moves[3].pp, moves[3].pp, moves[3].pp, moves[3].pp],
+        pp: [moves[3].pp, moves[3].pp, moves[3].pp, moves[3].pp],
         type1: 1,
         type2: 18,
     },

@@ -3,8 +3,7 @@ function resetstats(who){
     stats.forEach(stat => who[stat] = 6)
     who.toxcounter = 1
     who.confused = false
-    if (who == player) p1movehistory = []
-    if (who == rival) p2movehistory = []
+    who == player ? p1movehistory = [] : p2movehistory = []
 }
 
 async function delay(ms) {
@@ -41,7 +40,7 @@ async function playsound(what) {
     await delay(sound.duration / 2 * 1000)
 }
 
-function determinespeed(what){
+function checkspeed(what){
     if (what == 'moveorder' && p1move.priority != p2move.priority){
     return (typeof p1move.priority === 'number' && !(typeof p2move.priority === 'number')) || (p1move.priority > p2move.priority)
     } 
@@ -63,25 +62,25 @@ function dmgcalc() {
 }
 
 function checkprotect() {
-
-    let using = me == 'friend' ? p1.pokemon[0] : p2.pokemon[0]
-    let history = me == 'friend' ? p1movehistory : p2movehistory
-
-    if (using == user[4]) {
+    if (turn == 0) {
         let count = 0
+        let history = me == 'friend' ? p1movehistory : p2movehistory
         if (history.length > 1) {
             for (let i = history.length - 1; i >= 0; i--) {
                 if (history[i].movetype && history[i].movetype == 'protect' && history[i].hit) count++
                 else break
             }
         }
-        hit = 100 * Math.pow(0.67, count) > randomacc()
+        let hit = 100 * Math.pow(0.67, count) > randomacc()
         user[10 + turn][user[10 + turn].length - 1]['hit'] = hit
         if (user[10 + turn].length > 1){
             if (user[10 + turn][user[10 + turn].length - 2].movetype == 'protect' && user[10 + turn][user[10 + turn].length - 2].hit == false) return true
         }
         return hit
-    } else return false
+    } else {
+        user[10 + turn][user[10 + turn].length - 1]['hit'] = false
+        return false
+    } 
 }
 
 function indexcheck() {

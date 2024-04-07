@@ -6,7 +6,7 @@ function updateview() {
         ${p1.avatar}
         </div>  
         <div style="position: fixed; bottom: 25%; left: 25%">
-        ${genavatar(p1)}
+        ${genpokemon(p1)}
         </div>
         <div style="position: fixed; top: 10%; left: 10%">${weather.image}</div>
         
@@ -14,35 +14,35 @@ function updateview() {
         ${p2.avatar}
         </div>
         <div style="position: fixed; top: 19%; right: 23%">
-        ${genavatar(p2)}
+        ${genpokemon(p2)}
         </div> 
-        <div style="position: fixed; bottom: 10%; right: 8%">${genbuttons()}</div>
+        <div style="position: fixed; bottom: 10%; right: 8%">${genui()}</div>
         `
 }
 
-function genavatar(who) {
+function genpokemon(who) {
     if (who == p1 && deadp1 || who == p2 && deadp2) return ''
     avatar = /*HTML*/`
     <div style="position: relative;"> 
     <div style="display: flex; justify-content: space-between">
-    <div style="text-align: left; justify-content: left">${who.pokemon.length > 0 ? who.pokemon[0].name : ''}</div>
+    <div style="text-align: left; justify-content: left">${who.pokemon[0].name}</div>
     <div>${statusimages[who.pokemon[0].status] ?? ''}</div> </div>
-    <div>${who.pokemon.length > 0 && who.pokemon[0].name ? `${who.pokemon[0].hp} / ${who.pokemon[0].maxhp} HP` : ''}</div>
+    <div>${who.pokemon[0].name ? `${who.pokemon[0].hp} / ${who.pokemon[0].maxhp} HP` : ''}</div>
     <div style="display: flex; height: 2.3vh;">
-    <div style="width: ${who.pokemon.length > 0 ? (who.pokemon[0].hp / who.pokemon[0].maxhp * 100).toString() : ''}%; background-color: green;"></div>
-    <div style="flex-grow: 1; background-color: red;"></div></div>${who.pokemon.length > 0 ? who.pokemon[0].avatar : ''}</div>`
+    <div style="width: ${(who.pokemon[0].hp / who.pokemon[0].maxhp * 100).toString()}%; background-color: green;"></div>
+    <div style="flex-grow: 1; background-color: red;"></div></div>${who.pokemon[0].avatar}</div>`
     return avatar
 }
 
-function genbuttons() {
+function genui() {
     let button = ''
     for (let i = 0; i < 4; i++) {
-        let p1moves = p1.pokemon.length > 0 ? moves[p1.pokemon[0].move[i]] : null
-        button += /*HTML*/`<button style="width: 16vh; height: 8vh; font-size: 100%; position: relative; background-color: ${typecolors[p1moves?.type]};"
-            ${buttonsenabled ? '' : 'disabled'} ${p1.pokemon[0].currentpp[i] <= 0 ? 'Disabled' : ''} onclick="battlemanager(${p1.pokemon.length > 0 ? `'${p1.pokemon[0].move[i]}'` : ''}, ${i});">
+        button += /*HTML*/`<button style="width: 16vh; height: 8vh; font-size: 100%; position: relative; background-color: ${typecolors[moves[p1.pokemon[0].move[i]].type]};"
+            ${buttonsenabled ? '' : 'disabled'} ${p1.pokemon[0].pp[i] > 0 ? '' : 'Disabled'} onclick="battlemanager(${`${p1.pokemon[0].move[i]}`}, ${i});">
             <div style="position: relative; height: 100%; width: 100%; display: flex; justify-content: center; align-items: center;">
-            <div>${p1moves ? p1moves.name : ''}</div><div style="position: absolute; bottom: 0; right: 0;">
-            ${p1.pokemon[0].currentpp[i] ?? ''}${p1.pokemon[0].currentpp[i] ? ' / ' : ''}${p1.pokemon[0].maxpp[i] ?? ''}</div></div></button>`
+            <div>${moves[p1.pokemon[0].move[i]].name}</div><div style="position: absolute; bottom: 0; right: 0;">
+            ${`${p1.pokemon[0].pp[i]} / ${moves[p1.pokemon[0].move[i]].pp}`}</div>
+        </div></button>`
     }
     let buttons = /*HTML*/`
     <div style="background-color: orange; display: flex; align-items: center; justify-content: center; width: 32.3vh; height: 6vh;">${battlemessage}</div>
@@ -61,9 +61,9 @@ async function changepokemon() {
             <div style="text-align: left;">${p1.pokemon[i].name}</div>
             <div>${statusimages[p1.pokemon[i].status[1]] ?? ''}</div>
             </div>
-            <div>${p1.pokemon.length > 0 ? `${p1.pokemon[i].hp} / ${p1.pokemon[i].maxhp} HP` : ''}</div>
+            <div>${`${p1.pokemon[i].hp} / ${p1.pokemon[i].maxhp} HP`}</div>
             <div style="display: flex; height: 30px;">
-            <div style="width: ${p1.pokemon.length > 0 ? (p1.pokemon[i].hp / p1.pokemon[i].maxhp * 100).toString() : ''}%; background-color: green;"></div>
+            <div style="width: ${(p1.pokemon[i].hp / p1.pokemon[i].maxhp * 100).toString()}%; background-color: green;"></div>
             <div style="flex-grow: 1; background-color: red;"></div>
             </div>
             ${p1.pokemon[i].avatar}

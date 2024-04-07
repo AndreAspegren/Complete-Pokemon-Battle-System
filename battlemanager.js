@@ -16,8 +16,8 @@ async function battlemanager(moveinput, pp) {
 
 
 async function endofrounddamage() {      // brn, psn, tox, sandstorm
-    who = [p1.pokemon[0].status, p2.pokemon[0].status]
-    what = ['brn', 'brn', 'psn', 'psn', 'tox', 'tox', weather.weather, weather.weather]
+    let who = [p1.pokemon[0].status, p2.pokemon[0].status]
+    let what = ['brn', 'brn', 'psn', 'psn', 'tox', 'tox', weather.weather, weather.weather]
 
     for (let i = 0; i < 8; i++) {
         n = i % 2 == 0 ? 0 : 1
@@ -37,6 +37,7 @@ async function endofrounddamage() {      // brn, psn, tox, sandstorm
 }
 
 async function newpokemon() {
+    let newmon = false
     for (let i = 0; i < 2; i++) {
         if (user[4 + i].hp == 0 && !user[12 + i].pokemon.every(pokemon => pokemon.hp == 0) &&
             (((user[12 + i] == p1 ? p1faster : !p1faster) && i == 0) || ((user[12 + i] == p1 ? !p1faster : p1faster) && i == 1))) {
@@ -51,17 +52,15 @@ async function newpokemon() {
 }
 
 async function hazards() {      // spikes, toxic spikes, stealth rock
-    spk = ['', 1/8, 1/6, 1/4]
+    spk = ['', 1 / 8, 1 / 6, 1 / 4]
     tspk = ['', 'psn', 'tox']
     strk = [types[12][p1.pokemon[0].type1] * types[12][p1.pokemon[0].type2], types[12][p2.pokemon[0].type1] * types[12][p2.pokemon[0].type2]]
-    who = [player.spk, rival.spk, player.tspk, rival.tspk, player.strk, rival.strk]
     value = [spk[player.spk], rival[spk], tspk[player.tspk], tspk[rival.tspk], strk[0], strk[1]]
-    
 
     for (let i = 0; i < 6; i++) {
         n = i % 2 == 0 ? 0 : 1
-        if (who[i] != false && user[6 + n].hp != 0) {
-            if (!Number.isInteger(value[i])) updatestats(user[16 + i], value[i])
+        if (user[14 + n] && user[6 + n].hp != 0) {
+            if (!isInteger(value[i])) updatestats(user[16 + i], value[i])
             else {
                 effect = Math.round((user[6 + n].maxhp * value[i]))
                 user[6 + n].hp -= effect < 1 ? effect = 1 : effect
@@ -77,13 +76,13 @@ async function hazards() {      // spikes, toxic spikes, stealth rock
 
 function prelimfunctions(moveinput, pp) {
     buttonsenabled = false
-    p1.pokemon[0].currentpp[pp]--
+    p1.pokemon[0].pp[pp]--
     p1move = moveinput != 'switch' ? moves[moveinput] : moveinput
     p2move = moves[p2.pokemon[0].move[randommove()]]
     p1movehistory.push(JSON.parse(JSON.stringify(p1move)))
     p2movehistory.push(JSON.parse(JSON.stringify(p2move)))
-    p1firstMO = determinespeed('moveorder')
-    p1faster = determinespeed()
+    p1firstMO = checkspeed('moveorder')
+    p1faster = checkspeed()
 
     user = [p1firstMO ? 'friend' : 'foe', !p1firstMO ? 'friend' : 'foe',                      // whoismoving 0-1 MO
     p1firstMO ? p1move : p2move, p1firstMO ? p2move : p1move,                                 // move 2-3 MO
@@ -93,6 +92,12 @@ function prelimfunctions(moveinput, pp) {
     p1firstMO ? p1movehistory : p2movehistory, p1firstMO ? p2movehistory : p1movehistory,     // historie 10-11 MO
     p1faster ? p1 : p2, p1faster ? p2 : p1,                                                   // spiller 12-13 
     p1faster ? player : rival, p1faster ? rival : player,                                     // stats 14-15
-    p1faster ? 'friend' : 'foe', p1faster ? 'foe' : 'friend',]                                // whoismoving 16-17     
-                     
+    p1faster ? 'friend' : 'foe', p1faster ? 'foe' : 'friend',]                                // whoismoving 16-17    
+    
+    who = null
+    speed = null
+    stats = null
+    players = null
+    currentmove = null
+    movehistory = null
 }
