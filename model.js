@@ -1,11 +1,12 @@
 let buttonsenabled = true
 let battlemessage = ''
-let protected = false
+let skipturn = false
 let p1movehistory = []
 let p2movehistory = []
 let p1movehit = null
 let p2movehit = null
-let deadmon = null
+let deadp1 = null
+let deadp2 = null
 
 const types = [
     /* Normal 0*/[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0, 1, 1, 0.5, 1, 1],
@@ -46,11 +47,11 @@ let player = {
     spe: 6,
     acc: 6,
     eva: 6,
+    cnf: false,  // Confused
     spk: false,  // Spikes
     tspk: false, // Toxic Spikes
     strk: false, // Stealth Rock
     stwb: false, // Sticky Web
-    cnf: false,  // Confused
     txc: 1,      // toxic counter
 }
 
@@ -62,11 +63,11 @@ let rival = {
     spe: 6,
     acc: 6,
     eva: 6,
+    cnf: false,  
     spk: false,  
     tspk: false, 
     strk: false, 
     stwb: false, 
-    cnf: false,  
     txc: 1,     
 }
 
@@ -135,6 +136,7 @@ const moves = [
             effect2: 'cd',
             dmg: 150,
             pp: 35,
+            dmgtype: 'phy'
         },
         {
             name: 'Tackle',
@@ -143,6 +145,7 @@ const moves = [
             movetype: 'damage',
             dmg: 40,
             pp: 35,
+            dmgtype: 'phy',
         },
         {
             name: 'Toxic',
@@ -163,6 +166,7 @@ const moves = [
             effecttype: ['atk'],
             effect: [1],
             who: ['u'],
+            dmgtype: 'phy'
         },
         {
             name: 'Recover',
@@ -186,25 +190,27 @@ const moves = [
             acc: 100,
             movetype: 'damage',
             dmg: 40,
-            accuracy: 100
+            acc: 100,
+            dmgtype: 'phy'
         },
         {
             name: 'Swords Dance',
             type: 0,
             acc: 0,
             movetype: 'stat',
-            effecttype: 'aup2',
-            ueffect: 2
+            effecttype: ['atk'],
+            effect: [2],
+            who: ['o'],
         },
         {
             name: 'Explosion',
             type: 0,
+            dmg: 250,
             acc: 100,
             acc2: 0,
             movetype: 'damage',
             effect2: 'suicide',
-            dmg: 250,
-            accuracy: 100
+            dmgtype: 'phy',
         },
         {
             name: 'Smokescreen',
@@ -224,7 +230,7 @@ const moves = [
             effect: true,
         },
         {
-            name: 'Darude Sandstorm',
+            name: 'Sandstorm',
             type: 3,
             acc: 0,
             movetype: 'weatherchange',
@@ -261,6 +267,45 @@ const moves = [
             acc: 90,
             movetype: 'damage',
             dmg: 50,
+            dmgtype: 'phy',
+        },
+        {
+            name: 'Bite',
+            type: 15,
+            acc: 100,
+            movetype: 'damage',
+            dmg: 60,
+            effect2: 'flinch',
+            acc2: 20,
+            dmgtype: 'phy',
+        },
+        {
+            name: 'Spikes',
+            type: 8,
+            acc: 0,
+            movetype: 'sethazard',
+            effect: 'spk',
+        },
+        {
+            name: 'Toxic Spikes',
+            type: 7,
+            acc: 0,
+            movetype: 'sethazard',
+            effect: 'tspk',
+        },
+        {
+            name: 'Stealth Rock',
+            type: 8,
+            acc: 0,
+            movetype: 'sethazard',
+            effect: 'strk',
+        },
+        {
+            name: 'Sticky Web',
+            type: 11,
+            acc: 0,
+            movetype: 'sethazard',
+            effect: 'stwb',
         },
 ]
 
@@ -276,7 +321,7 @@ let pokemon = [
         spd: 10,
         spe: 10,
         status: '',
-        move: [0, 14, 3, 2],
+        move: [20, 13, 12, 2],
         currentpp: [moves[3].pp, moves[14].pp, moves[0].pp, moves[2].pp],
         maxpp: [moves[3].pp, moves[14].pp, moves[0].pp, moves[2].pp],
         type1: 11,
@@ -285,8 +330,8 @@ let pokemon = [
     {
         name: "Charmander",
         avatar: `<img style="height: auto; width: 20vh" src="pictures/pokemon/charmander.png" alt="">`,
-        maxhp: 1,
-        hp: 1,
+        maxhp: 10000,
+        hp: 10000,
         atk: 11,
         def: 8,
         spa: 13,
@@ -327,6 +372,7 @@ const movesounds = {
     rockblast: new Audio('sounds/moves/rockblast.mp3'),
     raindance: new Audio('sounds/moves/raindance.mp3'),
     sandstorm: new Audio('sounds/moves/sandstorm.mp3'),
+    bite: new Audio('sounds/moves/sandstorm.mp3'),
 }
 
 

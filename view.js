@@ -21,7 +21,7 @@ function updateview() {
 }
 
 function genavatar(who) {
-    if (who == p1 && deadmon == 'friend' || who == p2 && deadmon == 'foe') return ''
+    if (who == p1 && deadp1 || who == p2 && deadp2) return ''
     avatar = /*HTML*/`
     <div style="position: relative;"> 
     <div style="display: flex; justify-content: space-between">

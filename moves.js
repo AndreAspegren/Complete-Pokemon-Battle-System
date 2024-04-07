@@ -10,6 +10,10 @@ async function damage() {
     } else missed()
 }
 
+async function flinch() {
+    if (turn = 0) skipturn = 'flinch'
+}
+
 async function heal() {
     if (umovehit) {
         playsound()
@@ -19,6 +23,18 @@ async function heal() {
         battlemessage = uname + ' healet ' + (uhp - currenthp) + ' hp!'
         updatestats(me, 'hp', uhp)
     } else missed()
+}
+
+async function sethazard() {
+    let message
+    max = {spk: 3, tspk: 2, strk: 1, stwb: 1}
+    if (ostat[move.effect] < max[move.effect]) ostat[move.effect] += 1
+    else message = 'max'
+    sethazardmsg(move.effect, ostat[move.effect], message)
+}
+
+function sethazardmsg(){
+return battlemessage = '?!'
 }
 
 async function suicide() {
@@ -33,14 +49,14 @@ async function protect() {
     ithit = checkprotect()
     if (((ocurrentmove.dmg ||
         ocurrentmove.who.some(str => str.includes('u')) ||
-        ocurrentmove.effect === true)) && ithit) protected = true
+        ocurrentmove.effect === true)) && ithit) skipturn = true
     if (ithit) playsound()
     if (!ithit) battlemessage = 'Men det feilet'
 }
 
 async function status() {
     if (umovehit) {
-        if (you == 'foe' && p2.pokemon[0].status != '' || you == 'friend' && p1.pokemon[0].status != '') battlemessage = oname + ' har allerede en statustilstand!'
+        if (o.status != '') battlemessage = oname + ' har allerede en statustilstand!'
         else {
             playsound()
             battlemessage = oname + ' ble ' + move.statustype
@@ -51,7 +67,7 @@ async function status() {
 
 async function statusheal() {
     if (umovehit) {
-        if (u == 'friend' && p1.pokemon[0].status == '' || u == 'foe' && p2.pokemon[0].status == '') battlemessage = uname + ' har ikke en statustilstand!'
+        if (u.status == '') battlemessage = uname + ' har ikke en statustilstand!'
         else {
             playsound()
             battlemessage = uname + ' ble ' + move.statustype
@@ -72,20 +88,23 @@ async function weatherchange() {
 async function stat() {
     if (umovehit || move.movetype != 'stat') {
         if (move.movetype == 'stat') await playsound()
-        let length = move.effect.length
-        for (let i = 0; i < length; i++) {
+        for (let i = 0; i < move.effect.length; i++) {
             target = (me == 'friend' && move.who[i] == 'u') || (me == 'foe' && move.who[i] == 'o') ? [player, 'friend'] : [rival, 'foe']
             targetname = me == 'friend' && move.who[i] == 'u' || me == 'foe' && move.who[i] == 'u' ? uname : oname
             currentstat = target[0][move.effecttype[i]]
             newstat = target[0][move.effecttype[i]] + move.effect[i]
 
-            if (newstat < 0) newstat = 0
-            else if (newstat > 12) newstat = 12
-            if (currentstat == newstat) battlemessage = (newstat == 12 ? uname + ' sin ' + move.effecttype[i] + ' kan ikke gå høyere' :
-                uname + ' sin ' + move.effecttype[i] + ' kan ikke gå lavere')
+            if (currentstat == 0 && newstat < 0 && move.movetype == 'stat') {
+                newstat = 0
+                battlemessage = name + ' sin ' + move.effecttype[i] + ' kan ikke gå lavere'
+            }
+            else if (currentstat == 12 && newstat > 12 && move.movetype == 'stat') {
+                newstat = 12
+                battlemessage = uname + ' sin ' + move.effecttype[i] + ' kan ikke gå høyere'
+            }
 
-            if (move.effect[i] == move.effect[0] && move.effect[i] < 0) await playsound('statdown')
-            else if (move.effect[i] == move.effect[0] && move.effect[i] > 0 || move.effect[i] > 0 && move.effect[i - 1] < 0) await playsound('statup')
+            if (i == 0 && move.effect[i] < 0 && currentstat != 0) await playsound('statdown')
+            else if ((i == 0 && move.effect[i] > 0 || move.effect[i] > 0 && move.effect[i - 1] < 0) && currentstat != 12) await playsound('statup')
 
             updatestats(target[1], move.effecttype[i], newstat)
             statmsg(move.effecttype[i], move.effect[i])
@@ -110,36 +129,36 @@ function updatestats(who, what, value) {
 
 function whoismoving(who, i) {
     turn = i
-    current = who === 'friend' ? p1.pokemon[0] : p2.pokemon[0]
+    u = who === 'friend' ? p1.pokemon[0] : p2.pokemon[0]
     ustat = who === 'friend' ? player : rival
     me = who === 'friend' ? 'friend' : 'foe'
     move = who == 'friend' ? p1move : p2move
 
-    uname = current.name
-    uhp = current.hp
-    umaxhp = current.maxhp
-    uatk = current.atk
+    uname = u.name
+    uhp = u.hp
+    umaxhp = u.maxhp
+    uatk = u.atk
     uatkstat = statstates[ustat.atk]
     uatkstage = ustat.atk
-    udef = current.def
+    udef = u.def
     udefstat = statstates[ustat.def]
     udefstage = ustat.def
-    uspa = current.spa
+    uspa = u.spa
     uspastat = statstates[ustat.spa]
     uspastage = ustat.spa
-    uspd = current.spd
+    uspd = u.spd
     uspdstat = statstates[ustat.spd]
     uspdstage = ustat.spd
-    uspe = current.spe
+    uspe = u.spe
     uspestat = statstates[ustat.spe]
     uspestage = ustat.spe
     uacc = statstates2[ustat.acc]
     uaccstat = ustat.acc
     ueva = statstates2[ustat.eva]
     uevastat = ustat.eva
-    utype1 = current.type1
-    utype2 = current.type2
-    ustatus = current.status
+    utype1 = u.type1
+    utype2 = u.type2
+    ustatus = u.status
     umovehit = who === 'friend' ? p1movehit : p2movehit
 
     o = who === 'friend' ? p2.pokemon[0] : p1.pokemon[0]

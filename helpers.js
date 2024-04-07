@@ -69,7 +69,7 @@ function checkprotect() {
 
     if (using == user[4]) {
         let count = 0
-        if (history.length > 0) {
+        if (history.length > 1) {
             for (let i = history.length - 1; i >= 0; i--) {
                 if (history[i].movetype && history[i].movetype == 'protect' && history[i].hit) count++
                 else break
