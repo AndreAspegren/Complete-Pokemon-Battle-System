@@ -47,7 +47,7 @@ function genui() {
     let buttons = /*HTML*/`
     <div style="background-color: orange; display: flex; align-items: center; justify-content: center; width: 32.3vh; height: 6vh;">${battlemessage}</div>
     <div style="display: flex;"><div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.3vh;">${button}</div>
-    <img onclick="changepokemon()" style="width: auto; height: 16vh; cursor: pointer;" src="pictures/misc/bag.png" alt="Change Pokemon"></div>`
+    <img onclick="changepokemon()" style="width: auto; height: 16vh; cursor: pointer;" src="pictures/misc/bag.png"></div>`
     return buttons
 }
 

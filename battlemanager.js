@@ -92,12 +92,12 @@ function prelimfunctions(moveinput, pp) {
     p1firstMO ? p1movehistory : p2movehistory, p1firstMO ? p2movehistory : p1movehistory,     // historie 10-11 MO
     p1faster ? p1 : p2, p1faster ? p2 : p1,                                                   // spiller 12-13 
     p1faster ? player : rival, p1faster ? rival : player,                                     // stats 14-15
-    p1faster ? 'friend' : 'foe', p1faster ? 'foe' : 'friend',]                                // whoismoving 16-17    
+    p1faster ? 'friend' : 'foe', p1faster ? 'foe' : 'friend']                                // whoismoving 16-17    
     
     who = null
-    speed = null
+    monspeed = null
     stats = null
-    players = null
+    trainer = null
     currentmove = null
     movehistory = null
 }
