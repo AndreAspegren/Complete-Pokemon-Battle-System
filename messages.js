@@ -30,3 +30,14 @@ function weathermsg(){
 function missed(){
     return battlemessage = uname + ' bommet!'
 }
+
+function statusmsg(what, who){
+    let statusconditions = {
+        brn: ' ble brent!',
+        psn: ' ble forgiftet!',
+        tox: ' ble veldig forgiftet!',
+        par: ' ble paralysert!',
+        slp: ' sovna!'
+    }
+    return battlemessage = who.name + statusconditions[what]
+}

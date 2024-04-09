@@ -26,15 +26,23 @@ async function heal() {
 }
 
 async function sethazard() {
-    let message
-    max = {spk: 3, tspk: 2, strk: 1, stwb: 1}
-    if (ostat[move.effect] < max[move.effect]) ostat[move.effect] += 1
-    else message = 'max'
-    sethazardmsg(move.effect, ostat[move.effect], message)
+    max = { spk: 3, tspk: 2, strk: 1, stwb: 1 }
+    if (ostat[move.effect] < max[move.effect]) {
+        ostat[move.effect] += 1
+        hazardmsg(move.effect, o)
+    }
+    else battlemessage = 'Men det feilet!'
 }
 
-function sethazardmsg(){
-return battlemessage = '?!'
+function hazardmsg(what, who) {
+    affected = who == p1.pokemon[0] ? p1.name : p2.name
+    let hazardmsgs = {
+        spk: 'Spikes var spredt rundt føttene til ' + affected + ' sitt lag!',
+        tspk: 'Giftpigger var spredt rundt føttene til ' + affected + ' sitt lag!',
+        strk: 'Spissede steiner svever i luften rundt ' + affected + ' sitt lag!',
+        stwb: 'Et klebrig nett brer seg ut under ' + affected + ' sitt lag!'
+    }
+    return battlemessage = hazardmsgs[what]
 }
 
 async function suicide() {
@@ -59,7 +67,7 @@ async function status() {
         if (o.status != '') battlemessage = oname + ' har allerede en statustilstand!'
         else {
             playsound()
-            battlemessage = oname + ' ble ' + move.statustype
+            statusmsg(move.statustype, u)
             updatestats(you, move.statustype)
         }
     } else missed()

@@ -342,7 +342,7 @@ let pokemon = [
         spd: 10,
         spe: 10,
         status: '',
-        move: [20, 13, 12, 2],
+        move: [20, 21, 12, 3],
         pp: [moves[3].pp, moves[14].pp, moves[0].pp, moves[2].pp],
         type1: 11,
         type2: 12,
@@ -350,8 +350,8 @@ let pokemon = [
     {
         name: "Charmander",
         avatar: `<img style="height: auto; width: 20vh" src="pictures/pokemon/charmander.png" alt="">`,
-        maxhp: 10000,
-        hp: 10000,
+        maxhp: 1,
+        hp: 1,
         atk: 11,
         def: 8,
         spa: 13,
@@ -377,7 +377,7 @@ let p2 = {
     name: 'Cynthia',
     avatar: `
     <img style="height: 20vh; width: auto" src="https://www.serebii.net/pokemonmasters/syncpairs/cynthia.png" alt="">`,
-    pokemon: [pokemon[1], pokemon[1], pokemon[0]].map(p => JSON.parse(JSON.stringify(p)))
+    pokemon: [pokemon[1], pokemon[0], pokemon[0]].map(p => JSON.parse(JSON.stringify(p)))
 }
 
 const movesounds = {

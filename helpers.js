@@ -19,9 +19,9 @@ function randommove() {
 }
 
 function checkacc(who, i) {
-hit = user[2 + i].acc * statstates[user[8 + i].acc] >= randomacc() * (user[4 + i].status === 'par' ? 0.75 : 1) || user[2 + i].acc == 0
+hit = currentmove[i].acc * statstates[stats[i].acc] >= randomacc() * (mon[i].status === 'par' ? 0.75 : 1) || currentmove[i].acc == 0
 who == p1.pokemon[0] ? p1movehit = hit : p2movehit = hit
-user[10 + i][user[10 + i].length - 1]['hit'] = hit
+movehistory[i][movehistory[i].length - 1]['hit'] = hit
 }
 
 function checkacc2() {
@@ -85,4 +85,16 @@ function checkprotect() {
 
 function indexcheck() {
     return p2.pokemon.findIndex(pokemon => pokemon.hp !== 0)
+}
+
+function setspeed(round) {
+    p1faster = checkspeed(round ? 'moveorder' : null)
+
+    who = [p1faster ? 'friend' : 'foe', p1faster ? 'foe' : 'friend']
+    mon = [p1faster ? p1.pokemon[0] : p2.pokemon[0], p1faster ? p2.pokemon[0] : p1.pokemon[0]]
+    stats = [p1faster ? player : rival, p1faster ? rival : player]
+    trainer = [p1faster ? p1 : p2, p1faster ? p2 : p1]
+    currentmove = [p1faster ? p1move : p2move, p1faster ? p2move : p1move]
+    movehistory = [p1faster ? p1movehistory : p2movehistory, p1faster ? p2movehistory : p1movehistory]
+    monstatus = [p1faster ? p1.pokemon[0].status : p2.pokemon[0].status, p1faster ? p2.pokemon[0].status : p1.pokemon[0].status]
 }

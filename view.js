@@ -1,7 +1,6 @@
 updateview()
 function updateview() {
     app.innerHTML = /*HTML*/`
-    
         <div style="position: fixed; bottom: 5%; left: 5%">
         ${p1.avatar}
         </div>  
