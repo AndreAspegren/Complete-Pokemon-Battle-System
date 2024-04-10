@@ -41,7 +41,7 @@ async function playsound(what) {
 }
 
 function checkspeed(what){
-    if (what == 'moveorder' && p1move.priority != p2move.priority){
+    if (what && p1move.priority != p2move.priority){
     return (typeof p1move.priority === 'number' && !(typeof p2move.priority === 'number')) || (p1move.priority > p2move.priority)
     } 
     if (p1.pokemon[0].spe * statstates[player.spe] != p2.pokemon[0].spe * statstates[rival.spe]){
@@ -88,7 +88,7 @@ function indexcheck() {
 }
 
 function setspeed(round) {
-    p1faster = checkspeed(round ? 'moveorder' : null)
+    p1faster = checkspeed(round ? 'round' : null)
 
     who = [p1faster ? 'friend' : 'foe', p1faster ? 'foe' : 'friend']
     mon = [p1faster ? p1.pokemon[0] : p2.pokemon[0], p1faster ? p2.pokemon[0] : p1.pokemon[0]]

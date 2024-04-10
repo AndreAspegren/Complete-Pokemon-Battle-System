@@ -34,17 +34,6 @@ async function sethazard() {
     else battlemessage = 'Men det feilet!'
 }
 
-function hazardmsg(what, who) {
-    affected = who == p1.pokemon[0] ? p1.name : p2.name
-    let hazardmsgs = {
-        spk: 'Spikes var spredt rundt føttene til ' + affected + ' sitt lag!',
-        tspk: 'Giftpigger var spredt rundt føttene til ' + affected + ' sitt lag!',
-        strk: 'Spissede steiner svever i luften rundt ' + affected + ' sitt lag!',
-        stwb: 'Et klebrig nett brer seg ut under ' + affected + ' sitt lag!'
-    }
-    return battlemessage = hazardmsgs[what]
-}
-
 async function suicide() {
     await delay(2000)
     updatestats(me, 'hp', 0)
@@ -115,7 +104,7 @@ async function stat() {
             else if ((i == 0 && move.effect[i] > 0 || move.effect[i] > 0 && move.effect[i - 1] < 0) && currentstat != 12) await playsound('statup')
 
             updatestats(target[1], move.effecttype[i], newstat)
-            statmsg(move.effecttype[i], move.effect[i])
+            statmsg(move.effecttype[i], move.effect[i], targetname)
             updateview()
             await delay(1100)
         }

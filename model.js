@@ -302,7 +302,7 @@ const moves = [
             acc: 0,
             movetype: 'sethazard',
             effect: 'spk',
-            pp: 10,
+            pp: 20,
         },
         {
             name: 'Toxic Spikes',
@@ -310,7 +310,7 @@ const moves = [
             acc: 0,
             movetype: 'sethazard',
             effect: 'tspk',
-            pp: 10,
+            pp: 20,
         },
         {
             name: 'Stealth Rock',
@@ -318,7 +318,7 @@ const moves = [
             acc: 0,
             movetype: 'sethazard',
             effect: 'strk',
-            pp: 10,
+            pp: 20,
         },
         {
             name: 'Sticky Web',
@@ -326,7 +326,7 @@ const moves = [
             acc: 0,
             movetype: 'sethazard',
             effect: 'stwb',
-            pp: 10,
+            pp: 20,
         },
 ]
 
@@ -342,7 +342,7 @@ let pokemon = [
         spd: 10,
         spe: 10,
         status: '',
-        move: [20, 21, 12, 3],
+        move: [20, 21, 22, 3],
         pp: [moves[3].pp, moves[14].pp, moves[0].pp, moves[2].pp],
         type1: 11,
         type2: 12,

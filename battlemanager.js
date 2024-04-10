@@ -10,7 +10,7 @@ async function battlemanager(moveinput, pp) {
     await endofrounddamage()
     await newpokemon()
 
-    battlemessage = p2.pokemon.every(pokemon => pokemon.hp === 0) ? 'Du vant!' : p1.pokemon.every(pokemon => pokemon.hp === 0) ? 'Du tapte!' : ''
+    battlemessage = p1.pokemon.every(pokemon => pokemon.hp === 0) ? 'Du tapte!' : p2.pokemon.every(pokemon => pokemon.hp === 0) ? 'Du vant!' : ''
     buttonsenabled = battlemessage == '' ? true : false
     updateview()
 }
@@ -49,14 +49,16 @@ async function newpokemon() {
     }
 }
 
-async function hazards(who) {      // spikes, toxic spikes, stealth rock, sticky web (soon)
-    let what = who == p1.pokemon[0] ? [player.spk, player.tspk, player.strk, player.stwb] : [rival.spk, rival.tspk, rival.strk, rival.stwb]
-    let damage = [[1/8, 1/6, 1/4], ['psn', 'tox'], [(1/8) * types[12][who.type1] * types[12][who.type2]]] 
+async function hazards(who) {      
+    let what = who == p1.pokemon[0] ? [player.spk, player.tspk, player.strk, player.stwb, player] : [rival.spk, rival.tspk, rival.strk, rival.stwb, rival]
+    let damage = [[1 / 8, 1 / 6, 1 / 4], ['psn', 'tox'], [(1 / 8) * types[12][who.type1] * types[12][who.type2]]]
+
+
     for (let i = 0; i < 4; i++) {
-        if (what[i] && who.hp != 0) {
-            if (i == 1) updatestats(who == p1.pokemon[0] ? 'friend' : 'foe', damage[i][what[i] -1])
-            else {
-                effect = Math.round((who.maxhp * damage[i][what[i] -1]))
+        if (what[i] > 0 && who.hp != 0) {
+            if (i == 1) updatestats(who == p1.pokemon[0] ? 'friend' : 'foe', damage[i][what[i] - 1])
+            if (i == 0 || i == 2) {
+                effect = Math.round((who.maxhp * damage[i][what[i] - 1]))
                 who.hp -= effect < 1 ? effect = 1 : effect
                 if (who.hp < 0) who.hp = 0
             }
@@ -64,20 +66,16 @@ async function hazards(who) {      // spikes, toxic spikes, stealth rock, sticky
             if (who.hp == 0) await deathdisplay(i)
             updateview()
             await delay(2000)
+            if (i == 3 && whostat[0].spe > 0) {
+                statmsg('spe', -1, who.name)
+                whostat[4].spe--
+                await playsound('statdown')
+                updateview()
+                await delay(2000)  
+            }
         }
     }
 }
-
-function hazardsdmgmsg(what, who){
-    let hazards = {
-        0: who.name + ' er skadet av pigger!',
-        1: who.name + ' har blitt forgiftet!',
-        2: 'Spisse steiner graver inni ' + who.name + '!',
-        3: who.name + ' ble fanget i et klebrig nett!'
-    }
-    return battlemessage = hazards[what]
-}
-
 
 async function prelimfunctions(moveinput, pp) {
     buttonsenabled = false
@@ -87,6 +85,6 @@ async function prelimfunctions(moveinput, pp) {
     p1movehistory.push(JSON.parse(JSON.stringify(p1move)))
     p2movehistory.push(JSON.parse(JSON.stringify(p2move)))
     setspeed('round')
-    if (p1move == 'switch') await hazards(p1.pokemon[0]) 
+    if (p1move == 'switch') await hazards(p1.pokemon[0])
 }
 
