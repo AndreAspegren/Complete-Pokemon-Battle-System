@@ -20,7 +20,7 @@ function updateview() {
 }
 
 function genpokemon(who) {
-    if (who == p1 && deadp1 || who == p2 && deadp2) return ''
+    if (who == p1 && deadp1 || who == p2 && deadp2 || who == p1 && p1invul || who == p2 && p2invul) return ''
     avatar = /*HTML*/`
     <div style="position: relative;"> 
     <div style="display: flex; justify-content: space-between">

@@ -7,6 +7,11 @@ let p1movehit = null
 let p2movehit = null
 let deadp1 = null
 let deadp2 = null
+let p1invul = null
+let p2invul = null
+let p1skipchoice = null
+let p2skipchoice = null
+let roundcounter = 0
 
 const types = [
     /* Normal 0*/[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0, 1, 1, 0.5, 1, 1],
@@ -134,7 +139,7 @@ const moves = [
             type: 0,
             acc: 90,
             movetype: 'damage',
-            effect2: 'cd',
+            effect: 'movethencd',
             dmg: 150,
             pp: 35,
             dmgtype: 'phy',
@@ -314,7 +319,7 @@ const moves = [
         },
         {
             name: 'Stealth Rock',
-            type: 8,
+            type: 12,
             acc: 0,
             movetype: 'sethazard',
             effect: 'strk',
@@ -326,6 +331,24 @@ const moves = [
             acc: 0,
             movetype: 'sethazard',
             effect: 'stwb',
+            pp: 20,
+        },
+        {
+            name: 'Solar Beam',
+            type: 3,
+            dmg: 120,
+            acc: 100,
+            movetype: 'damage',
+            effect: 'cdthenmove',
+            pp: 20,
+        },
+        {
+            name: 'Dig',
+            type: 8,
+            dmg: 80,
+            acc: 100,
+            movetype: 'damage',
+            effect: 'hidethencd',
             pp: 20,
         },
 ]
@@ -342,7 +365,7 @@ let pokemon = [
         spd: 10,
         spe: 10,
         status: '',
-        move: [20, 21, 22, 3],
+        move: [24, 21, 2, 3],
         pp: [moves[3].pp, moves[14].pp, moves[0].pp, moves[2].pp],
         type1: 11,
         type2: 12,

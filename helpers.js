@@ -19,7 +19,8 @@ function randommove() {
 }
 
 function checkacc(who, i) {
-hit = currentmove[i].acc * statstates[stats[i].acc] >= randomacc() * (mon[i].status === 'par' ? 0.75 : 1) || currentmove[i].acc == 0
+invulmon = mon[i] == p1.pokemon[0] ? p2invul : p1invul
+hit = (currentmove[i].acc * statstates[stats[i].acc] >= randomacc() * (mon[i].status === 'par' ? 0.75 : 1) || currentmove[i].acc == 0) && !invulmon
 who == p1.pokemon[0] ? p1movehit = hit : p2movehit = hit
 movehistory[i][movehistory[i].length - 1]['hit'] = hit
 }
@@ -97,4 +98,5 @@ function setspeed(round) {
     currentmove = [p1faster ? p1move : p2move, p1faster ? p2move : p1move]
     movehistory = [p1faster ? p1movehistory : p2movehistory, p1faster ? p2movehistory : p1movehistory]
     monstatus = [p1faster ? p1.pokemon[0].status : p2.pokemon[0].status, p1faster ? p2.pokemon[0].status : p1.pokemon[0].status]
+    invul = [p1faster ? p1invul : p2invul, p1faster ? p2invul : p1invul]
 }

@@ -5,6 +5,8 @@ async function battlemanager(moveinput, pp) {
         checkacc(mon[i], i)
         whoismoving(who[i], i)
         await moveevents(i)
+        updateview()
+        await delay(2000)
     }
     setspeed()
     await endofrounddamage()
@@ -13,6 +15,15 @@ async function battlemanager(moveinput, pp) {
     battlemessage = p1.pokemon.every(pokemon => pokemon.hp === 0) ? 'Du tapte!' : p2.pokemon.every(pokemon => pokemon.hp === 0) ? 'Du vant!' : ''
     buttonsenabled = battlemessage == '' ? true : false
     updateview()
+    if (skipchoice) {
+        console.log('hei')
+        battlemanager()
+    } 
+    await multiturnevents()
+}
+
+async function multiturnevents(){
+    roundcounter++
 }
 
 async function endofrounddamage() {      // brn, psn, tox, sandstorm
@@ -80,7 +91,8 @@ async function hazards(who) {
 async function prelimfunctions(moveinput, pp) {
     buttonsenabled = false
     p1.pokemon[0].pp[pp]--
-    p1move = moveinput != 'switch' ? moves[moveinput] : moveinput
+    if (!skipchoice) p1move = moveinput != 'switch' ? moves[moveinput] : moveinput
+    else p1move = 'skipchoice'
     p2move = moves[p2.pokemon[0].move[randommove()]]
     p1movehistory.push(JSON.parse(JSON.stringify(p1move)))
     p2movehistory.push(JSON.parse(JSON.stringify(p2move)))

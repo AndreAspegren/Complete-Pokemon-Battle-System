@@ -7,6 +7,8 @@ async function damage() {
         effectivenessmsg()
         updatestats(you, 'hp', ohp)
         if (checkacc2()) await eval(move.effect2 + '()')
+        console.log(move.effect)
+        if (move.effect == 'movethencd') skipchoice = true
     } else missed()
 }
 
