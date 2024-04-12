@@ -11,7 +11,6 @@ let p1invul = null
 let p2invul = null
 let p1skipchoice = null
 let p2skipchoice = null
-let roundcounter = 0
 
 const types = [
     /* Normal 0*/[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0, 1, 1, 0.5, 1, 1],
@@ -99,8 +98,8 @@ const statusimages = {
 const typecolors = ['hsl(58, 20%, 56%)',
     'hsl(25, 84%, 56%)',
     'hsl(220, 82%, 66%)',
-    'hsl(48, 92%, 57%)',
     'hsl(97, 52%, 53%)',
+    'hsl(48, 92%, 57%)',
     'hsl(177, 46%, 71%)',
     'hsl(2, 65%, 45%)',
     'hsl(301, 44%, 44%)',
@@ -139,7 +138,18 @@ const moves = [
             type: 0,
             acc: 90,
             movetype: 'damage',
-            effect: 'movethencd',
+            multiturn: 'dmgthencd',
+            dmg: 150,
+            pp: 35,
+            dmgtype: 'phy',
+            pp: 10,
+        },
+        {
+            name: 'Fly',
+            type: 9,
+            acc: 90,
+            movetype: 'damage',
+            multiturn: 'invulthendmg',
             dmg: 150,
             pp: 35,
             dmgtype: 'phy',
@@ -339,7 +349,7 @@ const moves = [
             dmg: 120,
             acc: 100,
             movetype: 'damage',
-            effect: 'cdthenmove',
+            multiturn: 'cdthendmg',
             pp: 20,
         },
         {
@@ -348,7 +358,7 @@ const moves = [
             dmg: 80,
             acc: 100,
             movetype: 'damage',
-            effect: 'hidethencd',
+            effect: 'invulthendmg',
             pp: 20,
         },
 ]

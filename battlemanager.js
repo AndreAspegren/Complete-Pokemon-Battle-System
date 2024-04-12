@@ -16,7 +16,6 @@ async function battlemanager(moveinput, pp) {
     buttonsenabled = battlemessage == '' ? true : false
     updateview()
     if (skipchoice) {
-        console.log('hei')
         battlemanager()
     } 
     await multiturnevents()
@@ -91,8 +90,7 @@ async function hazards(who) {
 async function prelimfunctions(moveinput, pp) {
     buttonsenabled = false
     p1.pokemon[0].pp[pp]--
-    if (!skipchoice) p1move = moveinput != 'switch' ? moves[moveinput] : moveinput
-    else p1move = 'skipchoice'
+    p1move = moveinput != 'switch' ? moves[moveinput] : moveinput
     p2move = moves[p2.pokemon[0].move[randommove()]]
     p1movehistory.push(JSON.parse(JSON.stringify(p1move)))
     p2movehistory.push(JSON.parse(JSON.stringify(p2move)))

@@ -28,7 +28,7 @@ async function heal() {
 }
 
 async function sethazard() {
-    max = { spk: 3, tspk: 2, strk: 1, stwb: 1 }
+    max = {spk: 3, tspk: 2, strk: 1, stwb: 1}
     if (ostat[move.effect] < max[move.effect]) {
         ostat[move.effect] += 1
         hazardmsg(move.effect, o)
