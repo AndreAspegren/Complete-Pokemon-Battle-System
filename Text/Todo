@@ -1,14 +1,3 @@
-for i morgen:
+todo
 
-fullføre logikken for weather effects
-fullføre priority logikken
-lage logikk for moves som tar flere turer å gjennomføre
-lage logikk for moves som gjør at bruker må hvile neste runde
-se på hvordan en solid battlemanager vil se ut
-
-må fikse
-
-binde effekter som moves har til move funksjonene for å minimere hardkoding
-definere hvem movet påvirker i moves objektene og binde det inn i moves funksjonene
-studere detaljer i hvordan pokemon fungerer
-gjøre announcement av moves til egen funksjon
+fikse messaging på check acc for hvis para er grunn til miss

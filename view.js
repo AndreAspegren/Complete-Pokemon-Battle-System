@@ -1,4 +1,15 @@
+assignpp()
+function assignpp(){
+    p1.pokemon[0].pp = []
+    for (let i = 0; i < p1.pokemon[0].move.length; i++) p1.pokemon[0].pp.push(moves[p1.pokemon[0].move[i]].pp)
+}
+
 updateview()
+
+function randommove() {
+    return Math.floor(Math.random() * 4)
+}
+
 function updateview() {
     app.innerHTML = /*HTML*/`
         <div style="position: fixed; bottom: 5%; left: 5%">
@@ -37,10 +48,10 @@ function genui() {
     let button = ''
     for (let i = 0; i < 4; i++) {
         button += /*HTML*/`<button style="width: 16vh; height: 8vh; font-size: 100%; position: relative; background-color: ${typecolors[moves[p1.pokemon[0].move[i]].type]};"
-            ${buttonsenabled ? '' : 'disabled'} ${p1.pokemon[0].pp[i] > 0 ? '' : 'Disabled'} onclick="battlemanager(${`${p1.pokemon[0].move[i]}`}, ${i});">
+            ${buttonsenabled ? '' : 'disabled'} ${p1.pokemon[0].pp[i] > 0 ? '' : 'Disabled'} onclick="battlemanager(${`${p1.pokemon[0].move[i]}`}, ${randommove()}, ${i});">
             <div style="position: relative; height: 100%; width: 100%; display: flex; justify-content: center; align-items: center;">
             <div>${moves[p1.pokemon[0].move[i]].name}</div><div style="position: absolute; bottom: 0; right: 0;">
-            ${`${p1.pokemon[0].pp[i]} / ${moves[p1.pokemon[0].move[i]].pp}`}</div>
+            ${`${p1.pokemon[0].pp[i]} / ${moves[p1.pokemon[0].move[i]].pp ?? moves[p1.pokemon[0].move[i]].turn2.pp}`}</div>
         </div></button>`
     }
     let buttons = /*HTML*/`
@@ -80,7 +91,6 @@ async function changepokemon() {
 
 async function changeto(who) {
     if (who != 0 && p1.pokemon[0].hp == 0) {            // død bytte
-        p1.pokemon[0].status = ''
         element = p1.pokemon.splice(who, 1)[0]
         p1.pokemon.unshift(element)
         resolvechange()
@@ -90,6 +100,7 @@ async function changeto(who) {
         buttonsenabled = false
         updateview()
         await delay(2000)
+        resetstats(player, p1.pokemon[0])
         item = p1.pokemon.splice(who, 1)[0]
         p1.pokemon.unshift(item)
         updateview()

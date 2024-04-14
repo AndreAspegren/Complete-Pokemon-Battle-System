@@ -1,8 +1,8 @@
-function resetstats(who){
-    stats = ['atk', 'def', 'satk', 'sdef', 'spe', 'acc', 'eva']
+function resetstats(who, dead) {
+    const stats = ['atk', 'def', 'satk', 'sdef', 'spe', 'acc', 'eva']
     stats.forEach(stat => who[stat] = 6)
-    who.toxcounter = 1
-    who.confused = false
+    Object.assign(who, { toxcounter: 1, cnf: false })
+    if (dead) dead.status = ''
     who == player ? p1movehistory = [] : p2movehistory = []
 }
 
@@ -14,15 +14,30 @@ function randomacc() {
     return Math.ceil(Math.random() * 100)
 }
 
-function randommove() {
-    return Math.floor(Math.random() * 4)
+function checkacc(who, i) {
+    invulmon = mon[i] == p1.pokemon[0] ? p2invul : p1invul;
+    let random = randomacc();
+    let accwithoutpar = currentmove[i].acc * statstates[stats[i].acc] * weatheracc() >= random
+    let hit = (currentmove[i].acc * statstates[stats[i].acc] * (mon[i].status == 'par' ? 0.75 : 1) * weatheracc() >= random || currentmove[i].acc == 0) && !invulmon
+    paralysed = mon[i].status == 'par' && !hit && accwithoutpar
+    who == p1.pokemon[0] ? p1movehit = hit : p2movehit = hit
+    movehistory[i][movehistory[i].length - 1]['hit'] = hit
 }
 
-function checkacc(who, i) {
-invulmon = mon[i] == p1.pokemon[0] ? p2invul : p1invul
-hit = (currentmove[i].acc * statstates[stats[i].acc] >= randomacc() * (mon[i].status === 'par' ? 0.75 : 1) || currentmove[i].acc == 0) && !invulmon
-who == p1.pokemon[0] ? p1movehit = hit : p2movehit = hit
-movehistory[i][movehistory[i].length - 1]['hit'] = hit
+
+function weatheracc() {
+    if (weather.weather == 'sun') {
+        if (move.name == 'Thunder') return 0.5
+        if (move.name == 'Hurricane') return 0.5
+    }
+    if (weather.weather == 'rain') {
+        if (move.name == 'Thunder') return 1000
+        if (move.name == 'Hurricane') return 1000
+    }
+    if (weather.weather == 'hail') {
+        if (move.name == 'Blizzard') return 1000
+    }
+    return 1
 }
 
 function checkacc2() {
@@ -31,30 +46,35 @@ function checkacc2() {
 }
 
 async function playsound(what) {
-    if (what){
+    if (what) {
         movesounds[what].play()
         await delay(movesounds[what].duration * 1000)
         return
     }
-    sound = movesounds[move.name.toLowerCase().split(' ').join('')]
-    sound.play()
+    movesounds[move.name.toLowerCase().replace(/ /g, '')].play()
     await delay(sound.duration / 2 * 1000)
 }
 
-function checkspeed(what){
-    if (what && p1move.priority != p2move.priority){
-    return (typeof p1move.priority === 'number' && !(typeof p2move.priority === 'number')) || (p1move.priority > p2move.priority)
-    } 
-    if (p1.pokemon[0].spe * statstates[player.spe] != p2.pokemon[0].spe * statstates[rival.spe]){
-        return p1.pokemon[0].spe * statstates[player.spe] > p2.pokemon[0].spe * statstates[rival.spe]
-    } 
+function checkspeed(what) {
+    if (what == 'round' && p1move.priority != p2move.priority) {
+        if (p1move.priority > 0 && !p2move.priority) return true
+        if (p1move.priority < 0 && !p2move.priority) return false
+        if (p2move.priority > 0 && !p1move.priority) return false
+        if (p2move.priority < 0 && !p1move.priority) return true
+        return p1move.priority > p2move.priority
+    }
+    let p1speed = p1.pokemon[0].spe * statstates[player.spe] * (p1.pokemon[0].status === 'par' ? 0.25 : 1)
+    let p2speed = p2.pokemon[0].spe * statstates[rival.spe] * (p2.pokemon[0].status === 'par' ? 0.25 : 1)
+    if (!global.trickroom && p1speed != p2speed) return p1speed > p2speed
+    if (global.trickroom && p1speed != p2speed) return p1speed < p2speed
     return Math.random() > 0.5
 }
+
 
 function dmgcalc() {
     if (types[move.type][otype1] * types[move.type][otype2] == 0) return 0
     return Math.round(((((((2 * 10 / 5) + 2)) * (move.dmg * (move.dmgtype == 'phy' ? uatk / odef : uspa / ospd))) / 12 + 2) *
-        1 *
+        weatherdmg() *
         ((Math.floor(Math.random() * 16) == 0) ? 2 : 1) *
         (move.type == utype1 || utype2 ? 1.5 : 1) *
         (types[move.type][otype1] * types[move.type][otype2]) *
@@ -62,26 +82,35 @@ function dmgcalc() {
         ((Math.floor(Math.random() * 16) + 85) / 100)))
 }
 
+function weatherdmg() {
+    if (weather.weather == 'sun') {
+        if (move.type == 1) return 1.5
+        if (move.type == 2) return 0.5
+    }
+    if (weather.weather == 'rain') {
+        if (move.type == 1) return 0.5
+        if (move.type == 2) return 1.5
+        if (['Solar Beam', 'Solar Blade'].includes(move.name) && move.dmg) return 0.5
+    }
+    if (weather.weather == 'sandstorm') {
+        if (['Solar Beam', 'Solar Blade'].includes(move.name) && move.dmg) return 0.5
+    }
+    if (weather.weather == 'hail') {
+        if (['Solar Beam', 'Solar Blade'].includes(move.name) && move.dmg) return 0.5
+    }
+    return 1
+}
+
 function checkprotect() {
-    if (turn == 0) {
-        let count = 0
-        let history = me == 'friend' ? p1movehistory : p2movehistory
-        if (history.length > 1) {
-            for (let i = history.length - 1; i >= 0; i--) {
-                if (history[i].movetype && history[i].movetype == 'protect' && history[i].hit) count++
-                else break
-            }
-        }
-        let hit = 100 * Math.pow(0.67, count) > randomacc()
-        user[10 + turn][user[10 + turn].length - 1]['hit'] = hit
-        if (user[10 + turn].length > 1){
-            if (user[10 + turn][user[10 + turn].length - 2].movetype == 'protect' && user[10 + turn][user[10 + turn].length - 2].hit == false) return true
-        }
-        return hit
-    } else {
-        user[10 + turn][user[10 + turn].length - 1]['hit'] = false
-        return false
-    } 
+    if (turn == 1) return false
+    if (movehistory[0].length <= 1) return true
+    if (movehistory[0][movehistory[turn].length - 2].movetype == 'protect' && movehistory[0][movehistory[turn].length - 2].hit == false) return true
+    let count = 0
+    for (let i = movehistory[0].length - 1; i >= 0; i--) {
+        if (movehistory[0][i].movetype && movehistory[0][i].movetype == 'protect' && movehistory[0][i].hit) count++
+        else break
+    }
+    return movehistory[0][movehistory[0].length - 1]['hit'] = 100 * Math.pow(2 / 3, count) > randomacc()
 }
 
 function indexcheck() {
@@ -95,7 +124,7 @@ function setspeed(round) {
     mon = [p1faster ? p1.pokemon[0] : p2.pokemon[0], p1faster ? p2.pokemon[0] : p1.pokemon[0]]
     stats = [p1faster ? player : rival, p1faster ? rival : player]
     trainer = [p1faster ? p1 : p2, p1faster ? p2 : p1]
-    currentmove = [p1faster ? p1move : p2move, p1faster ? p2move : p1move]
+    currentmove = [JSON.parse(JSON.stringify(p1faster ? p1move : p2move)), JSON.parse(JSON.stringify(p1faster ? p2move : p1move))]
     movehistory = [p1faster ? p1movehistory : p2movehistory, p1faster ? p2movehistory : p1movehistory]
     monstatus = [p1faster ? p1.pokemon[0].status : p2.pokemon[0].status, p1faster ? p2.pokemon[0].status : p1.pokemon[0].status]
     invul = [p1faster ? p1invul : p2invul, p1faster ? p2invul : p1invul]

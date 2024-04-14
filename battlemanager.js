@@ -1,5 +1,5 @@
-async function battlemanager(moveinput, pp) {
-    prelimfunctions(moveinput, pp)
+async function battlemanager(moveinput, enemymove, pp) {
+    prelimfunctions(moveinput, enemymove, pp)
 
     for (let i = 0; i < 2; i++) {
         checkacc(mon[i], i)
@@ -12,24 +12,36 @@ async function battlemanager(moveinput, pp) {
     await endofrounddamage()
     await newpokemon()
 
+    await multiturnevents()
     battlemessage = p1.pokemon.every(pokemon => pokemon.hp === 0) ? 'Du tapte!' : p2.pokemon.every(pokemon => pokemon.hp === 0) ? 'Du vant!' : ''
     buttonsenabled = battlemessage == '' ? true : false
     updateview()
-    if (skipchoice) {
-        battlemanager()
-    } 
-    await multiturnevents()
+    await multiturndmgmoves()
 }
 
 async function multiturnevents(){
-    roundcounter++
+    if (global.trickroom) {
+        if (global.trickroom == 6) {
+            battlemessage = 'Dimensjonene gikk tilbake til normalt!'
+            global.trickroom = 0
+            updateview()
+            await delay(2000)
+        } else global.trickroom ++
+    }
+}
+
+async function multiturndmgmoves() {
+    flexmoves = [JSON.parse(JSON.stringify(p2move)), JSON.parse(JSON.stringify(p1move))]
+    for (let i = 0; i < 2; i++) {
+        if (flexmoves[i].turn2) i == 0 ? p2nextmove = flexmoves[i].turn2 : battlemanager(flexmoves[i].turn2, randommove())
+    }
 }
 
 async function endofrounddamage() {      // brn, psn, tox, sandstorm
     let what = ['brn', 'brn', 'psn', 'psn', 'tox', 'tox', weather.weather, weather.weather]
 
     for (let i = 0; i < 8; i++) {
-        n = i % 2 == 0 ? 0 : 1
+        let n = i % 2 == 0 ? 0 : 1
         value = what[i] == 'brn' ? 0.125 : 0.0625
         if ((monstatus[n] == what[i] && mon[n].hp > 0 && i < 6) || (what[i] == 'sandstorm' && ![8, 12, 16].includes(mon[n].type1) &&
             ![8, 12, 16].includes(mon[n].type2) && mon[n].hp > 0)) {
@@ -49,8 +61,11 @@ async function newpokemon() {
     for (let i = 0; i < 2; i++) {
         if (mon[i].hp == 0 && !trainer[i].pokemon.every(pokemon => pokemon.hp == 0) &&
             (((trainer[i] == p1 ? p1faster : !p1faster) && i == 0) || ((trainer[i] == p1 ? !p1faster : p1faster) && i == 1))) {
+            resetstats(stats[i], mon[i])
             trainer[i] == p1 ? (deadp1 = null, await changepokemon()) : (deadp2 = null, newpokemonout = p2.pokemon.splice(indexcheck(), 1)[0], p2.pokemon.unshift(newpokemonout))
-            battlemessage = trainer[i].name + ' sendte ut ' + mon[n].name + '!'
+            setspeed()
+            if (who[i] == 'friend') assignpp()
+            battlemessage = trainer[i].name + ' sendte ut ' + mon[i].name + '!'
             updateview()
             await delay(3000)
             setspeed()
@@ -59,7 +74,7 @@ async function newpokemon() {
     }
 }
 
-async function hazards(who) {      
+async function hazards(who) {
     let what = who == p1.pokemon[0] ? [player.spk, player.tspk, player.strk, player.stwb, player] : [rival.spk, rival.tspk, rival.strk, rival.stwb, rival]
     let damage = [[1 / 8, 1 / 6, 1 / 4], ['psn', 'tox'], [(1 / 8) * types[12][who.type1] * types[12][who.type2]]]
 
@@ -76,22 +91,22 @@ async function hazards(who) {
             if (who.hp == 0) await deathdisplay(i)
             updateview()
             await delay(2000)
-            if (i == 3 && whostat[0].spe > 0) {
+            if (i == 3 && whostat[4].spe > 0) {
                 statmsg('spe', -1, who.name)
-                whostat[4].spe--
+                updatestats(what[4] == player ? 'friend' : 'foe', 'spe', whostat[4].spe--)
                 await playsound('statdown')
                 updateview()
-                await delay(2000)  
+                await delay(2000)
             }
         }
     }
 }
 
-async function prelimfunctions(moveinput, pp) {
+async function prelimfunctions(moveinput, enemymove, pp) {
     buttonsenabled = false
-    p1.pokemon[0].pp[pp]--
-    p1move = moveinput != 'switch' ? moves[moveinput] : moveinput
-    p2move = moves[p2.pokemon[0].move[randommove()]]
+    if (moves[pp] && moves[pp].pp) p1.pokemon[0].pp[pp]--
+    p1move = !Number.isInteger(moveinput) ? moveinput : moveinput != 'switch' ? moves[moveinput] : moveinput
+    p2move = p2nextmove || moves[p2.pokemon[0].move[enemymove]]; p2nextmove = null
     p1movehistory.push(JSON.parse(JSON.stringify(p1move)))
     p2movehistory.push(JSON.parse(JSON.stringify(p2move)))
     setspeed('round')

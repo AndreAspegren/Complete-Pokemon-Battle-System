@@ -1,77 +1,92 @@
 async function moveevents(i) {
-    completed = false
-    if (mon[i] == p1.pokemon[0] && move == 'switch') return        // switch out
-    if (movehistory[i].length != 1) {                                     // movethencd rest    
-        if (movehistory[i][movehistory[i].length - 2].effect == 'movethencd' && movehistory[i][movehistory[i].length - 2].hit == true && movehistory[i][movehistory[i].length - 2].cd != true) {
-            movehistory[i][movehistory[i].length - 1]['cd'] = true
-            battlemessage = uname + ' må hvile!'
-            completed = true
-            skipchoice = false
-        }
-    }
-    if (mon[i].hp == 0) await deathdisplay(i, 'turn')         
-    if (skipturn && mon[i].hp != 0) await turnskip(i)
-    if (currentmove[i].effect == 'hidethencd') await hidethencd(i)
-    if (movehistory[i].length != 1) {
-        if (movehistory[i][movehistory[i].length -2].effect == 'hidethencd' && movehistory[i][movehistory[i].length -1] == 'skipchoice') await hidethencd(i)
-    }
-    if (!completed) {                                       // hvis ikke noe annet, så dette
-        battlemessage = mon[i].name + ' brutke ' + currentmove[i].name + '!'
+    if (mon[i] == p1.pokemon[0] && move == 'switch') return
+    if (ustat.cnf) await confused()
+    if (mon[i].hp == 0) await deathdisplay(i, 'turn')
+    else if (move.turn2 && !move.dmg || move.movetype == 'recharge') await multiturnmove(i)
+    else {
+        if (['slp', 'frz', 'par'].includes(mon[i].status)) await statusing()
+        if (statused) return statused = false
+        battlemessage = mon[i].name + ' brutke ' + move.name + '!'
         updateview()
         await delay(2000)
-        await window[currentmove[i].movetype]()
-    }
-} 
-
-async function hidethencd(i){
-    if (currentmove[i].effect == 'hidethencd'){
-        thismove = currentmove[i].name.toLowerCase().split(' ').join('')
-        hidemessage = {
-            dig: mon[turn].name + ' gravde seg under bakken!',
-            fly: mon[turn].name + ' fløy opp høyt!',
-            phantomforce: mon[turn].name + ' forsvant med en gang!',
-            Dive: mon[turn].name + ' stupte undervann!',
-            Bounce: mon[turn].name + ' hoppet opp høyt!',
-        }
-        mon[i] == p1.pokemon[0] ? p1invul = thismove : p2invul = thismove
-        battlemessage = hidemessage[thismove]
-        completed = true
-        skipchoice = true
-    } else {
-        battlemessage = mon[i].name + ' brutke ' + movehistory[i][movehistory[i].length -2].name + '!'
-        updateview()
-        mon[i] == p1.pokemon[0] ? p1invul = false : p2invul = false
-        completed = true
-        await delay(2000)
-        await window[movehistory[i][movehistory[i].length -2].movetype]()
-        skipchoice = false
+        if (invul[turn]) me == 'friend' ? p1invul = false : p2invul = false
+        if (protected && umovehit) nomove()
+        else if (umovehit || move.acc == 0) await window[move.movetype]()
+        else missed()
     }
 }
 
-async function deathdisplay(i, turn){
-    if (turn) affected = [stats[i], mon[i]]
-    !turn && (i == 0 && p1faster || i == 0 && !p1faster) ? affected = [player, p1.pokemon[0]] : affected = [rival, p2.pokemon[0]]
-    resetstats(affected[0])
-    completed = true
+async function statusing() {
+    if (['frz'].includes(mon[i].status)) {
+        if (Math.random() < 0.2) {
+            battlemessage = uname + ' smeltet ut!'
+            updatestats(who[i], '')
+        } else {
+            battlemessage = uname + ' er frosset fast!'
+            statused = true
+        }
+    }
+    if (['slp'].includes(mon[i].status)) {
+        if (mon[i].status == 'slp3' || mon[i].status != 'slp' && Math.random() < 0.5) {
+            battlemessage = uname + ' våknet!'
+            updatestats(who[i], '')
+        } else {
+            let slp = mon[i].status
+            updatestats(who[i], slp.length > 3 ? slp.replace(/\d+$/, num => +num + 1) : slp + '1')
+            battlemessage = uname + ' sover raskt!'
+            statused = true
+        }
+    }
+    if (['par'].includes(mon[i].status)) {
+        if (paralysed) {
+            battlemessage = uname + ' er paralysert! Den kan ikke bevege seg!'
+            statused = true
+            paralysed = false
+        } else return
+    }
     updateview()
     await delay(2000)
-    battlemessage = affected[1].name + ' døde!'
-    updateview()
-    await delay(2000)
-    turn && stats[i] == player ? deadp1 = true : deadp2 = true
-    !turn && affected[0] == player ? deadp1 = true : deadp2 = true
 }
 
-async function turnskip(i){
-        if (skipturn == true) {
-            battlemessage = mon[n].name + ' brutke ' + currentmove[i].name + '!'
-            updateview()
-            await delay(2000)
-            battlemessage = oname + ' beskyttet seg selv!'
+async function multiturnmove(i) {
+    if (move.movetype == 'invul' || move.movetype == 'charge') {
+        if (['Solar Beam', 'Solar Blade'].includes(move.name) && !move.dmg && weather.weather == 'sun') {
+            who[i] == 'friend' ? (p1move = JSON.parse(JSON.stringify(p1move.turn2)), p1movehistory.pop(), p1movehistory.push(JSON.parse(JSON.stringify(p1move)))) :
+            (p2move = JSON.parse(JSON.stringify(p2move.turn2)), p2movehistory.pop(), p2movehistory.push(JSON.parse(JSON.stringify(p2move))))
+            return
+        } 
+        let message = {
+            dig: ' gravde seg under bakken!',
+            fly: ' fløy opp høyt!',
+            phantomforce: ' forsvant med en gang!',
+            dive: ' stupte undervann!',
+            bounce: ' hoppet opp høyt!',
+            solarbeam: ' samlet opp sollys!',
+            razorwind: ' pisket opp en storm!'
         }
-        if (skipturn == 'flinch') battlemessage = uname  + ' ble rystet!'
-        completed = true
-        skipturn = false
+        battlemessage = uname + message[move.name.toLowerCase().replace(/ /g, '')]
+        if (move.movetype == 'invul') mon[i] == p1.pokemon[0] ? p1invul = move.name : p2invul = move.name
+    }
+    if (move.movetype == 'recharge') battlemessage = uname + ' må hvile!'
+}
+
+async function deathdisplay(i, turn) {
+    let deadmon = null
+    deadmon = (turn ? deadmon = [stats[i], mon[i]] : !turn && (i == 0 && p1faster || i == 0 && !p1faster) ? 
+    [player, p1.pokemon[0]] : [rival, p2.pokemon[0]])
+    updateview()
+    await delay(2000)
+    battlemessage = deadmon[1].name + ' døde!'
+    updateview()
+    await delay(2000)
+    deadp1 = (turn && stats[i] == player) || (!turn && deadmon[0] == player)
+    deadp2 = !deadp1
+}
+
+function nomove() {
+    let message = { protected: ' beskyttet seg selv!', flinch: ' ble rystet!' }
+    battlemessage = oname + message[protected]
+    protected = false
 }
 
 

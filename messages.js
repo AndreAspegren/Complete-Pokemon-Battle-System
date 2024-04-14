@@ -43,7 +43,7 @@ function statusmsg(what, who){
 }
 
 function hazardmsg(what, who) {
-    affected = who == p1.pokemon[0] ? p1.name : p2.name
+    let affected = who == p1.pokemon[0] ? p1.name : p2.name
     let hazardmsgs = {
         spk: 'Spikes var spredt rundt føttene til ' + affected + ' sitt lag!',
         tspk: 'Giftpigger var spredt rundt føttene til ' + affected + ' sitt lag!',
