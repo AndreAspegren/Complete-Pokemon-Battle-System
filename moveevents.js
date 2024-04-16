@@ -1,9 +1,9 @@
 async function moveevents(i) {
     if (mon[i] == p1.pokemon[0] && move == 'switch') return
     if (ustat.cnf) await confused()
-    if (mon[i].hp == 0) await deathdisplay(i, 'turn')
-    else if (move.turn2 && !move.dmg || move.movetype == 'recharge') await multiturnmove(i)
-    else {
+    await deathdisplay(i)
+    if (move.turn2 && !move.dmg || move.movetype == 'recharge') await multiturnmove(i)
+    if (!endturn) {
         if (['slp', 'frz', 'par'].includes(mon[i].status)) await statusing()
         if (statused) return statused = false
         battlemessage = mon[i].name + ' brutke ' + move.name + '!'
@@ -13,7 +13,9 @@ async function moveevents(i) {
         if (protected && umovehit) nomove()
         else if (umovehit || move.acc == 0) await window[move.movetype]()
         else missed()
+        await deathdisplay(i)
     }
+    endturn = false
 }
 
 async function statusing() {
@@ -23,7 +25,7 @@ async function statusing() {
             updatestats(who[i], '')
         } else {
             battlemessage = uname + ' er frosset fast!'
-            statused = true
+            endturn = true
         }
     }
     if (['slp'].includes(mon[i].status)) {
@@ -32,15 +34,15 @@ async function statusing() {
             updatestats(who[i], '')
         } else {
             let slp = mon[i].status
-            updatestats(who[i], slp.length > 3 ? slp.replace(/\d+$/, num => +num + 1) : slp + '1')
+            updatestats(who[i], slp.length > 3 ? slp.replace(/\d+$/, num => + num + 1) : slp + '1')
             battlemessage = uname + ' sover raskt!'
-            statused = true
+            endturn = true
         }
     }
     if (['par'].includes(mon[i].status)) {
         if (paralysed) {
             battlemessage = uname + ' er paralysert! Den kan ikke bevege seg!'
-            statused = true
+            endturn = true
             paralysed = false
         } else return
     }
@@ -52,9 +54,9 @@ async function multiturnmove(i) {
     if (move.movetype == 'invul' || move.movetype == 'charge') {
         if (['Solar Beam', 'Solar Blade'].includes(move.name) && !move.dmg && weather.weather == 'sun') {
             who[i] == 'friend' ? (p1move = JSON.parse(JSON.stringify(p1move.turn2)), p1movehistory.pop(), p1movehistory.push(JSON.parse(JSON.stringify(p1move)))) :
-            (p2move = JSON.parse(JSON.stringify(p2move.turn2)), p2movehistory.pop(), p2movehistory.push(JSON.parse(JSON.stringify(p2move))))
+                (p2move = JSON.parse(JSON.stringify(p2move.turn2)), p2movehistory.pop(), p2movehistory.push(JSON.parse(JSON.stringify(p2move))))
             return
-        } 
+        }
         let message = {
             dig: ' gravde seg under bakken!',
             fly: ' fløy opp høyt!',
@@ -70,17 +72,20 @@ async function multiturnmove(i) {
     if (move.movetype == 'recharge') battlemessage = uname + ' må hvile!'
 }
 
-async function deathdisplay(i, turn) {
-    let deadmon = null
-    deadmon = (turn ? deadmon = [stats[i], mon[i]] : !turn && (i == 0 && p1faster || i == 0 && !p1faster) ? 
-    [player, p1.pokemon[0]] : [rival, p2.pokemon[0]])
-    updateview()
-    await delay(2000)
-    battlemessage = deadmon[1].name + ' døde!'
-    updateview()
-    await delay(2000)
-    deadp1 = (turn && stats[i] == player) || (!turn && deadmon[0] == player)
-    deadp2 = !deadp1
+async function deathdisplay(i) {
+    if (mon[i].hp == 0) endturn = true
+    for (let i = 0; i < 2; i++) {
+        if (mon[i].hp == 0 && ((who[i] == 'friend' && !deadp1) || (who[i] == 'foe' && !deadp2))) {
+            updateview()
+            await delay(1500)
+            battlemessage = mon[i].name + ' døde!'
+            updateview()
+            resetstats(stats[i], mon[i])
+            await delay(1500)
+            who[i] == 'friend' ? deadp1 = true : deadp2 = true
+            updateview()
+        }
+    }
 }
 
 function nomove() {

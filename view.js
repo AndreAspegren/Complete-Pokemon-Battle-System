@@ -61,12 +61,12 @@ function genui() {
     return buttons
 }
 
-async function changepokemon() {
+async function changepokemon(switchmove) {
     let caughtpokemon = ''
     for (let i = 0; i < p1.pokemon.length; i++) {
         if (p1.pokemon[i].name != ''){
             caughtpokemon += /*HTML*/ `
-            <div style="height: 24vh; width: auto;" onclick="changeto(${i})">
+            <div style="height: 24vh; width: auto;" onclick="changeto(${i}, '${switchmove}')">
             <div style="display: flex; justify-content: space-between">
             <div style="text-align: left;">${p1.pokemon[i].name}</div>
             <div>${statusimages[p1.pokemon[i].status[1]] ?? ''}</div>
@@ -89,7 +89,7 @@ async function changepokemon() {
     return new Promise(resolve => window.resolvechange = resolve)
 }
 
-async function changeto(who) {
+async function changeto(who, switchmove) {
     if (who != 0 && p1.pokemon[0].hp == 0) {            // død bytte
         element = p1.pokemon.splice(who, 1)[0]
         p1.pokemon.unshift(element)
@@ -105,7 +105,8 @@ async function changeto(who) {
         p1.pokemon.unshift(item)
         updateview()
         await delay(2000)
-        battlemanager('switch')
+        if (switchmove == undefined) battlemanager('switch')
+        resolvechange()
     }
 }
 

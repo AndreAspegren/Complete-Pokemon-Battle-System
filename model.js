@@ -11,8 +11,10 @@ let p1invul = null
 let p2invul = null
 let p2nextmove = null
 let statused = null
+let isconfused = null
 let paralysed = null
-let uname
+let endturn = false
+let gameon = true
 
 const types = [
     /* Normal 0*/[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.5, 0, 1, 1, 0.5, 1, 1],
@@ -128,6 +130,18 @@ const moves = [
         acc: 100,
         movetype: 'damage',
         dmg: 40,
+        pp: 35,
+        dmgtype: 'phy',
+        pp: 10,
+    },
+    {
+        name: 'U Turn',
+        type: 11,
+        acc: 100,
+        movetype: 'damage',
+        effect2: 'switchu',
+        acc2: 0,
+        dmg: 70,
         pp: 35,
         dmgtype: 'phy',
         pp: 10,
@@ -459,6 +473,7 @@ const movesounds = {
     bite: new Audio('sounds/moves/sandstorm.mp3'),
     fly: new Audio('sounds/moves/fly.mp3'),
     rockblast: new Audio('sounds/moves/tackle.mp3'),
+    uturn: new Audio('sounds/moves/tackle.mp3'),
 }
 
 

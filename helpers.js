@@ -21,7 +21,7 @@ function checkacc(who, i) {
     let hit = (currentmove[i].acc * statstates[stats[i].acc] * (mon[i].status == 'par' ? 0.75 : 1) * weatheracc() >= random || currentmove[i].acc == 0) && !invulmon
     paralysed = mon[i].status == 'par' && !hit && accwithoutpar
     who == p1.pokemon[0] ? p1movehit = hit : p2movehit = hit
-    movehistory[i][movehistory[i].length - 1]['hit'] = hit
+    if (movehistory[i] > 0) movehistory[i][movehistory[i].length - 1]['hit'] = hit
 }
 
 
@@ -51,7 +51,8 @@ async function playsound(what) {
         await delay(movesounds[what].duration * 1000)
         return
     }
-    movesounds[move.name.toLowerCase().replace(/ /g, '')].play()
+    const sound = movesounds[move.name.toLowerCase().replace(/ /g, '')]
+    sound.play()
     await delay(sound.duration / 2 * 1000)
 }
 

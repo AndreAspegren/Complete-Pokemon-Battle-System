@@ -11,12 +11,8 @@ async function battlemanager(moveinput, enemymove, pp) {
     setspeed()
     await endofrounddamage()
     await newpokemon()
-
     await multiturnevents()
-    battlemessage = p1.pokemon.every(pokemon => pokemon.hp === 0) ? 'Du tapte!' : p2.pokemon.every(pokemon => pokemon.hp === 0) ? 'Du vant!' : ''
-    buttonsenabled = battlemessage == '' ? true : false
-    updateview()
-    await multiturndmgmoves()
+    if (checkend()) await multiturndmgmoves()
 }
 
 async function multiturnevents(){
@@ -60,7 +56,7 @@ async function endofrounddamage() {      // brn, psn, tox, sandstorm
 async function newpokemon() {
     for (let i = 0; i < 2; i++) {
         if (mon[i].hp == 0 && !trainer[i].pokemon.every(pokemon => pokemon.hp == 0) &&
-            (((trainer[i] == p1 ? p1faster : !p1faster) && i == 0) || ((trainer[i] == p1 ? !p1faster : p1faster) && i == 1))) {
+            ((((trainer[i] == p1 ? p1faster : !p1faster) && i == 0) || ((trainer[i] == p1 ? !p1faster : p1faster) && i == 1)))) {
             resetstats(stats[i], mon[i])
             trainer[i] == p1 ? (deadp1 = null, await changepokemon()) : (deadp2 = null, newpokemonout = p2.pokemon.splice(indexcheck(), 1)[0], p2.pokemon.unshift(newpokemonout))
             setspeed()
@@ -113,3 +109,10 @@ async function prelimfunctions(moveinput, enemymove, pp) {
     if (p1move == 'switch') await hazards(p1.pokemon[0])
 }
 
+function checkend(){
+    battlemessage = p1.pokemon.every(p => p.hp === 0) ? 'Du tapte!' : p2.pokemon.every(p => p.hp === 0) ? 'Du vant!' : ''
+    buttonsenabled = battlemessage == '' ? true : false
+    updateview()
+    if (battlemessage != '') return false
+    return true
+}

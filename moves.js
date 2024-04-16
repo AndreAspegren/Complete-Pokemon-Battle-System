@@ -4,7 +4,7 @@ async function damage() {
     if (ohp < 0) ohp = 0
     effectivenessmsg()
     updatestats(you, 'hp', ohp)
-    if (checkacc2()) await eval(move.effect2 + '()')
+    if (checkacc2() && move.effect2) await window[move.effect2]()
 }
 
 async function flinch() {
@@ -88,13 +88,14 @@ async function confused() {
         updatestats(who[turn], 'cnf', false)
     } else {
         if (Math.random() < 1 / 3) {
+            endturn = true
             await playsound()
             uhp -= Math.round(((((2 * 10 / 5) + 2)) * (40 * (uatk / udef)) / 12 + 2) * (ustatus == 'brn' ? 0.5 : 1))
             if (uhp < 0) uhp = 0
             updatestats(me, 'hp', uhp)
             battlemessage = 'Den skadet seg selv i sin forvirring!'
             updatestats(who[turn], 'cnf', ustat.cnf + 1)
-        } else return
+        }
     }
     updateview()
     await delay(2000)
@@ -102,7 +103,7 @@ async function confused() {
 
 async function trickroom() {
     global.trickroom = 1,
-    battlemessage = uname + ' vridde dimensjonene!'
+        battlemessage = uname + ' vridde dimensjonene!'
 }
 
 async function status() {
@@ -112,6 +113,23 @@ async function status() {
         updatestats(you, move.statustype)
     }
     else battlemessage = oname + ' har allerede en statustilstand!'
+}
+
+async function switchu() {
+    updateview()
+    await delay(1500)
+    if (trainer[turn].pokemon.slice(1).some(p => p.hp > 0)) {
+        if (who[turn] == 'friend') {
+            await changepokemon('switchmove')
+            assignpp()    
+        } 
+        else {
+            const index = p2.pokemon.findIndex(p => p.hp > 0)
+            const [pokemon] = p2.pokemon.splice(index, 1)
+            p2.pokemon.unshift(pokemon)
+        }
+    }
+    setspeed()
 }
 
 async function statusheal() {
@@ -170,12 +188,13 @@ function updatestats(who, what, value) {
     }
 }
 
-function whoismoving(who, i) {
+function whoismoving(who, i) { // u = user, o = opponent
     turn = i
     u = who === 'friend' ? p1.pokemon[0] : p2.pokemon[0]
     ustat = who === 'friend' ? player : rival
     me = who === 'friend' ? 'friend' : 'foe'
     move = who == 'friend' ? p1move : p2move
+    
 
     uname = u.name
     uhp = u.hp
