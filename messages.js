@@ -1,10 +1,10 @@
 function endofroundmsg(what, who) {
     const options = { brn: 'tok brannskade', psn: 'tok giftskade', tox: 'tok giftskade', sandstorm: 'ble skadet av sandstormen' }
-    battlemessage = (who == p1.pokemon[0] ? p1.pokemon[0].name : p2.pokemon[0].name) + ' ' + options[what]
+    battlemessage = who.name + ' ' + options[what]
 }
 
 async function effectivenessmsg() {
-    const effect = (types[move.type][otype1] * types[move.type][otype2])
+    const effect = (types[move[0].type][type1[0]] * types[move[0].type][type2[0]])
     if (effect == 0) battlemessage = 'Det har ingen effekt på ' + oname + '!'
     else if (effect > 1) battlemessage = 'Det var super effektivt!'
     else if (effect < 1) battlemessage = 'Det var ikke veldig effektivt!'
@@ -28,7 +28,7 @@ function weathermsg(){
 }
 
 function missed(){
-    battlemessage = uname + ' bommet!'
+    battlemessage = monname[0] + ' bommet!'
 }
 
 function statusmsg(what, who){
@@ -43,22 +43,21 @@ function statusmsg(what, who){
 }
 
 function hazardmsg(what, who) {
-    let affected = who == p1.pokemon[0] ? p1.name : p2.name
     let hazardmsgs = {
-        spk: 'Spikes var spredt rundt føttene til ' + affected + ' sitt lag!',
-        tspk: 'Giftpigger var spredt rundt føttene til ' + affected + ' sitt lag!',
-        strk: 'Spissede steiner svever i luften rundt ' + affected + ' sitt lag!',
-        stwb: 'Et klebrig nett brer seg ut under ' + affected + ' sitt lag!'
+        spk: 'Spikes var spredt rundt føttene til ' + who + ' sitt lag!',
+        tspk: 'Giftpigger var spredt rundt føttene til ' + who + ' sitt lag!',
+        strk: 'Spissede steiner svever i luften rundt ' + who + ' sitt lag!',
+        stwb: 'Et klebrig nett brer seg ut under ' + who + ' sitt lag!'
     }
     battlemessage = hazardmsgs[what]
 }
 
-function hazardsdmgmsg(what, who) {
+function hazarddmgmsg(what, who) {
     let hazards = {
-        0: who.name + ' ble skadet av pigger!',
-        1: who.name + ' har blitt forgiftet!',
-        2: 'Spisse steiner graver inni ' + who.name + '!',
-        3: who.name + ' ble fanget i et klebrig nett!',
+        0: who + ' ble skadet av pigger!',
+        1: who + ' har blitt forgiftet!',
+        2: 'Spisse steiner graver inni ' + who + '!',
+        3: who + ' ble fanget i et klebrig nett!',
     }
     battlemessage = hazards[what]
 }

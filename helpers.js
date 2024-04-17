@@ -14,14 +14,14 @@ function randomacc() {
     return Math.ceil(Math.random() * 100)
 }
 
-function checkacc(who, i) {
-    invulmon = mon[i] == p1.pokemon[0] ? p2invul : p1invul;
-    let random = randomacc();
-    let accwithoutpar = currentmove[i].acc * statstates[stats[i].acc] * weatheracc() >= random
-    let hit = (currentmove[i].acc * statstates[stats[i].acc] * (mon[i].status == 'par' ? 0.75 : 1) * weatheracc() >= random || currentmove[i].acc == 0) && !invulmon
-    paralysed = mon[i].status == 'par' && !hit && accwithoutpar
-    who == p1.pokemon[0] ? p1movehit = hit : p2movehit = hit
-    if (movehistory[i] > 0) movehistory[i][movehistory[i].length - 1]['hit'] = hit
+function checkacc() {
+    let invulmon = mon[0] == p1.pokemon[0] ? p2invul : p1invul
+    let random = randomacc()
+    let accwithoutpar = move[0].acc * statstates[stats[0].acc] * weatheracc() >= random
+    let hit = (move[0].acc * statstates[stats[0].acc] * (mon[0].status == 'par' ? 0.75 : 1) * weatheracc() >= random || move[0].acc == 0) && !invulmon
+    paralysed = mon[0].status == 'par' && !hit && accwithoutpar
+    mon[0] == p1.pokemon[0] ? p1movehit = hit : p2movehit = hit
+    if (movehistory[0] > 0) movehistory[0][movehistory[0].length - 1]['hit'] = hit
 }
 
 
@@ -41,7 +41,7 @@ function weatheracc() {
 }
 
 function checkacc2() {
-    if (move.effect2 && move.acc2 >= randomacc() || move.acc2 == 0) return true
+    if (move[turn].effect2 && move[turn].acc2 >= randomacc() || move[turn].acc2 == 0) return true
     return false
 }
 
@@ -51,7 +51,7 @@ async function playsound(what) {
         await delay(movesounds[what].duration * 1000)
         return
     }
-    const sound = movesounds[move.name.toLowerCase().replace(/ /g, '')]
+    const sound = movesounds[move[0].name.toLowerCase().replace(/ /g, '')]
     sound.play()
     await delay(sound.duration / 2 * 1000)
 }
@@ -73,13 +73,13 @@ function checkspeed(what) {
 
 
 function dmgcalc() {
-    if (types[move.type][otype1] * types[move.type][otype2] == 0) return 0
-    return Math.round(((((((2 * 10 / 5) + 2)) * (move.dmg * (move.dmgtype == 'phy' ? uatk / odef : uspa / ospd))) / 12 + 2) *
+    if (types[move[0].type][type1[0]] * types[move[0].type][type2[0]] == 0) return 0
+    return Math.round(((((((2 * 10 / 5) + 2)) * (move[0].dmg * (move[0].dmgtype == 'phy' ? mon[0].atk / mon[1].def : mon[0].spa / mon[1].spd))) / 12 + 2) *
         weatherdmg() *
         ((Math.floor(Math.random() * 16) == 0) ? 2 : 1) *
-        (move.type == utype1 || utype2 ? 1.5 : 1) *
-        (types[move.type][otype1] * types[move.type][otype2]) *
-        (ustatus == 'brn' ? 0.5 : 1) *
+        (move[0].type == type1[0] || type2[0] ? 1.5 : 1) *
+        (types[move[0].type][type1[0]] * types[move[0].type][type2[0]]) *
+        (pstatus[0] == 'brn' ? 0.5 : 1) *
         ((Math.floor(Math.random() * 16) + 85) / 100)))
 }
 
@@ -91,13 +91,13 @@ function weatherdmg() {
     if (weather.weather == 'rain') {
         if (move.type == 1) return 0.5
         if (move.type == 2) return 1.5
-        if (['Solar Beam', 'Solar Blade'].includes(move.name) && move.dmg) return 0.5
+        if (['Solar Beam', 'Solar Blade'].includes(move[0].name) && move[0].dmg) return 0.5
     }
     if (weather.weather == 'sandstorm') {
-        if (['Solar Beam', 'Solar Blade'].includes(move.name) && move.dmg) return 0.5
+        if (['Solar Beam', 'Solar Blade'].includes(move[0].name) && move[0].dmg) return 0.5
     }
     if (weather.weather == 'hail') {
-        if (['Solar Beam', 'Solar Blade'].includes(move.name) && move.dmg) return 0.5
+        if (['Solar Beam', 'Solar Blade'].includes(move[0].name) && move[0].dmg) return 0.5
     }
     return 1
 }
@@ -118,15 +118,3 @@ function indexcheck() {
     return p2.pokemon.findIndex(pokemon => pokemon.hp !== 0)
 }
 
-function setspeed(round) {
-    p1faster = checkspeed(round ? 'round' : null)
-
-    who = [p1faster ? 'friend' : 'foe', p1faster ? 'foe' : 'friend']
-    mon = [p1faster ? p1.pokemon[0] : p2.pokemon[0], p1faster ? p2.pokemon[0] : p1.pokemon[0]]
-    stats = [p1faster ? player : rival, p1faster ? rival : player]
-    trainer = [p1faster ? p1 : p2, p1faster ? p2 : p1]
-    currentmove = [JSON.parse(JSON.stringify(p1faster ? p1move : p2move)), JSON.parse(JSON.stringify(p1faster ? p2move : p1move))]
-    movehistory = [p1faster ? p1movehistory : p2movehistory, p1faster ? p2movehistory : p1movehistory]
-    monstatus = [p1faster ? p1.pokemon[0].status : p2.pokemon[0].status, p1faster ? p2.pokemon[0].status : p1.pokemon[0].status]
-    invul = [p1faster ? p1invul : p2invul, p1faster ? p2invul : p1invul]
-}

@@ -38,7 +38,6 @@ const types = [
     /* No Type 18*/[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ]
 
-
 const statstates = [
     2 / 8, 2 / 7, 2 / 6, 2 / 5, 2 / 4, 2 / 3, 2 / 2, 3 / 2, 4 / 2, 5 / 2, 6 / 2, 7 / 2, 8 / 2
 ]
@@ -139,7 +138,7 @@ const moves = [
         type: 11,
         acc: 100,
         movetype: 'damage',
-        effect2: 'switchu',
+        effect2: 'switchuser',
         acc2: 0,
         dmg: 70,
         pp: 35,
@@ -407,6 +406,14 @@ const moves = [
         pp: 5,
         priority: -7,
     },
+    {
+        name: 'Double Edge',
+        type: 0,
+        dmg: 120,
+        acc: 0,
+        movetype: 'recoil',
+        pp: 20,
+    },
 ]
 
 let pokemon = [
@@ -421,7 +428,7 @@ let pokemon = [
         spd: 10,
         spe: 10,
         status: '',
-        move: [27, 2, 1, 3],
+        move: [29, 14, 1, 3],
         pp: [],
         type1: 11,
         type2: 12,
