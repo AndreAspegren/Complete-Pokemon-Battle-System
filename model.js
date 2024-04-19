@@ -122,6 +122,28 @@ const typecolors = ['hsl(58, 20%, 56%)',
     'hsl(330, 49%, 68%)'
 ]
 
+const items = {
+    focussash: {
+        name: 'Focus Sash',
+        effect: 'fullhpdmgsurvival',
+        cd: false,
+    } 
+}
+
+const abilities = {
+    intimidate: {
+        name: 'Intimidate',
+        activateonentry: true,
+        cd: false,
+        effect: 'atkdown',
+    },
+    sturdy: {
+        name: 'Sturdy',
+        effect: 'survive1hpfromfull',
+        cd: false,
+    } 
+}
+
 const moves = [
     {
         name: 'Tackle',
@@ -373,13 +395,13 @@ const moves = [
         type: 3,
         movetype: 'charge',
         turn2: {
-        name: 'Solar Beam',
-        type: 3,
-        dmg: 120,
-        acc: 100,
-        movetype: 'damage',
-        dmgtype: 'spe',
-        pp: 20,
+            name: 'Solar Beam',
+            type: 3,
+            dmg: 120,
+            acc: 100,
+            movetype: 'damage',
+            dmgtype: 'spe',
+            pp: 20,
         }
     },
     {
@@ -411,7 +433,9 @@ const moves = [
         type: 0,
         dmg: 120,
         acc: 0,
-        movetype: 'recoil',
+        movetype: 'damage',
+        effect2: 'recoil',
+        acc2: 0,
         pp: 20,
     },
 ]
@@ -428,13 +452,33 @@ let pokemon = [
         spd: 10,
         spe: 10,
         status: '',
-        move: [29, 14, 1, 3],
+        move: [29, 14, 0, 3],
         pp: [],
         type1: 11,
         type2: 12,
+        ability: JSON.parse(JSON.stringify(abilities.sturdy)),
+        item: JSON.parse(JSON.stringify(items.focussash)),
     },
     {
         name: "Charmander",
+        avatar: `<img style="height: auto; width: 20vh" src="pictures/pokemon/charmander.png" alt="">`,
+        maxhp: 1,
+        hp: 1,
+        atk: 11,
+        def: 8,
+        spa: 13,
+        spd: 10,
+        spe: 1,
+        status: '',
+        move: [0, 0, 0, 0],
+        pp: [],
+        type1: 1,
+        type2: 18,
+        ability: JSON.parse(JSON.stringify(abilities.sturdy)),
+        item: JSON.parse(JSON.stringify(items.focussash)),
+    },
+    {
+        name: "kek",
         avatar: `<img style="height: auto; width: 20vh" src="pictures/pokemon/charmander.png" alt="">`,
         maxhp: 1,
         hp: 1,
@@ -463,7 +507,7 @@ let p2 = {
     name: 'Cynthia',
     avatar: `
     <img style="height: 20vh; width: auto" src="https://www.serebii.net/pokemonmasters/syncpairs/cynthia.png" alt="">`,
-    pokemon: [pokemon[1], pokemon[0], pokemon[0]].map(p => JSON.parse(JSON.stringify(p)))
+    pokemon: [pokemon[1], pokemon[2], pokemon[0]].map(p => JSON.parse(JSON.stringify(p)))
 }
 
 const movesounds = {

@@ -3,7 +3,7 @@ async function damage() {
     hp[1] -= dmgcalc()
     if (hp[1] < 0) hp[1] = 0
     effectivenessmsg()
-    updatestats(mon[1], 'hp', hp[1])
+    await updatestats(mon[1], 'hp', hp[1])
     if (checkacc2() && move[0].effect2) await window[move[0].effect2]()
 }
 
@@ -47,15 +47,11 @@ async function suicide() {
 
 async function protect() {
     let ithit = checkprotect()
-    if (((move[1].dmg || move[1].effect === true)) && ithit) {
-        if (move[1].who) {
-            if (move[1].who.some(str => str.includes('u'))) protected = 'protected'
-        }
-        else protected = 'protected'
-    }
+    if (((move[1].dmg || move[1].effect == true || [move[1].who].includes('u'))) && ithit) protected = 'protected'
     if (ithit) playsound()
     else battlemessage = 'Men det feilet'
 }
+
 
 async function multidmg() {
     let count = 0
@@ -178,44 +174,30 @@ async function stat() { // refactor dette kaoset
 async function updatestats(who, what, value) {
     let stattarget = (who == 'p1') ? player : rival
     let trainer = (who == 'p1') ? p1 : p2
+    let mon = (who == 'p1') ? p1.pokemon[0] : p2.pokemon[0]
+
+
     if (what === 'hp') {
+        if (who.hp === who.maxhp && value === 0 && who.item.effect === 'fullhpdmgsurvival' && !who.item.cd) {
+            return await focussash()
+        }
         who.hp = value
-        if (value == 0) await deathdisplay(who)
+        if (value === 0) await deathdisplay(who)
     }
-    else if (['atk', 'def', 'spa', 'spd', 'spe', 'acc', 'eva', 'cnf'].includes(what)) stattarget[what] = value
+    else if (['atk', 'def', 'spa', 'spd', 'spe', 'acc', 'eva', 'cnf'].includes(what)) {
+        stattarget[what] = value
+    }
+    else if (what === 'status') {
+        trainer.pokemon[0].status = value;
+        if (value === 'tox' && !value) stattarget['txc'] = 1
+    } 
     else {
-        trainer.pokemon[0].status = what
-        if (what == 'tox' && !value) stattarget['txc'] = 1
-    }
+        console.log(mon, what, value)
+        mon[what] = value
+    } 
 }
 
-function setturn(i, moveturn) {
-    let n = i % 2 == 0 ? 0 : 1
 
-    p1faster = checkspeed(moveturn ? 'round' : null)
-    p1turn = p1faster && n == 0 || !p1faster && n == 1
 
-    who = p1turn ? ['p1', 'p2'] : ['p2', 'p1']
-    mon = p1turn ? [p1.pokemon[0], p2.pokemon[0]] : [p2.pokemon[0], p1.pokemon[0]]
-    move = [p1turn ? p1move : p2move, p1turn ? p2move : p1move]
-    stats = p1turn ? [player, rival] : [rival, player]
-    trainer = p1turn ? [p1, p2] : [p2, p1]
-    movehistory = p1turn ? [p1movehistory, p2movehistory] : [p2movehistory, p1movehistory]
-    invul = p1turn ? [p1invul, p2invul] : [p2invul, p1invul]
-    monname = [mon[0].name, mon[1].name]
-    maxhp = [mon[0].maxhp, mon[1].maxhp]
-    hp = [mon[0].hp, mon[1].hp]
-    atk = [mon[0].atk, mon[1].atk]
-    def = [mon[0].def, mon[1].def]
-    spa = [mon[0].spa, mon[1].spa]
-    spd = [mon[0].spd, mon[1].spd]
-    spe = [mon[0].spe, mon[1].spe]
-    acc = [stats[0].acc, stats[1].acc]
-    eva = [stats[0].eva, stats[1].eva]
-    type1 = [mon[0].type1, mon[1].type1]
-    type2 = [mon[0].type2, mon[1].type2]
-    pstatus = [mon[0].status, mon[1].status]
-    if (moveturn) checkacc(mon[0])
-    ithit = p1turn ? p1movehit : p2movehit
-}
+
 

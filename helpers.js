@@ -52,8 +52,8 @@ async function playsound(what) {
         return
     }
     const sound = movesounds[move[0].name.toLowerCase().replace(/ /g, '')]
-    sound.play()
-    await delay(sound.duration / 2 * 1000)
+    // sound.play()
+    // await delay(sound.duration / 2 * 1000)
 }
 
 function checkspeed(what) {
@@ -118,3 +118,31 @@ function indexcheck() {
     return p2.pokemon.findIndex(pokemon => pokemon.hp !== 0)
 }
 
+function setturn(i, what) {
+    let n = i % 2 == 0 ? 0 : 1
+    turn = i
+    if (what != 'newpokemon') p1faster = checkspeed(what ? 'round' : null)
+    p1turn = p1faster && n == 0 || !p1faster && n == 1
+    who = p1turn ? ['p1', 'p2'] : ['p2', 'p1']
+    mon = p1turn ? [p1.pokemon[0], p2.pokemon[0]] : [p2.pokemon[0], p1.pokemon[0]]
+    move = [p1turn ? p1move : p2move, p1turn ? p2move : p1move]
+    stats = p1turn ? [player, rival] : [rival, player]
+    trainer = p1turn ? [p1, p2] : [p2, p1]
+    movehistory = p1turn ? [p1movehistory, p2movehistory] : [p2movehistory, p1movehistory]
+    invul = p1turn ? [p1invul, p2invul] : [p2invul, p1invul]
+    monname = [mon[0].name, mon[1].name]
+    maxhp = [mon[0].maxhp, mon[1].maxhp]
+    hp = [mon[0].hp, mon[1].hp]
+    atk = [mon[0].atk, mon[1].atk]
+    def = [mon[0].def, mon[1].def]
+    spa = [mon[0].spa, mon[1].spa]
+    spd = [mon[0].spd, mon[1].spd]
+    spe = [mon[0].spe, mon[1].spe]
+    acc = [stats[0].acc, stats[1].acc]
+    eva = [stats[0].eva, stats[1].eva]
+    type1 = [mon[0].type1, mon[1].type1]
+    type2 = [mon[0].type2, mon[1].type2]
+    pstatus = [mon[0].status, mon[1].status]
+    if (what == 'turn') checkacc(mon[0])
+    ithit = p1turn ? p1movehit : p2movehit
+}

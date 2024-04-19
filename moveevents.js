@@ -10,7 +10,8 @@ async function moveevents(i) {
         await delay(2000)
         if (invul[0]) who[0] == 'p1' ? p1invul = false : p2invul = false
         if (protected && ithit) nomove()
-        else if (ithit || move[0].acc == 0) await window[move[0].movetype]()
+        else if ((ithit || move[0].acc == 0) && (mon[1].hp != 0 ||
+            (mon[1].hp == 0 && !move[0].dmg && move[0].effect != true && !move[0].who.includes('u')))) await window[move[0].movetype]()
         else missed()
     }
 }

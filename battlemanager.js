@@ -2,7 +2,7 @@ async function battlemanager(moveinput, enemymove, pp) {
     prelimfunctions(moveinput, enemymove, pp)
 
     for (let i = 0; i < 2; i++) {
-        setturn(i, 'moveturn')
+        setturn(i, 'turn')
         await moveevents(i)
         updateview()
         await delay(2000)
@@ -52,16 +52,18 @@ async function endofrounddamage() {      // brn, psn, tox, sandstorm
 }
 
 async function newpokemon() {
+    setturn(0)
     for (let i = 0; i < 2; i++) {
         if (mon[i].hp == 0 && !trainer[i].pokemon.every(p => p.hp == 0)) {
             resetstats(stats[i], mon[i])
-            trainer[i] == p1 ? (deadp1 = null, await changepokemon()) : (deadp2 = null, newpokemonout = p2.pokemon.splice(indexcheck(), 1)[0], p2.pokemon.unshift(newpokemonout))
-            if (who[i] == 'p1') assignpp()
-            setturn(i)
-            battlemessage = trainer[i].name + ' sendte ut ' + monname[i] + '!'
+            who[i] == 'p1' ? (deadp1 = null, await changepokemon()) : (deadp2 = null, newpokemonout = p2.pokemon.splice(indexcheck(), 1)[0], p2.pokemon.unshift(newpokemonout))
+            setturn(i, 'newpokemon')
+            if (who[0] == 'p1') assignpp()
+            battlemessage = trainer[0].name + ' sendte ut ' + monname[0] + '!'
             updateview()
-            await delay(3000)
-            await hazards(mon[i])
+            await delay(2000)
+            if (abilities[mon[0].ability].activateonentry) await abilityonentry()
+            await hazards(mon[0])
         }
     }
 }
@@ -70,7 +72,6 @@ async function hazards(who) {
     let what = who == p1.pokemon[0] ? [player.spk, player.tspk, player.strk, player.stwb, player] : [rival.spk, rival.tspk, rival.strk, rival.stwb, rival]
     let damage = [[1 / 8, 1 / 6, 1 / 4], ['psn', 'tox'], [(1 / 8) * types[12][who.type1] * types[12][who.type2]]]
     
-
     for (let i = 0; i < 4; i++) {
         if (what[i] > 0 && who.hp != 0) {
             if (i == 1) updatestats(who, damage[i][what[i] - 1])
