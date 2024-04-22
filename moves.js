@@ -176,10 +176,9 @@ async function updatestats(who, what, value) {
     let trainer = (who == 'p1') ? p1 : p2
     let mon = (who == 'p1') ? p1.pokemon[0] : p2.pokemon[0]
 
-
     if (what === 'hp') {
         if (who.hp === who.maxhp && value === 0 && who.item.effect === 'fullhpdmgsurvival' && !who.item.cd) {
-            return await focussash()
+            return await who.item.function()
         }
         who.hp = value
         if (value === 0) await deathdisplay(who)
@@ -193,7 +192,7 @@ async function updatestats(who, what, value) {
     } 
     else {
         console.log(mon, what, value)
-        mon[what] = value
+        mon[what] = false
     } 
 }
 

@@ -130,19 +130,19 @@ const items = {
     } 
 }
 
-const abilities = {
-    intimidate: {
+const abilities = [
+    {
         name: 'Intimidate',
         activateonentry: true,
         cd: false,
         effect: 'atkdown',
     },
-    sturdy: {
+    {
         name: 'Sturdy',
         effect: 'survive1hpfromfull',
         cd: false,
     } 
-}
+]
 
 const moves = [
     {
@@ -456,7 +456,7 @@ let pokemon = [
         pp: [],
         type1: 11,
         type2: 12,
-        ability: JSON.parse(JSON.stringify(abilities.sturdy)),
+        ability: JSON.parse(JSON.stringify(abilities[1])),
         item: JSON.parse(JSON.stringify(items.focussash)),
     },
     {
@@ -474,7 +474,7 @@ let pokemon = [
         pp: [],
         type1: 1,
         type2: 18,
-        ability: JSON.parse(JSON.stringify(abilities.sturdy)),
+        ability: JSON.parse(JSON.stringify(abilities[1])),
         item: JSON.parse(JSON.stringify(items.focussash)),
     },
     {
