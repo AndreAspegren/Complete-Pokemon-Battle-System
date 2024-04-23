@@ -444,14 +444,15 @@ let pokemon = [
     {
         name: "Dwebble",
         avatar: `<img style="height: auto; width: 20vh" src="pictures/pokemon/dwebble.png" alt="">`,
-        maxhp: 10000,
-        hp: 10000,
+        url: 'pictures/pokemon/dwebble.png',
+        maxhp: 10,
+        hp: 5,
         atk: 10,
         def: 10,
         spa: 10,
         spd: 10,
         spe: 10,
-        status: '',
+        status: 'tox',
         move: [29, 14, 0, 3],
         pp: [],
         type1: 11,
@@ -462,6 +463,7 @@ let pokemon = [
     {
         name: "Charmander",
         avatar: `<img style="height: auto; width: 20vh" src="pictures/pokemon/charmander.png" alt="">`,
+        url: 'pictures/pokemon/charmander.png',
         maxhp: 1,
         hp: 1,
         atk: 11,
@@ -500,7 +502,7 @@ let p1 = {
     avatar: `<div>
     <img style="height: 20vh; width: auto" src="https://archives.bulbagarden.net/media/upload/thumb/d/d3/Lets_Go_Pikachu_Eevee_Red.png/250px-Lets_Go_Pikachu_Eevee_Red.png" alt="}">
     `,
-    pokemon: [pokemon[0], pokemon[1], pokemon[0]].map(p => JSON.parse(JSON.stringify(p)))
+    pokemon: [pokemon[0], pokemon[1], pokemon[1], pokemon[0]].map(p => JSON.parse(JSON.stringify(p)))
 }
 
 let p2 = {

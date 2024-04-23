@@ -64,27 +64,50 @@ function genui() {
 async function changepokemon(switchmove) {
     let caughtpokemon = ''
     for (let i = 0; i < p1.pokemon.length; i++) {
+        console.log(p1.pokemon[i].item.name.toLowerCase().replace(' ', ''))
         if (p1.pokemon[i].name != ''){
             caughtpokemon += /*HTML*/ `
-            <div style="height: 24vh; width: auto;" onclick="changeto(${i}, '${switchmove}')">
-            <div style="display: flex; justify-content: space-between">
-            <div style="text-align: left;">${p1.pokemon[i].name}</div>
-            <div>${statusimages[p1.pokemon[i].status[1]] ?? ''}</div>
-            </div>
+            <div id="changegrandparent">
+            <div id="changeparent" onclick="changeto(${i}, '${switchmove}')">
+
+            <div id="info">
+            
+            <div style="">
+            <div>${p1.pokemon[i].name}</div>
             <div>${`${p1.pokemon[i].hp} / ${p1.pokemon[i].maxhp} HP`}</div>
-            <div style="display: flex; height: 30px;">
-            <div style="width: ${(p1.pokemon[i].hp / p1.pokemon[i].maxhp * 100).toString()}%; background-color: green;"></div>
-            <div style="flex-grow: 1; background-color: red;"></div>
             </div>
-            ${p1.pokemon[i].avatar}
+
+            <div>${statusimages[p1.pokemon[i].status] ?? ''}</div>
+            
+            <div>
+            <div>${p1.pokemon[i].item ? `<img src="pictures/items/${p1.pokemon[i].item.name.toLowerCase().replace(' ', '')}.png" style="height: 2vh; width: auto;">` : ''}</div>
+            <div>${p1.pokemon[i].ability ? `${p1.pokemon[i].ability.name}` : ''}</div>
+            </div>
+
+            </div>
+            
+            <div id="hp">
+            <div style="width: ${(p1.pokemon[i].hp / p1.pokemon[i].maxhp * 100).toString()}%; background-color: green;"></div>
+            <div style="width: ${((p1.pokemon[i].maxhp - p1.pokemon[i].hp) / p1.pokemon[i].maxhp * 100).toString()}%; background-color: red;"></div>
+            </div>
+    
+            
+            <div id="avatar">
+            <img src="${p1.pokemon[i].url}">
+            </div>
+
+            </div>
             </div>
             `
         }
     }
-    app.innerHTML = /*HTML*/`<div style="position: fixed; top: 5%; left: 50%; transform: translateX(-50%)">Trykk på pokemonen du vil bytte til</div>
-    <div style="display: grid; grid-template-columns: repeat(2, 1fr); width: auto; height: 80vh; position: fixed; left: 50%; top: 50%; transform: 
-    translate(-50%, -50%); gap: 5vh;">${caughtpokemon}<button style="position: fixed; bottom: -5vh; left: 50vw" 
-    onclick="updateview()">Gå tilbake</button>`
+    app.innerHTML = /*HTML*/`<div style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0; justify-content: center; align-items: center; width: 60vw; height: 80vh; border: 1px solid black">
+        ${caughtpokemon}
+    </div>
+    <button onclick="updateview()">Gå tilbake</button>
+</div>
+`
     
     return new Promise(resolve => window.resolvechange = resolve)
 }
