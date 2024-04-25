@@ -47,7 +47,7 @@ async function suicide() {
 
 async function protect() {
     let ithit = checkprotect()
-    if (((move[1].dmg || move[1].effect == true || [move[1].who].includes('u'))) && ithit) protected = 'protected'
+    if (((move[1].dmg || move[1].effect == true || [move[1].who].includes('you'))) && ithit) protected = 'protected'
     if (ithit) playsound()
     else battlemessage = 'Men det feilet'
 }
@@ -144,50 +144,69 @@ async function weatherchange() {
     weathermsg()
 }
 
-async function stat() { // refactor dette kaoset
+async function stat() {
     if (move[0].movetype == 'stat') await playsound()
     for (let i = 0; i < move[0].effect.length; i++) {
-        target = (who[0] == 'friend' && move[0].who[i] == 'u') || (me == 'foe' && move.who[i] == 'o') ? [player, 'friend'] : [rival, 'foe']
-        targetname = me == 'friend' && move.who[i] == 'u' || me == 'foe' && move.who[i] == 'u' ? uname : oname
-        currentstat = target[0][move.effecttype[i]]
-        newstat = target[0][move.effecttype[i]] + move.effect[i]
-
+        let target = (who[0] == 'friend' && move[0].who[i] == 'me') || (me == 'foe' && move.who[i] == 'you') ? [player, 'p1', monname[0]] : [rival, 'p2', monname[1]]
+        let currentstat = target[0][move.effecttype[i]]
+        let newstat = target[0][move.effecttype[i]] + move.effect[i]
+        let stats = {'atk': 'angrep', 'def': 'forsvar',   
+            'spa': 'spesialangrep', 'spd': 'spesialforsvar',
+            'spe': 'hastighet', 'acc': 'nøyaktighet',   
+            'eva': 'unngåelse',  
+        }
+        
         if (currentstat == 0 && newstat < 0 && move.movetype == 'stat') {
             newstat = 0
-            battlemessage = name + ' sin ' + move.effecttype[i] + ' kan ikke gå lavere'
+            battlemessage = target[2] + ' sin ' + stats[move.effecttype[i]] + ' kan ikke gå lavere'
         }
         else if (currentstat == 12 && newstat > 12 && move.movetype == 'stat') {
             newstat = 12
-            battlemessage = uname + ' sin ' + move.effecttype[i] + ' kan ikke gå høyere'
+            battlemessage = target[2] + ' sin ' + stats[move.effecttype[i]] + ' kan ikke gå høyere'
         }
 
         if (i == 0 && move.effect[i] < 0 && currentstat != 0) await playsound('statdown')
         else if ((i == 0 && move.effect[i] > 0 || move.effect[i] > 0 && move.effect[i - 1] < 0) && currentstat != 12) await playsound('statup')
 
+        statmsg(move.effecttype[i], move.effect[i], target[2])
         updatestats(target[1], move.effecttype[i], newstat)
-        statmsg(move.effecttype[i], move.effect[i], targetname)
+        updateview()
+        await delay(1100)
+    }
+}
+
+async function parstat(who, what, value) {
+    for (let i = 0; i < what.length; i++) {
+
+        if ((currentstat == 12 && value[i] > 0) || (currentstat == 0 && value[i] < 0)) return
+
+        let currentstat = who[i][what[i]]
+        let newstat = currentstat + value[i]
+        newstat > 12 
+        if (i == 0 && value[i] < 0) await playsound('statdown')
+        else if (i == 0 && value[i] > 0) await playsound('statup')
+        else if (i > 0) if (value[i] > 0 && value[i - 1] < 0) await playsound('statup')
+
+        statmsg(move.effecttype[i], move.effect[i], target[2])
+        updatestats(who[i], what[i], newstat) 
         updateview()
         await delay(1100)
     }
 }
 
 async function updatestats(who, what, value, what2) {
-    let stattarget = who == 'p1' ? player : rival
-    let trainer = who == 'p1' ? p1 : p2
     let mon = who == 'p1' ? p1.pokemon[0] : p2.pokemon[0]
+    let stat = who == 'p1' ? player : rival
 
-    if (what === 'hp') {
-        if (who.hp === who.maxhp && value === 0 && who.item.effect === 'fullhpdmgsurvival' && !mon.item.cd) {
-            return await focussash()
-        }
+    if (what == 'hp') {
+        if (who.hp == who.maxhp && value === 0 && who.item.effect === 'fullhpdmgsurvival' && !mon.item.cd) return await focussash()
         who.hp = value
-        if (value === 0) await deathdisplay(who)
+        if (value == 0) await deathdisplay(who)
     }
-    else if (['atk', 'def', 'spa', 'spd', 'spe', 'acc', 'eva', 'cnf'].includes(what)) stattarget[what] = value
-    else if (what === 'status') {
-        trainer.pokemon[0].status = value;
-        if (value === 'tox' && !value) stattarget['txc'] = 1
-    } 
-    else who == 'p1' ? p1.pokemon[0].what = value : p2.pokemon[0][what][what2] = value   
+    else if (['atk', 'def', 'spa', 'spd', 'spe', 'acc', 'eva', 'cnf'].includes(what)) stat[what] = value
+    else if (what == 'status') {
+        mon.status = value
+        if (value == false) stat['txc'] = 1
+    }
+    else what2 ? mon[what][what2] = value : mon[what] = value
 }
-
