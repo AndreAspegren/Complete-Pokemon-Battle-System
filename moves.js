@@ -171,32 +171,23 @@ async function stat() { // refactor dette kaoset
     }
 }
 
-async function updatestats(who, what, value) {
-    let stattarget = (who == 'p1') ? player : rival
-    let trainer = (who == 'p1') ? p1 : p2
-    let mon = (who == 'p1') ? p1.pokemon[0] : p2.pokemon[0]
+async function updatestats(who, what, value, what2) {
+    let stattarget = who == 'p1' ? player : rival
+    let trainer = who == 'p1' ? p1 : p2
+    let mon = who == 'p1' ? p1.pokemon[0] : p2.pokemon[0]
 
     if (what === 'hp') {
-        if (who.hp === who.maxhp && value === 0 && who.item.effect === 'fullhpdmgsurvival' && !who.item.cd) {
-            return await who.item.function()
+        if (who.hp === who.maxhp && value === 0 && who.item.effect === 'fullhpdmgsurvival' && !mon.item.cd) {
+            return await focussash()
         }
         who.hp = value
         if (value === 0) await deathdisplay(who)
     }
-    else if (['atk', 'def', 'spa', 'spd', 'spe', 'acc', 'eva', 'cnf'].includes(what)) {
-        stattarget[what] = value
-    }
+    else if (['atk', 'def', 'spa', 'spd', 'spe', 'acc', 'eva', 'cnf'].includes(what)) stattarget[what] = value
     else if (what === 'status') {
         trainer.pokemon[0].status = value;
         if (value === 'tox' && !value) stattarget['txc'] = 1
     } 
-    else {
-        console.log(mon, what, value)
-        mon[what] = false
-    } 
+    else who == 'p1' ? p1.pokemon[0].what = value : p2.pokemon[0][what][what2] = value   
 }
-
-
-
-
 

@@ -102,6 +102,10 @@ function weatherdmg() {
     return 1
 }
 
+function randommove() {
+    return Math.floor(Math.random() * 4)
+}
+
 function checkprotect() {
     if (turn == 1) return false
     if (movehistory[0].length <= 1) return true

@@ -122,13 +122,13 @@ const typecolors = ['hsl(58, 20%, 56%)',
     'hsl(330, 49%, 68%)'
 ]
 
-const items = {
-    focussash: {
+const items = [
+    {
         name: 'Focus Sash',
         effect: 'fullhpdmgsurvival',
         cd: false,
-    } 
-}
+    }
+]
 
 const abilities = [
     {
@@ -141,7 +141,7 @@ const abilities = [
         name: 'Sturdy',
         effect: 'survive1hpfromfull',
         cd: false,
-    } 
+    }
 ]
 
 const moves = [
@@ -458,7 +458,7 @@ let pokemon = [
         type1: 11,
         type2: 12,
         ability: JSON.parse(JSON.stringify(abilities[1])),
-        item: JSON.parse(JSON.stringify(items.focussash)),
+        item: JSON.parse(JSON.stringify(items[0])),
     },
     {
         name: "Charmander",
@@ -477,7 +477,7 @@ let pokemon = [
         type1: 1,
         type2: 18,
         ability: JSON.parse(JSON.stringify(abilities[1])),
-        item: JSON.parse(JSON.stringify(items.focussash)),
+        item: JSON.parse(JSON.stringify(items[0])),
     },
     {
         name: "kek",

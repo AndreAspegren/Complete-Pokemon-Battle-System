@@ -1,4 +1,5 @@
 async function battlemanager(moveinput, enemymove, pp) {
+    console.log(moveinput)
     prelimfunctions(moveinput, enemymove, pp)
 
     for (let i = 0; i < 2; i++) {
@@ -39,7 +40,7 @@ async function endofrounddamage() {      // brn, psn, tox, sandstorm
         value = what[i] == 'brn' ? 0.125 : 0.0625
         if ((pstatus[0] == what[i] && mon[0].hp > 0 && i < 6) || (what[i] == 'sandstorm' && ![8, 12, 16].includes(mon[0].type1) &&
             ![8, 12, 16].includes(mon[0].type2) && mon[0].hp > 0)) {
-            effect = Math.round((mon[0].maxhp * (what[i] == 'tox' ? value * stats[n].txc : value)))
+            effect = Math.round((mon[0].maxhp * (what[i] == 'tox' ? value * stats[0].txc : value)))
             mon[0].hp -= effect < 1 ? effect = 1 : effect
             if (mon[0].hp < 0) mon[0].hp = 0
             if (what == 'tox') stats[0].toxcounter++
@@ -62,7 +63,7 @@ async function newpokemon() {
             battlemessage = trainer[0].name + ' sendte ut ' + monname[0] + '!'
             updateview()
             await delay(2000)
-            if (abilities[mon[0].ability].activateonentry) await abilityonentry()
+           // if (abilities[mon[0].ability].activateonentry) await abilityonentry()
             await hazards(mon[0])
         }
     }
