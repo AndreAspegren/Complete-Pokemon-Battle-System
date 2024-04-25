@@ -10,7 +10,7 @@ async function effectivenessmsg() {
     else if (effect < 1) battlemessage = 'Det var ikke veldig effektivt!'
 }
 
-function statmsg(type, change, who) {
+function statmsg(who, type, change) {
     const typemap = { 'atk': 0, 'def': 1, 'spa': 2, 'spd': 3, 'spe': 4, 'acc': 5, 'eva': 6 }
     stats = [' sitt angrep', ' sitt forsvar', ' sitt spesielle angrep', ' sitt spesielle forsvar', ' sin hastighet', ' sin treffsikkerthet', ' sin unnvikelse']
     statsmovement = [' falt betraktelig!', ' falt!', '', ' økte!', ' økte netraktelig!']

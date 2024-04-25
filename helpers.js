@@ -1,9 +1,13 @@
-function resetstats(who, dead) {
+function resetstats(stat, mon) {
     const stats = ['atk', 'def', 'satk', 'sdef', 'spe', 'acc', 'eva']
     stats.forEach(stat => who[stat] = 6)
-    Object.assign(who, { toxcounter: 1, cnf: false })
-    if (dead) dead.status = ''
-    who == player ? p1movehistory = [] : p2movehistory = []
+    Object.assign(stat, { toxcounter: 1, cnf: false })
+    if (mon) {
+        if (mon.item.cd) mon.item.cd = false
+        if (mon.ability.cd) mon.ability.cd = false
+        mon.status = ''
+    } 
+    stat == player ? p1movehistory = [] : p2movehistory = []
 }
 
 async function delay(ms) {
@@ -73,14 +77,14 @@ function checkspeed(what) {
 
 
 function dmgcalc() {
-    if (types[move[0].type][type1[0]] * types[move[0].type][type2[0]] == 0) return 0
+    if (types[move[0].type][type1[0]] * types[move[0].type][type2[0]] == 0) return 0 // Immunity
     return Math.round(((((((2 * 10 / 5) + 2)) * (move[0].dmg * (move[0].dmgtype == 'phy' ? mon[0].atk / mon[1].def : mon[0].spa / mon[1].spd))) / 12 + 2) *
-        weatherdmg() *
-        ((Math.floor(Math.random() * 16) == 0) ? 2 : 1) *
-        (move[0].type == type1[0] || type2[0] ? 1.5 : 1) *
-        (types[move[0].type][type1[0]] * types[move[0].type][type2[0]]) *
-        (pstatus[0] == 'brn' ? 0.5 : 1) *
-        ((Math.floor(Math.random() * 16) + 85) / 100)))
+        weatherdmg() * // Weather
+        ((Math.floor(Math.random() * 16) == 0) ? 2 : 1) * // Crit
+        (move[0].type == type1[0] || type2[0] ? 1.5 : 1) * // Stab
+        (types[move[0].type][type1[0]] * types[move[0].type][type2[0]]) * // Type effectiveness
+        (pstatus[0] == 'brn' ? 0.5 : 1) * // Burn
+        ((Math.floor(Math.random() * 16) + 85) / 100))) // Random
 }
 
 function weatherdmg() {

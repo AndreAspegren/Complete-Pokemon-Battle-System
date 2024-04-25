@@ -230,7 +230,7 @@ const moves = [
         acc2: 100,
         effecttype: ['atk'],
         effect: [1],
-        who: ['u'],
+        who: ['me'],
         dmgtype: 'phy',
         pp: 10,
     },
@@ -249,7 +249,7 @@ const moves = [
         movetype: 'stat',
         effecttype: ['atk'],
         effect: [-1],
-        who: ['o'],
+        who: ['you'],
         pp: 10,
     },
     {
@@ -270,7 +270,7 @@ const moves = [
         movetype: 'stat',
         effecttype: ['atk'],
         effect: [2],
-        who: ['o'],
+        who: ['you'],
         pp: 10,
     },
     {
@@ -291,7 +291,7 @@ const moves = [
         movetype: 'stat',
         effecttype: ['acc'],
         effect: [-1],
-        who: ['o'],
+        who: ['you'],
         pp: 10,
     },
     {
@@ -335,7 +335,7 @@ const moves = [
         movetype: 'stat',
         effecttype: ['spe', 'atk', 'def'],
         effect: [-1, 1, 1],
-        who: ['u', 'u', 'u'],
+        who: ['me', 'me', 'me'],
         pp: 10,
     },
     {

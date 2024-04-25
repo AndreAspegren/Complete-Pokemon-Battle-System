@@ -144,51 +144,37 @@ async function weatherchange() {
     weathermsg()
 }
 
-async function stat() {
-    if (move[0].movetype == 'stat') await playsound()
-    for (let i = 0; i < move[0].effect.length; i++) {
-        let target = (who[0] == 'friend' && move[0].who[i] == 'me') || (me == 'foe' && move.who[i] == 'you') ? [player, 'p1', monname[0]] : [rival, 'p2', monname[1]]
-        let currentstat = target[0][move.effecttype[i]]
-        let newstat = target[0][move.effecttype[i]] + move.effect[i]
-        let stats = {'atk': 'angrep', 'def': 'forsvar',   
-            'spa': 'spesialangrep', 'spd': 'spesialforsvar',
-            'spe': 'hastighet', 'acc': 'nøyaktighet',   
-            'eva': 'unngåelse',  
-        }
-        
-        if (currentstat == 0 && newstat < 0 && move.movetype == 'stat') {
-            newstat = 0
-            battlemessage = target[2] + ' sin ' + stats[move.effecttype[i]] + ' kan ikke gå lavere'
-        }
-        else if (currentstat == 12 && newstat > 12 && move.movetype == 'stat') {
-            newstat = 12
-            battlemessage = target[2] + ' sin ' + stats[move.effecttype[i]] + ' kan ikke gå høyere'
-        }
+async function stat(who, what, value) {
+    if (move[0].movetype == 'stat' && !who) await playsound()
 
-        if (i == 0 && move.effect[i] < 0 && currentstat != 0) await playsound('statdown')
-        else if ((i == 0 && move.effect[i] > 0 || move.effect[i] > 0 && move.effect[i - 1] < 0) && currentstat != 12) await playsound('statup')
-
-        statmsg(move.effecttype[i], move.effect[i], target[2])
-        updatestats(target[1], move.effecttype[i], newstat)
-        updateview()
-        await delay(1100)
+    const stats = {
+        'atk': 'angrep', 'def': 'forsvar',
+        'spa': 'spesialangrep', 'spd': 'spesialforsvar',
+        'spe': 'hastighet', 'acc': 'nøyaktighet',
+        'eva': 'unngåelse',
     }
-}
+    for (let i = 0; i < (who ? what.length : move[0].effect.length); i++) {
+        let currentstat = who ? who[i][what[i]] : target[0][move.effecttype[i]]
+        let effect = who ? value[i] : move.effect[i]
+        
+        if (((!who && move[0].movetype != 'stat') || who) && ((currentstat == 12 && effect > 0 || (currentstat == 0 && effect < 0)))) continue
+        let what = who ? what[i] : move.effecttype[i]
+        let target = (who[0] == 'p1' && move[0].who[i] == 'me') || (me == 'p2' && move.who[i] == 'you') ? [player, 'p1'] : [rival, 'p2']
+        let mon = who ? null : move.who == 'me' ? mon[0] : mon[1]
+        let newstat = Math.min(12, Math.max(0, (who ? currentstat + value[i] : target[0][move.effecttype[i]] + move.effect[i])))
+        let changemsg = (currentstat == 11 && effect == 2) ? 1 : (currentstat == 1 && effect == -2) ? -1 : effect
+        
+        if ((currentstat == 12 && effect > 0 || currentstat == 0 && effect < 0) && move[0].movetype == 'stat' && !who) {
+            battlemessage = mon.name + ' sin ' + stats[move.effecttype[i]] + 'kan ikke gå ' + (effect > 0 ? 'høyere!' : 'lavere!')
+            updateview()
+            await delay(1100)
+            continue
+        }
+        if (i == 0 && effect < 0 && currentstat != 0) await playsound('statdown')
+        else if ((i == 0 || (who ? value[i - 1] : move.effect[i - 1]) < 0) && currentstat != 12 && effect > 0) await playsound('statup')
 
-async function parstat(who, what, value) {
-    for (let i = 0; i < what.length; i++) {
-
-        if ((currentstat == 12 && value[i] > 0) || (currentstat == 0 && value[i] < 0)) return
-
-        let currentstat = who[i][what[i]]
-        let newstat = currentstat + value[i]
-        newstat > 12 
-        if (i == 0 && value[i] < 0) await playsound('statdown')
-        else if (i == 0 && value[i] > 0) await playsound('statup')
-        else if (i > 0) if (value[i] > 0 && value[i - 1] < 0) await playsound('statup')
-
-        statmsg(move.effecttype[i], move.effect[i], target[2])
-        updatestats(who[i], what[i], newstat) 
+        statmsg(who ? who : mon, what, changemsg)
+        updatestats(target[1], what, newstat)
         updateview()
         await delay(1100)
     }
