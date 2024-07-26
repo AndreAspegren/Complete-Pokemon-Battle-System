@@ -1,7 +1,7 @@
 function resetstats(stat, mon) {
     const stats = ['atk', 'def', 'satk', 'sdef', 'spe', 'acc', 'eva']
     stats.forEach(s => stat[s] = 6)
-    Object.assign(stat, { toxcounter: 1, cnf: false, inlove: false })
+    Object.assign(stat, { toxcounter: 1, cnf: false, inlove: false, trapped: false, })
     if (mon) {
         if (mon.item) if (mon.item.cd) mon.item.cd = false
         if (mon.ability.cd) mon.ability.cd = false
@@ -167,10 +167,6 @@ function indexcheck() {
 async function setturn(i, what) {
     let n = i % 2 == 0 ? 0 : 1
     turn = i
-    if (what == 'turn' && i == 0) {
-        movehistory = p1turn ? [p1movehistory, p2movehistory] : [p2movehistory, p1movehistory]
-        checkqueue(0)
-    }
     if (what != 'newpokemon' && n == 0) p1faster = checkspeed(what ? 'round' : null)
     p1turn = p1faster && n == 0 || !p1faster && n == 1
     who = p1turn ? ['p1', 'p2'] : ['p2', 'p1']

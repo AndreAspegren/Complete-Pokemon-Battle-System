@@ -1,6 +1,5 @@
 async function moveevents(i) {
     let hitcheck = false
-    console.log(move[0].movetype)
     if (mon[0].hp <= 0 || movehistory[0][movehistory[0].length - 1] == 'switch') return
     if (mon[0] == p1.pokemon[0] && move == 'switch' || mon[0].hp == 0) return await delay(1000)
     if (stats[0].cnf) await confused()

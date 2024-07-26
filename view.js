@@ -32,10 +32,10 @@ async function updateview() {
         
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.3vh;">
         ${p1.pokemon[0].move.map((id, i) => {
-            return /*HTML*/`
+        return /*HTML*/`
                 <button style="width: 16vh; height: 8vh; font-size: 100%; position: relative; background-color: ${typecolors[moves[id].type]};" 
                         ${buttonsenabled || p1.pokemon[0].pp[i] > 0 ? '' : 'disabled'} 
-                        onclick="battlemanager(${i}, setenemymove())">
+                        onclick="setmove(${i});">
                     <div style="position: relative; height: 100%; width: 100%; display: flex; justify-content: center; align-items: center;">
                         <div>${moves[id].name}</div>
                         <div style="position: absolute; bottom: 0; right: 0;">
@@ -43,9 +43,9 @@ async function updateview() {
                         </div>
                     </div>
                 </button>`
-        }).join('')}
+    }).join('')}
         </div>
-        <img onclick="changepokemon()" ${cantflee ? 'disabled' : ''}  style="width: auto; height: 16vh; cursor: pointer;" src="pictures/misc/bag.png"></div>`}</div>
+        <img onclick="changepokemon()" ${player.trapped ? 'disabled' : ''}  style="width: auto; height: 16vh; cursor: pointer;" src="pictures/misc/bag.png"></div>`}</div>
         `
 }
 
@@ -130,7 +130,9 @@ async function changeto(who, switchmove) {
         resolvechange()
         if (switchmove === 'undefined') {
             assignpp('p1')
-            await battlemanager('switch', setenemymove())
+            player.move = 'switch'
+            rival.move = setenemymove()
+            moved()
         }
     }
 }

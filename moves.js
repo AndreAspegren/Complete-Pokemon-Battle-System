@@ -1,9 +1,10 @@
 async function damage() {
     await playsound()
+    let prehp = hp[1]
     hp[1] -= dmgcalc()
     effectivenessmsg()
     await updatestats(who[1], 'hp', hp[1])
-
+    movehistory[0][movehistory[0].length - 1]['dmgdealt'] = prehp - (trainer[0] == 'p1' ? p1.pokemon[0].hp : p2.pokemon[0].hp)
     if (checkacc2() && move[0].effect2) {
         updateview()
         await delay(1000)
@@ -27,8 +28,10 @@ async function acrobatics() {
 }
 
 async function trapped() {
-    battlemessage = monname[1] + ' kan ikke flykte!'
-    cantflee = true
+    if (!stats[1].trapped) {
+        battlemessage = monname[1] + ' kan ikke flykte!'
+        updatestats(who[1], 'trapped', true)
+    } else failed()
 }
 
 async function autotomize() {
@@ -119,16 +122,17 @@ async function afteryou() {
 
 async function dmgheal() {
     await playsound()
-    let currenthp = hp[1]
+    let prehp = hp[1]
     hp[1] -= dmgcalc()
-    if (hp[1] < 0) hp[1] = 0
     effectivenessmsg()
     await updatestats(who[1], 'hp', hp[1])
+    movehistory[0][movehistory[0].length - 1]['dmgdealt'] = prehp - (trainer[0] == 'p1' ? p2.pokemon[0].hp : p1.pokemon[0].hp)
 
-    if (hp[0] != maxhp[0]) {
+    if (hp[0] < maxhp[0]) {
         updateview()
         await delay(1000)
-        updatestats(mon[0], 'hp', (currenthp - hp[0]) * move[0].value)
+        let heal = (prehp - hp[1]) * move[0].value
+        updatestats(mon[0], 'hp', heal > maxhp[0] ? maxhp[0] : heal)
         battlemessage = monname[1] + ' hadde sin energi tappet!'
     }
 }
@@ -141,6 +145,25 @@ async function heal() {
     if (hp[0] > maxhp[0]) hp[0] = maxhp[0]
     battlemessage = monname[0] + ' healet ' + (hp[0] - currenthp) + ' hp!'
     await updatestats(who[0], 'hp', hp[0])
+}
+
+async function bide1(){
+    await delay(2000)
+    await playsound()
+}
+
+async function bide2(){
+    battlemessage = monname[0] + ' lagrer energi!'
+    updateview()
+    await delay(2000)
+    await playsound()
+}
+
+async function bide3(){
+    if (movehistory[1][movehistory[1].length - 3]?.dmgdealt > 0 || movehistory[1][movehistory[1].length - 2]?.dmgdealt > 0) {
+        updatestats(who[1], 'hp', hp[1] - ((movehistory[1][movehistory[1].length - 3]?.dmgdealt + movehistory[1][movehistory[1].length - 2]?.dmgdealt) * 2))
+        battlemessage = monname[0] + ' slapp ut energi!'
+    } else failed()
 }
 
 async function sethazard() {
@@ -190,12 +213,12 @@ async function protect() {
 async function bestow() {
     if (mon[0]?.item && !mon[1]?.item) {
         mon[1].item = mon[0].item
-        mon[1].item?.cd = false
+        mon[1].item.cd = false
         mon[0].item = null
         battlemessage = monname[0] + ' ga itemet sitt til ' + monname[1] + '!'
-    }
-    else failed()
+    } else failed()
 }
+
 
 async function multidmg() {
     let count = 0
@@ -415,7 +438,7 @@ async function updatestats(who, what, value, what2) {
         mon.hp = value
         if (mon.hp == 0) await deathdisplay(mon)
     }
-    else if (['atk', 'def', 'spa', 'spd', 'spe', 'acc', 'eva', 'cnf', 'inlove', 'auveil', 'reflect', 'lscreen'].includes(what)) {
+    else if (['atk', 'def', 'spa', 'spd', 'spe', 'acc', 'eva', 'cnf', 'inlove', 'auveil', 'reflect', 'lscreen', 'trapped'].includes(what)) {
         stat[what] = value
         if (movehistory[0].length > 0) movehistory[0][movehistory[0].length - 1]['statboosted'] = stat[what] < value
     }

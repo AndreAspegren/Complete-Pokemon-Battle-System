@@ -12,7 +12,6 @@ let deadp1 = null
 let deadp2 = null
 let p1invul = null
 let p2invul = null
-let p2nextmove = null
 let statused = null
 let isconfused = null
 let paralysed = null
@@ -21,7 +20,6 @@ let gameon = true
 let acc2hit = false
 let playerqueue = []
 let rivalqueue = []
-let cantflee = false
 let queue = []
 
 const types = [
@@ -59,6 +57,8 @@ let global = {
 }
 
 let player = {
+    move: null,
+    trapped: false,
     atk: 6,
     def: 6,
     spa: 6,
@@ -74,12 +74,16 @@ let player = {
     auveil: 0,
     reflect: 0,
     lscreen: 0,
+    trapped: false,
+    sub: false,
     txc: 1,      // toxic counter
     inlove: false,
     dynamax: false,
 }
 
 let rival = {
+    move: null,
+    trapped: false,
     atk: 6,
     def: 6,
     spa: 6,
@@ -95,6 +99,8 @@ let rival = {
     auveil: 0,
     reflect: 0,
     lscreen: 0,
+    trapped: false,
+    sub: false,
     txc: 1,
     inlove: false,
     dynamax: false,
@@ -187,7 +193,7 @@ const moves = [
     {
         name: 'Absorb',
         type: 3,
-        acc: 0,
+        acc: 100,
         movetype: 'dmgheal',
         dmg: 20,
         pp: 20,
@@ -699,6 +705,140 @@ const moves = [
         pp: 15,
     },
     {
+        name: 'Bide',
+        type: 0,
+        acc: 0,
+        movetype: 'bide1', 
+        pp: 15,
+        priority: 1,
+        turn2: {
+            name: 'Bide',
+            type: 0,
+            acc: 0,
+            movetype: 'bide2',
+            priority: 1,
+            turn2: {
+                name: 'Bide',
+                type: 0,
+                acc: 0,
+                movetype: 'bide3',
+                priority: 1,
+            }
+        }
+    },
+    {
+        name: 'Bind',
+        type: 0,
+        acc: 0,
+        movetype: 'bind', // må teste om de stacker
+        pp: 15,
+    },
+    {
+        name: 'Bite',
+        type: 15,
+        acc: 100,
+        movetype: 'damage',
+        dmg: 60,
+        effect2: 'flinch',
+        acc2: 20,
+        dmgtype: 'phy',
+        pp: 10,
+    },
+    {
+        name: 'Bitter Blade',
+        type: 1,
+        acc: 100,
+        movetype: 'dmgheal',
+        dmg: 90,
+        pp: 10,
+        dmgtype: 'phy',
+        value: 0.5,
+    },
+    {
+        name: 'Black Hole Eclipse',     // må implemente z moves
+        type: 0,
+        acc: 100,
+        movetype: 'damage',
+        dmg: 40,
+        pp: 35,
+        dmgtype: 'phy',
+    },
+    {
+        name: 'Bitter Malice',
+        type: 13,
+        acc: 100,
+        movetype: 'damage',
+        dmg: 75,
+        effect2: 'stat',
+        acc2: 100,
+        crit: 0,
+        effecttype: ['atk'],
+        effect: [-1],
+        who: ['you'],
+        dmgtype: 'phy',
+        pp: 10,
+    },
+    {
+        name: 'Blast Burn',
+        type: 1,
+        acc: 90,
+        movetype: 'damage',
+        turn2: {
+            movetype: 'recharge'
+        },
+        dmg: 150,
+        pp: 35,
+        dmgtype: 'phy',
+        pp: 5,
+    },
+    {
+        name: 'Blazing Torque',
+        type: 0,
+        acc: 100,
+        movetype: 'damage',
+        dmg: 80,
+        pp: 10,
+        dmgtype: 'phy',
+        acc2: 30,
+        effect2: 'status',
+        statustype: 'brn',
+        effect: true,        
+    },
+    {
+        name: 'Bleakwind Storm',
+        type: 9,
+        acc: 80,
+        movetype: 'damage',
+        dmg: 100,
+        dmgtype: 'spe',
+        pp: 10,
+        effect2: 'stat',
+        acc2: 30,
+        effecttype: ['spe'],
+        effect: [-1],
+        who: ['you'],
+    },
+    {
+        name: 'Blizzard',
+        type: 3,
+        acc: 70,
+        movetype: 'damage',
+        dmg: 110,
+        pp: 5,
+        dmgtype: 'spe',
+        acc2: 10,
+        effect2: 'status',
+        statustype: 'frz',
+        effect: true,        
+    },
+    {
+        name: 'Block',
+        type: 0,
+        acc: 0,
+        movetype: 'trapped',
+        pp: 5,
+    },
+    {
         name: 'Tackle',
         type: 0,
         acc: 100,
@@ -903,17 +1043,6 @@ const moves = [
         pp: 10,
     },
     {
-        name: 'Bite',
-        type: 15,
-        acc: 100,
-        movetype: 'damage',
-        dmg: 60,
-        effect2: 'flinch',
-        acc2: 20,
-        dmgtype: 'phy',
-        pp: 10,
-    },
-    {
         name: 'Spikes',
         type: 8,
         acc: 0,
@@ -1007,7 +1136,7 @@ let pokemon = [
         spd: 10,
         spe: 10,
         status: '',
-        move: [60, 7, 9, 3],
+        move: [64, 7, 9, 3],
         pp: [],
         type1: 11,
         type2: 12,
@@ -1050,7 +1179,7 @@ let pokemon = [
         spd: 10,
         spe: 1,
         status: '',
-        move: [1, 2, 3, 4],
+        move: [2, 2, 2, 2],
         pp: [],
         type1: 1,
         type2: 18,

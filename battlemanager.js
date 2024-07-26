@@ -1,17 +1,21 @@
-async function battlemanager(playermove, enemymove) {
-    prelimfunctions(playermove, enemymove)
-    for (let i = 0; i < 2; i++) {
-        await setturn(i, 'turn')
-        await moveevents(i)
-        updateview()
-        await delay(2000)
+battlemanager()
+async function battlemanager() {
+    while (gameon) {
+        if (p1movehistory.length < 1 || !p1movehistory[p1movehistory.length - 1]?.turn2) await new Promise(resolve => window.moved = resolve)
+        await prelimfunctions()
+        for (let i = 0; i < 2; i++) {
+            await setturn(i, 'turn')
+            await moveevents(i)
+            updateview()
+            await delay(2000)
+        }
+        await checkqueue(1)
+        await endofrounddamage()
+        await newpokemon()
+        await onentry()
+        checkend()
+        await endofroundevents()
     }
-    await checkqueue(1)
-    await endofrounddamage()
-    await newpokemon()
-    await onentry()
-    if (checkend()) await multiturndmgmoves()
-    await endofroundevents()
 }
 
 async function updatetrickroom() {
@@ -52,13 +56,6 @@ async function onentry() {
     }
 }
 
-async function multiturndmgmoves() {
-    let arr = [p2move, p1move]
-    for (let i = 0; i < 2; i++) {
-        if (arr[i].turn2) i == 0 ? p2nextmove = p2move.turn2 : decideround(p1move.turn2, setenemymove())
-    }
-}
-
 async function endofrounddamage() {      // brn, psn, tox, sandstorm
     let what = ['brn', 'brn', 'psn', 'psn', 'tox', 'tox', weather.weather, weather.weather]
 
@@ -84,7 +81,7 @@ async function newpokemon() {
     for (let i = 0; i < 2; i++) {
         if (mon[i].hp == 0 && !trainer[i].pokemon.every(p => p.hp == 0)) {
             resetstats(stats[i], mon[i])
-            who[i] == 'p1' ? (cantflee = false, deadp1 = null, await changepokemon()) : (deadp2 = null, newpokemonout = p2.pokemon.splice(indexcheck(), 1)[0], p2.pokemon.unshift(newpokemonout))
+            who[i] == 'p1' ? (player.trapped = false, deadp1 = null, await changepokemon()) : (deadp2 = null, newpokemonout = p2.pokemon.splice(indexcheck(), 1)[0], p2.pokemon.unshift(newpokemonout))
             setturn(i, 'newpokemon')
             if (who[0] == 'p1') assignpp()
             battlemessage = trainer[0].name + ' sendte ut ' + monname[0] + '!'
@@ -125,16 +122,24 @@ async function hazards(mon, who) {
     }
 }
 
-async function prelimfunctions(playermove, enemymove) {      
+async function prelimfunctions() {
+    await checkqueue(0)
     buttonsenabled = false
-    if (playermove != 'struggle') p1.pokemon[0].pp[playermove]--
-    if (enemymove != 'struggle') p2.pokemon[0].pp[enemymove]--
-    p1move = !Number.isInteger(playermove) ? playermove : playermove != 'switch' ? JSON.parse(JSON.stringify(moves[p1.pokemon[0].move[playermove]])) : playermove
-    p2move = p2nextmove || JSON.parse(JSON.stringify(moves[p2.pokemon[0].move[enemymove]])); p2nextmove = null
+    if (player.move != 'struggle' && !p1movehistory[p1movehistory.length -1]?.turn2) p1.pokemon[0].pp[player.move]--
+    if (rival.move != 'struggle' && !p2movehistory[p2movehistory.length -1]?.turn2) p2.pokemon[0].pp[rival.move]--
+    p1move = p1movehistory[p1movehistory.length -1]?.turn2 ? p1movehistory[p1movehistory.length -1].turn2 : Number.isInteger(player.move) ? JSON.parse(JSON.stringify(moves[p1.pokemon[0].move[player.move]])) : player.move
+    p2move = !p2movehistory[p2movehistory.length -1]?.turn2 ? JSON.parse(JSON.stringify(moves[p2.pokemon[0].move[rival.move]])) : p2movehistory[p2movehistory.length -1]?.turn2
     p1movehistory.push(p1move)
     p2movehistory.push(p2move)
-    if (p1move == 'switch') await hazards(p1.pokemon[0])
+    if (p1move == 'switch') await hazards(p1.pokemon[0], 'p1')
     if (turncounter == 0) await onentry()
+}
+
+async function setmove(i) {
+    player.move = i 
+    rival.move = setenemymove()
+    await delay(1)
+    window.moved()
 }
 
 function checkend() {
