@@ -1,12 +1,12 @@
 function resetstats(stat, mon) {
     const stats = ['atk', 'def', 'satk', 'sdef', 'spe', 'acc', 'eva']
-    stats.forEach(stat => who[stat] = 6)
-    Object.assign(stat, { toxcounter: 1, cnf: false })
+    stats.forEach(s => stat[s] = 6)
+    Object.assign(stat, { toxcounter: 1, cnf: false, inlove: false })
     if (mon) {
-        if (mon.item.cd) mon.item.cd = false
+        if (mon.item) if (mon.item.cd) mon.item.cd = false
         if (mon.ability.cd) mon.ability.cd = false
         mon.status = ''
-    } 
+    }
     stat == player ? p1movehistory = [] : p2movehistory = []
 }
 
@@ -25,7 +25,6 @@ function checkacc() {
     let hit = (move[0].acc * statstates[stats[0].acc] * (mon[0].status == 'par' ? 0.75 : 1) * weatheracc() >= random || move[0].acc == 0) && !invulmon
     paralysed = mon[0].status == 'par' && !hit && accwithoutpar
     mon[0] == p1.pokemon[0] ? p1movehit = hit : p2movehit = hit
-    if (movehistory[0] > 0) movehistory[0][movehistory[0].length - 1]['hit'] = hit
 }
 
 
@@ -45,8 +44,8 @@ function weatheracc() {
 }
 
 function checkacc2() {
-    if (move[turn].effect2 && move[turn].acc2 >= randomacc() || move[turn].acc2 == 0) return true
-    return false
+    if (move[turn].effect2 && move[turn].acc2 >= randomacc() || move[turn].acc2 == 0) return movehistory[0][movehistory[0].length - 1]['acc2hit'] = true
+    return movehistory[0][movehistory[0].length - 1]['acc2hit'] = false
 }
 
 async function playsound(what) {
@@ -75,16 +74,30 @@ function checkspeed(what) {
     return Math.random() > 0.5
 }
 
-
 function dmgcalc() {
     if (types[move[0].type][type1[0]] * types[move[0].type][type2[0]] == 0) return 0 // Immunity
     return Math.round(((((((2 * 10 / 5) + 2)) * (move[0].dmg * (move[0].dmgtype == 'phy' ? mon[0].atk / mon[1].def : mon[0].spa / mon[1].spd))) / 12 + 2) *
         weatherdmg() * // Weather
-        ((Math.floor(Math.random() * 16) == 0) ? 2 : 1) * // Crit
+        ((Math.floor(Math.random() * critratio()) == 0) ? 2 : 1) * // Crit
         (move[0].type == type1[0] || type2[0] ? 1.5 : 1) * // Stab
         (types[move[0].type][type1[0]] * types[move[0].type][type2[0]]) * // Type effectiveness
         (pstatus[0] == 'brn' ? 0.5 : 1) * // Burn
-        ((Math.floor(Math.random() * 16) + 85) / 100))) // Random
+        ((Math.floor(Math.random() * 16) + 85) / 100))) * // Random
+        checkscreens()
+}
+
+function checkscreens() {
+    if (stats[1].auveil) return 0.5
+    if (stats[1].reflect && move[0].dmgtype == 'phy') return 0.5
+    if (stats[1].lscreen && move[0].dmgtype == 'spe') return 0.5
+    return 1
+}
+
+function critratio() {
+    let stage = (move[0].crit ? move[0].crit : 0) + (item[0].crit ? item[0].crit : 0) + (ability[0].crit ? ability[0].crit : 0)
+    let stages = [24, 8, 2, 1]
+    if (stage > 3) stage = 3
+    return stages[stage]
 }
 
 function weatherdmg() {
@@ -110,13 +123,38 @@ function randommove() {
     return Math.floor(Math.random() * 4)
 }
 
+async function updatescreens() {
+    const name = {'auveil': 'Aurora Veil', 'reflect': 'Reflect', 'lscreen': 'Light Screen'}
+    for (const s of ['auveil', 'reflect', 'lscreen']) {
+        if (player[s] > 1) player[s]--
+        if (rival[s] > 1) rival[s]--
+
+        if (player[s] == 1) {
+            player[s]--
+            battlemessage = `${p1.name} sin ${name[s]} forsvant!`
+            updateview()
+            await delay(2000)
+        }
+
+        if (rival[s] == 1) {
+            rival[s]--
+            battlemessage = `${p2.name} sin ${name[s]} forsvant!`
+            updateview()
+            await delay(2000)
+        }
+    }
+}
+
 function checkprotect() {
-    if (turn == 1) return false
-    if (movehistory[0].length <= 1) return true
-    if (movehistory[0][movehistory[turn].length - 2].movetype == 'protect' && movehistory[0][movehistory[turn].length - 2].hit == false) return true
+    if (turn == 1) {
+        return movehistory[0][movehistory[0].length - 1]['hit'] = false
+    }
+    if (movehistory[0].length <= 1 || movehistory[0][movehistory[0].length - 2].movetype == 'protect' && movehistory[0][movehistory[0].length - 2].hit == false) {
+        return movehistory[0][movehistory[0].length - 1]['hit'] = true
+    }
     let count = 0
-    for (let i = movehistory[0].length - 1; i >= 0; i--) {
-        if (movehistory[0][i].movetype && movehistory[0][i].movetype == 'protect' && movehistory[0][i].hit) count++
+    for (let i = movehistory[0].length - 2; i >= 0; i--) {
+        if (movehistory[0][i].movetype == 'protect' && movehistory[0][i].hit) count++
         else break
     }
     return movehistory[0][movehistory[0].length - 1]['hit'] = 100 * Math.pow(2 / 3, count) > randomacc()
@@ -126,10 +164,14 @@ function indexcheck() {
     return p2.pokemon.findIndex(pokemon => pokemon.hp !== 0)
 }
 
-function setturn(i, what) {
+async function setturn(i, what) {
     let n = i % 2 == 0 ? 0 : 1
     turn = i
-    if (what != 'newpokemon') p1faster = checkspeed(what ? 'round' : null)
+    if (what == 'turn' && i == 0) {
+        movehistory = p1turn ? [p1movehistory, p2movehistory] : [p2movehistory, p1movehistory]
+        checkqueue(0)
+    }
+    if (what != 'newpokemon' && n == 0) p1faster = checkspeed(what ? 'round' : null)
     p1turn = p1faster && n == 0 || !p1faster && n == 1
     who = p1turn ? ['p1', 'p2'] : ['p2', 'p1']
     mon = p1turn ? [p1.pokemon[0], p2.pokemon[0]] : [p2.pokemon[0], p1.pokemon[0]]
@@ -150,7 +192,11 @@ function setturn(i, what) {
     eva = [stats[0].eva, stats[1].eva]
     type1 = [mon[0].type1, mon[1].type1]
     type2 = [mon[0].type2, mon[1].type2]
+    ability = [mon[0].ability, mon[1].ability]
+    item = [mon[0].ability, mon[1].ability]
     pstatus = [mon[0].status, mon[1].status]
-    if (what == 'turn') checkacc(mon[0])
+    if (what == 'turn') checkacc()
     ithit = p1turn ? p1movehit : p2movehit
+    queue = p1turn ? [playerqueue, rivalqueue] : [rivalqueue, playerqueue]
+    team = p1turn ? [p1.pokemon.map(p => p), p2.pokemon.map(p => p)] : [p2.pokemon.map(p => p), p1.pokemon.map(p => p)]
 }

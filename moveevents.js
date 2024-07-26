@@ -1,19 +1,30 @@
 async function moveevents(i) {
+    let hitcheck = false
+    console.log(move[0].movetype)
+    if (mon[0].hp <= 0 || movehistory[0][movehistory[0].length - 1] == 'switch') return
     if (mon[0] == p1.pokemon[0] && move == 'switch' || mon[0].hp == 0) return await delay(1000)
     if (stats[0].cnf) await confused()
-    if (move.turn2 && !move.dmg || move.movetype == 'recharge') await multiturnmove()
+    if (move[0].turn2 && !move[0].dmg || move.movetype == 'recharge') {
+        hitcheck = true
+        return await multiturnmove()
+    } 
     if (!endturn) {
         if (['slp', 'frz', 'par'].includes(mon[i].status)) await statusing(i)
         if (statused) return statused = false
         battlemessage = mon[0].name + ' brutke ' + move[0].name + '!'
         updateview()
         await delay(2000)
+        if (stats[0].inlove && Math.random() > 0.5) return inlovemsg()
         if (invul[0]) who[0] == 'p1' ? p1invul = false : p2invul = false
         if (protected && ithit) nomove()
         else if ((ithit || move[0].acc == 0) && (mon[1].hp != 0 ||
-            (mon[1].hp == 0 && !move[0].dmg && move[0].effect != true && !move[0].who.includes('u')))) await window[move[0].movetype]()
+            (mon[1].hp == 0 && !move[0].dmg && move[0].effect != true && !move[0].who.includes('u')))) {
+            await window[move[0].movetype]()
+            hitcheck = true
+        }
         else missed()
     }
+    sethit()
 }
 
 async function statusing() {
@@ -48,6 +59,12 @@ async function statusing() {
     await delay(2000)
 }
 
+function sethit(hitbool) {
+    let lastMove = movehistory[0]?.[movehistory[0].length - 1]
+    if (lastMove && lastMove.hit === undefined) movehistory[0][movehistory[0].length - 1].hit = hitbool
+}
+
+
 async function multiturnmove() {
     if (move[0].movetype == 'invul' || move[0].movetype == 'charge') {
         if (['Solar Beam', 'Solar Blade'].includes(move[0].name) && !move[0].dmg && weather.weather == 'sun') {
@@ -75,7 +92,7 @@ async function deathdisplay(who) {
     await delay(1500)
     battlemessage = who.name + ' døde!'
     updateview()
-    resetstats(who == p1.pokemon ? player : rival, who)
+    resetstats(who == p1.pokemon[0] ? player : rival, who)
     await delay(1500)
     who == p1.pokemon[0] ? deadp1 = true : deadp2 = true
     updateview()

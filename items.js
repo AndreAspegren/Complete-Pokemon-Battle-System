@@ -1,5 +1,5 @@
 async function focussash() {
-    await updatestats(mon[1], 'hp', 1)
+    await updatestats(who[1], 'hp', 1)
     await updatestats(who[1], 'item', true, 'cd')
     updateview()
     await delay(2000)
