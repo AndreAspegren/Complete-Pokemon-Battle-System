@@ -32,7 +32,7 @@ async function updateview() {
         
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.3vh;">
         ${p1.pokemon[0].move.map((id, i) => {
-            return `
+            return /*HTML*/`
                 <button style="width: 16vh; height: 8vh; font-size: 100%; position: relative; background-color: ${typecolors[moves[id].type]};" 
                         ${buttonsenabled || p1.pokemon[0].pp[i] > 0 ? '' : 'disabled'} 
                         onclick="battlemanager(${i}, setenemymove())">
