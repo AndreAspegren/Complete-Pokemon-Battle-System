@@ -1,4 +1,4 @@
-function endofroundmsg(what, who) {
+function endofroundmsg(who, what) {
     const options = { brn: 'tok brannskade', psn: 'tok giftskade', tox: 'tok giftskade', sandstorm: 'ble skadet av sandstormen' }
     battlemessage = who.name + ' ' + options[what]
 }
@@ -13,8 +13,12 @@ async function effectivenessmsg() {
 function statmsg(who, type, change) {
     const typemap = { 'atk': 0, 'def': 1, 'spa': 2, 'spd': 3, 'spe': 4, 'acc': 5, 'eva': 6 }
     stats = [' sitt angrep', ' sitt forsvar', ' sitt spesielle angrep', ' sitt spesielle forsvar', ' sin hastighet', ' sin treffsikkerthet', ' sin unnvikelse']
-    statsmovement = [' falt betraktelig!', ' falt!', '', ' økte!', ' økte netraktelig!']
-    battlemessage = who + stats[typemap[type]] + statsmovement[change + 2]
+    statsmovement = [' kan ikke gå lavere', ' falt dramatisk!', ' falt betraktelig!', ' falt!', '', ' økte!', ' økte betraktelig!',' økte dramatisk!', ' kan ikke gå høyere!']
+    battlemessage = who + stats[typemap[type]] + statsmovement[change + 4]
+}
+
+function inlovemsg(){
+    battlemessage = monname[0] + ' er forelsket!'
 }
 
 function weathermsg(){
@@ -24,14 +28,24 @@ function weathermsg(){
         sun: 'Sollyset ble hardt!',
         snow: 'Det begynte å hagle!',
     }
-    battlemessage = weathermessages[move.weather]
+    battlemessage = weathermessages[move[0].weather]
+}
+
+function screenmsg(){
+    if (move[0].screentype == 'reflect') battlemessage = 'En barriere var formet for å svekke fysiske angrep!'
+    else if (move[0].screentype == 'lscreen') battlemessage = 'En barriere var formet for å svekke spesielle angrep!'
+    else if (move[0].movetype == 'auroraveil') battlmessage = 'Aurora Veil gjorde laget ditt sterkere mot fysiske og spesielle angrep!'
 }
 
 function missed(){
     battlemessage = monname[0] + ' bommet!'
 }
 
-function statusmsg(what, who){
+function failed(){
+    battlemessage = 'Men det feilet!'
+}
+
+function statusmsg(who, what){
     let statusconditions = {
         brn: ' ble brent!',
         psn: ' ble forgiftet!',
@@ -39,10 +53,10 @@ function statusmsg(what, who){
         par: ' ble paralysert!',
         slp: ' sovna!'
     }
-    battlemessage = who.name + statusconditions[what]
+    battlemessage = who + statusconditions[what]
 }
 
-function hazardmsg(what, who) {
+function hazardmsg(who, what) {
     let hazardmsgs = {
         spk: 'Spikes var spredt rundt føttene til ' + who + ' sitt lag!',
         tspk: 'Giftpigger var spredt rundt føttene til ' + who + ' sitt lag!',
@@ -52,7 +66,7 @@ function hazardmsg(what, who) {
     battlemessage = hazardmsgs[what]
 }
 
-function hazarddmgmsg(what, who) {
+function hazarddmgmsg(who, what) {
     let hazards = {
         0: who + ' ble skadet av pigger!',
         1: who + ' har blitt forgiftet!',
