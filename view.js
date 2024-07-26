@@ -52,7 +52,8 @@ function genpokemon(who) {
     <div>${`${who.pokemon[0].hp} / ${who.pokemon[0].maxhp} HP`}</div>
     <div style="display: flex; height: 2.3vh;">
     <div style="width: ${(who.pokemon[0].hp / who.pokemon[0].maxhp * 100).toString()}%; background-color: green;"></div>
-    <div style="flex-grow: 1; background-color: red;"></div></div>${who.pokemon[0].avatar}</div>`
+    <div style="flex-grow: 1; background-color: red;"></div>
+    </div>${who.pokemon[0].avatar}</div>`
 }
 
 async function changepokemon(switchmove) {
