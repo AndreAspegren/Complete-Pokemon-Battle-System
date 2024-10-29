@@ -49,7 +49,7 @@ async function statusing() {
     }
     if (['par'].includes(pstatus[0])) {
         if (paralysed) {
-            battlemessage = monname[0] + ' er paralysert! Den kan ikke bevege seg!'
+            battlemessage = monname[0] + ' er paralysert! Den kan ikke bevege seg!!'
             endturn = true
             paralysed = false
         } else return
