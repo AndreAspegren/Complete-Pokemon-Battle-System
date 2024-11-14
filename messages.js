@@ -4,7 +4,8 @@ function endofroundmsg(who, what) {
 }
 
 async function effectivenessmsg() {
-    const effect = (types[move[0].type][type1[0]] * types[move[0].type][type2[0]])
+    console.log(types[move[0].type][type1[1]], types[move[0].type][type2[1]])
+    const effect = (types[move[0].type][type1[1]] * types[move[0].type][type2[1]])
     if (effect == 0) battlemessage = 'Det har ingen effekt på ' + oname + '!'
     else if (effect > 1) battlemessage = 'Det var super effektivt!'
     else if (effect < 1) battlemessage = 'Det var ikke veldig effektivt!'

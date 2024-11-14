@@ -26,6 +26,10 @@ async function moveevents(i) {
     sethit()
 }
 
+player = {
+    ghost: true
+}
+
 async function statusing() {
     if (['frz'].includes(pstatus[0])) {
         if (Math.random() < 0.2) {

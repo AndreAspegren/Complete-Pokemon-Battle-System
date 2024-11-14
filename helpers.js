@@ -80,7 +80,7 @@ function dmgcalc() {
         weatherdmg() * // Weather
         ((Math.floor(Math.random() * critratio()) == 0) ? 2 : 1) * // Crit
         (move[0].type == type1[0] || type2[0] ? 1.5 : 1) * // Stab
-        (types[move[0].type][type1[0]] * types[move[0].type][type2[0]]) * // Type effectiveness
+        (types[move[0].type][type1[1]] * types[move[0].type][type2[1]]) * // Type effectiveness
         (pstatus[0] == 'brn' ? 0.5 : 1) * // Burn
         ((Math.floor(Math.random() * 16) + 85) / 100))) * // Random
         checkscreens()
