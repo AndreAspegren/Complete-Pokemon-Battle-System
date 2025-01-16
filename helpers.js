@@ -60,12 +60,12 @@ async function playsound(what) {
 }
 
 function checkspeed(what) {
-    if (what == 'round' && p1move.priority != p2move.priority) {
-        if (p1move.priority > 0 && !p2move.priority) return true
-        if (p1move.priority < 0 && !p2move.priority) return false
-        if (p2move.priority > 0 && !p1move.priority) return false
-        if (p2move.priority < 0 && !p1move.priority) return true
-        return p1move.priority > p2move.priority
+    if (what == 'round' && "priority" in p1move || "priority" in p2move) {
+        p1priority = null
+        p2priority = null
+        "priority" in p1move ? p1priority = p1move.priority : p1priority = 0 
+        "priority" in p2move ? p2priority = p2move.priority : p2priority = 0 
+        if (p1priority != p2priority) return p1priority > p2priority
     }
     let p1speed = p1.pokemon[0].spe * statstates[player.spe] * (p1.pokemon[0].status === 'par' ? 0.25 : 1)
     let p2speed = p2.pokemon[0].spe * statstates[rival.spe] * (p2.pokemon[0].status === 'par' ? 0.25 : 1)
@@ -74,17 +74,7 @@ function checkspeed(what) {
     return Math.random() > 0.5
 }
 
-function dmgcalc() {
-    if (types[move[0].type][type1[0]] * types[move[0].type][type2[0]] == 0) return 0 // Immunity
-    return Math.round(((((((2 * 10 / 5) + 2)) * (move[0].dmg * (move[0].dmgtype == 'phy' ? mon[0].atk / mon[1].def : mon[0].spa / mon[1].spd))) / 12 + 2) *
-        weatherdmg() * // Weather
-        ((Math.floor(Math.random() * critratio()) == 0) ? 2 : 1) * // Crit
-        (move[0].type == type1[0] || type2[0] ? 1.5 : 1) * // Stab
-        (types[move[0].type][type1[1]] * types[move[0].type][type2[1]]) * // Type effectiveness
-        (pstatus[0] == 'brn' ? 0.5 : 1) * // Burn
-        ((Math.floor(Math.random() * 16) + 85) / 100))) * // Random
-        checkscreens()
-}
+
 
 function checkscreens() {
     if (stats[1].auveil) return 0.5
