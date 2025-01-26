@@ -32,18 +32,35 @@ body {
     align-items: center; 
 }
 
-#app > :nth-child(15) {
+#app > :nth-child(4) {
+    display: grid;
+    grid-template-columns: 65% 35%; 
+    grid-template-rows: 30% 70%;
+    place-items: center;
+    width: 70%; 
+    height: 50%; 
+    margin: auto;
+}
+
+#app > :nth-child(4) > div {
+    width: 100%; 
+    height: 100%; 
+}
+
+#app > :nth-child(4) > :nth-child(1) {
+    display: grid;
+    background-color: rgb(214, 183, 125);
+    place-items: center;
+}
+
+#app > :nth-child(4) > :nth-child(3) {
+    background-color: blue;
     display: grid;
     grid-template-columns: repeat(2, 1fr); 
     grid-template-rows: repeat(2, 1fr);  
-    height: 100%;                   
-    width: 120%;  
 }
 
-#app > :nth-child(15) > button {
-    width: 100%;  
+#app > :nth-child(4) > :nth-child(3) > button {
+    width: 100%; 
     height: 100%; 
-    box-sizing: border-box; 
-    padding: 10px;  
-    font-size: 1.2em;  
 }

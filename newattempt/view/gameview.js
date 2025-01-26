@@ -26,24 +26,10 @@ function buttons(){
     `
 }
 
-// function buttonsandmessage(){
-//     return `
-//      ${p1.pokemon[0].move.map((id, i) => {
-//         return /*HTML*/`
-//                 `
-//     }).join('')}
-    
-//     `
-// }
-
 function bag(){
     return `
     <img onclick="changepokemon()" ${player.trapped ? 'disabled' : ''}  style="width: auto; height: 16vh; cursor: pointer;" src="media/pictures/misc/bag.png">
     `
-}
-
-function battlemessagebox(){
-    return `${battlemessage}`
 }
 
 updateview()
@@ -53,47 +39,23 @@ async function updateview() {
     </div>
     
     <div class="upright">
-    <div class="rival">${p2.avatar}</div>
     <div class="opponentPokemon">${genpokemon(p2)}</div>
+    <div class="rival">${p2.avatar}</div>
     </div>
     
     <div class="downleft">
-    <div class="playerPokemon">${genpokemon(p1)}</div>
     <div class="player">${p1.avatar}</div>
+    <div class="playerPokemon">${genpokemon(p1)}</div>
     </div>
     
     <div class="downright">
-    <div class="void7">${battlemessagebox()}</div>
-    <div class="buttons">${buttons()}</div>
-    <div class="void10">${bag()}</div>
+    <div>${battlemessage}</div>
+    <div></div>
+    <div>${buttons()}</div>
+    <div>${bag()}</div>
     </div>
     `
 }
-    // app.innerHTML = /*HTML*/`
-    //     <div style="position: fixed; bottom: 5%; left: 5%">
-    //     ${p1.avatar}
-    //     </div>  
-    //     <div style="position: fixed; bottom: 25%; left: 25%">
-    //     ${genpokemon(p1)}
-    //     </div>
-    //     <div style="position: fixed; top: 10%; left: 10%">${weather.image ?? ''}</div>
-        
-    //     <div style="position: fixed; top: 5%; right: 5%">
-    //     ${p2.avatar}
-    //     </div>
-    //     <div style="position: fixed; top: 19%; right: 23%">
-    //     ${genpokemon(p2)}
-    //     </div> 
-        
-    //     <div style="position: fixed; bottom: 10%; right: 8%">${/*HTML*/`
-    //     <div style="background-color: orange; display: flex; align-items: center; justify-content: center; width: 32.3vh; height: 6vh;">${battlemessage}</div>
-    //     <div style="display: flex;">
-        
-    //     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.3vh;">
-       
-    //     </div>
-    //     </div>`}</div>
-    //     `
 
 function genpokemon(who) {
     if ((who == p1 && (deadp1 || p1invul)) || (who == p2 && (deadp2 || p2invul))) return ''
