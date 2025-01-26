@@ -2,7 +2,7 @@ let pokemon = [
     {
         name: "Dwebble",
         avatar: `<img style="height: auto; width: 20vh" src="media/pictures/pokemon/dwebble.png" alt="">`,
-        url: 'pictures/pokemon/dwebble.png',
+        url: 'media/pictures/pokemon/dwebble.png',
         maxhp: 10000,
         hp: 10000,
         atk: 10,
@@ -24,7 +24,7 @@ let pokemon = [
     {
         name: "Charmander",
         avatar: `<img style="height: auto; width: 20vh" src="media/pictures/pokemon/charmander.png" alt="">`,
-        url: 'pictures/pokemon/charmander.png',
+        url: 'media/pictures/pokemon/charmander.png',
         maxhp: 3,
         hp: 3,
         atk: 11,

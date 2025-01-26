@@ -1,4 +1,4 @@
-body {
+html, body {
     background-image: url('https://media-s3-us-east-1.ceros.com/hype-beast/images/2018/07/13/a9a51bc0b8d626db493ab5f9a971b043/background-hero.png');
     background-size: cover;
     background-position: center;
@@ -13,33 +13,34 @@ body {
 
 #app {
     color: white;
-    height: 95%;                  
-    width: 95%;                   
+    height: 90vh;  
+    max-height: 90vh;                
+    width: 90vw;                   
     display: grid;
-    grid-template-columns: repeat(2, 1fr); 
-    grid-template-rows: repeat(2, 1fr);    
+    grid-template-columns: 50% 50%; 
+    grid-template-rows: 50% 50%;    
     grid-template-areas:
     "upleft upright"
     "downleft downright";
-    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 #app > div {
-    width: 100%; 
-    height: 100%; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
+    display: grid; 
+    place-items: center; 
+    grid-template-columns: repeat(2, 1fr); 
+    grid-template-rows: repeat(2, 1fr); 
 }
 
 #app > :nth-child(4) {
     display: grid;
     grid-template-columns: 65% 35%; 
     grid-template-rows: 30% 70%;
-    place-items: center;
-    width: 70%; 
+    margin-top: 15vh;
+    margin-left: 7vw;
+    width: 80%; 
     height: 50%; 
-    margin: auto;
 }
 
 #app > :nth-child(4) > div {
@@ -49,7 +50,7 @@ body {
 
 #app > :nth-child(4) > :nth-child(1) {
     display: grid;
-    background-color: rgb(214, 183, 125);
+    background-color: rgb(255, 197, 131);
     place-items: center;
 }
 

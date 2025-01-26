@@ -1,31 +1,38 @@
-let buttonsenabled = true
-let battlemessage = ''
-let protected = false
-let playermove = null
-let enemymove = null
-let p1movehistory = []
-let p2movehistory = []
-let p1movehit = null
-let p2movehit = null
-let turncounter = 0
-let deadp1 = null
-let deadp2 = null
-let p1invul = null
-let p2invul = null
-let statused = null
-let isconfused = null
-let paralysed = null
-let endturn = false
-let gameon = true
-let acc2hit = false
-let playerqueue = []
-let rivalqueue = []
-let queue = []
+// let buttonsenabled = true
+// let battlemessage = ''
+// let protected = false
+// let playermove = null
+// let enemymove = null
+// let p1movehistory = []
+// let p2movehistory = []
+// let p1movehit = null
+// let p2movehit = null
+// let turncounter = 0
+// let deadp1 = null
+// let deadp2 = null
+// let p1invul = null
+// let p2invul = null
+// let statused = null
+// let isconfused = null
+// let paralysed = null
+// let endturn = false
+// let gameon = true
+// let acc2hit = false
+// let playerqueue = []
+// let rivalqueue = []
+// let queue = []
 
 let global = {
+    inturn: false,
+    battleon: true,
+    battlemessage: "",
+    turnorder: [],
+    turn: null,
+    loser: null,
     trickroom: false,
     app: document.getElementById("app")
 }
+
 
 
 const types = {
@@ -60,124 +67,6 @@ const statstates = [
 const statstates2 = [
     3 / 9, 3 / 8, 3 / 7, 3 / 6, 3 / 5, 3 / 4, 3 / 3, 4 / 3, 5 / 3, 6 / 3, 7 / 3, 8 / 3, 9 / 3
 ]
-
-let player = {
-    move: null,
-    trapped: false,
-    atk: 6,
-    def: 6,
-    spa: 6,
-    spd: 6,
-    spe: 6,
-    acc: 6,
-    eva: 6,
-    cnf: false,  // Confused
-    spk: false,  // Spikes
-    tspk: false, // Toxic Spikes
-    strk: false, // Stealth Rock
-    stwb: false, // Sticky Web
-    auveil: 0,
-    reflect: 0,
-    lscreen: 0,
-    trapped: false,
-    sub: false,
-    txc: 1,      // toxic counter
-    inlove: false,
-    dynamax: false,
-}
-
-// let actors = {
-//     players: [
-//         {
-//             name: 'Red',
-//             avatar: `<div>
-//             <img style="height: 20vh; width: auto" src="https://archives.bulbagarden.net/media/upload/thumb/d/d3/Lets_Go_Pikachu_Eevee_Red.png/250px-Lets_Go_Pikachu_Eevee_Red.png" alt="}">
-//             `,
-//             pokemon: [pokemon[0], pokemon[1], pokemon[1], pokemon[0]].map(p => JSON.parse(JSON.stringify(p)))
-//         },
-//         {
-//             name: 'Cynthia',
-//             avatar: `
-//             <img style="height: 20vh; width: auto" src="https://www.serebii.net/pokemonmasters/syncpairs/cynthia.png" alt="">`,
-//             pokemon: [pokemon[2], pokemon[2], pokemon[0]].map(p => JSON.parse(JSON.stringify(p)))
-//         }
-//     ],
-//     stats: [
-//         {
-//             move: null,
-//             trapped: false,
-//             atk: 6,
-//             def: 6,
-//             spa: 6,
-//             spd: 6,
-//             spe: 6,
-//             acc: 6,
-//             eva: 6,
-//             cnf: false,  // Confused
-//             spk: false,  // Spikes
-//             tspk: false, // Toxic Spikes
-//             strk: false, // Stealth Rock
-//             stwb: false, // Sticky Web
-//             auveil: 0,
-//             reflect: 0,
-//             lscreen: 0,
-//             trapped: false,
-//             sub: false,
-//             txc: 1,      // toxic counter
-//             inlove: false,
-//             dynamax: false,
-//         },
-//         {
-//             move: null,
-//             trapped: false,
-//             atk: 6,
-//             def: 6,
-//             spa: 6,
-//             spd: 6,
-//             spe: 6,
-//             acc: 6,
-//             eva: 6,
-//             cnf: false,
-//             spk: false,
-//             tspk: false,
-//             strk: false,
-//             stwb: false,
-//             auveil: 0,
-//             reflect: 0,
-//             lscreen: 0,
-//             trapped: false,
-//             sub: false,
-//             txc: 1,
-//             inlove: false,
-//             dynamax: false,
-//         }
-//     ],
-// }
-
-let rival = {
-    move: null,
-    trapped: false,
-    atk: 6,
-    def: 6,
-    spa: 6,
-    spd: 6,
-    spe: 6,
-    acc: 6,
-    eva: 6,
-    cnf: false,
-    spk: false,
-    tspk: false,
-    strk: false,
-    stwb: false,
-    auveil: 0,
-    reflect: 0,
-    lscreen: 0,
-    trapped: false,
-    sub: false,
-    txc: 1,
-    inlove: false,
-    dynamax: false,
-}
 
 let weather = {
     weather: 'sun',
@@ -236,29 +125,9 @@ const movesounds = {
     uturn: new Audio('media/sounds/moves/tackle.mp3'),
 }
 
-const items = [
-    {
-        name: 'Focus Sash',
-        effect: 'fullhpdmgsurvival',
-        trigger: 'fullhpko',
-        cd: false,
-    }
-]
 
-const abilities = [
-    {
-        name: 'Intimidate',
-        trigger: 'onentry',
-        cd: false,
-        effect: 'atkdown',
-    },
-    {
-        name: 'Sturdy',
-        effect: 'fullhpdmgsurvival',
-        trigger: 'fullhpko',
-        cd: false,
-    }
-]
+
+
 
 
 

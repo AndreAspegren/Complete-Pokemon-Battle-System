@@ -74,7 +74,15 @@ function checkspeed(what) {
     return Math.random() > 0.5
 }
 
-
+assignpp()
+function assignpp(who) {
+    actors.p1.pokemon[0].pp = []
+    for (let i = 0; i < actors.p1.pokemon[0].move.length; i++) actors.p1.pokemon[0].pp.push(moves[actors.p1.pokemon[0].move[i]].pp)
+    if (!who) {
+        actors.p2.pokemon[0].pp = []
+        for (let i = 0; i < actors.p2.pokemon[0].move.length; i++) actors.p2.pokemon[0].pp.push(moves[actors.p2.pokemon[0].move[i]].pp)
+    }
+}
 
 function checkscreens() {
     if (stats[1].auveil) return 0.5

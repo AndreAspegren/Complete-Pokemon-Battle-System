@@ -1,6 +1,6 @@
-battlemanager()
-async function battlemanager() {
-    while (gameon) {
+roundmanager()
+async function roundmanager() {
+    while (global.inturn) {
         if (p1movehistory.length < 1 || !p1movehistory[p1movehistory.length - 1]?.turn2) await new Promise(resolve => window.moved = resolve)
         await prelimfunctions()
         for (let i = 0; i < 2; i++) {
@@ -13,8 +13,26 @@ async function battlemanager() {
         await endofrounddamage()
         await newpokemon()
         await onentry()
-        checkend()
+        checkliveness()
         await endofroundevents()
+    }
+}
+
+async function roundmanager() {
+    while (global.battleon) {
+        if (!actors.p1.stats.forcedmove) await new Promise(resolve => window.moved = resolve)
+        else actors.p1.stats.forcedmove = false
+        await checkqueue(0)
+        await setmoves()
+        for (let i = 0; i < 2; i++) {
+            await setturn(i, 'turn')
+            await moveevents(i)
+            updateview()
+            await delay(2000)
+        }
+        await checkqueue(1)
+        await endofrounddamage()
+        checkliveness()
     }
 }
 
@@ -81,12 +99,13 @@ async function newpokemon() {
     for (let i = 0; i < 2; i++) {
         if (mon[i].hp == 0 && !trainer[i].pokemon.every(p => p.hp == 0)) {
             resetstats(stats[i], mon[i])
-            who[i] == 'p1' ? (player.trapped = false, deadp1 = null, await changepokemon()) : (deadp2 = null, newpokemonout = p2.pokemon.splice(indexcheck(), 1)[0], p2.pokemon.unshift(newpokemonout))
+            who[i] == 'p1' ? (player.trapped = false, deadp1 = null, await seeroster()) : (deadp2 = null, newpokemonout = p2.pokemon.splice(indexcheck(), 1)[0], p2.pokemon.unshift(newpokemonout))
             setturn(i, 'newpokemon')
             if (who[0] == 'p1') assignpp()
             battlemessage = trainer[0].name + ' sendte ut ' + monname[0] + '!'
             updateview()
             await delay(2000)
+            await onentry()
             await hazards(mon[0], who[0])
         }
     }
@@ -122,8 +141,7 @@ async function hazards(mon, who) {
     }
 }
 
-async function prelimfunctions() {
-    await checkqueue(0)
+async function setmoves() {
     buttonsenabled = false
     if (player.move != 'struggle' && !p1movehistory[p1movehistory.length -1]?.turn2) p1.pokemon[0].pp[player.move]--
     if (rival.move != 'struggle' && !p2movehistory[p2movehistory.length -1]?.turn2) p2.pokemon[0].pp[rival.move]--
@@ -131,8 +149,6 @@ async function prelimfunctions() {
     p2move = !p2movehistory[p2movehistory.length -1]?.turn2 ? JSON.parse(JSON.stringify(moves[p2.pokemon[0].move[rival.move]])) : p2movehistory[p2movehistory.length -1]?.turn2
     p1movehistory.push(p1move)
     p2movehistory.push(p2move)
-    if (p1move == 'switch') await hazards(p1.pokemon[0], 'p1')
-    if (turncounter == 0) await onentry()
 }
 
 async function setmove(i) {
@@ -142,10 +158,47 @@ async function setmove(i) {
     window.moved()
 }
 
-function checkend() {
+function checkliveness() {
+    let gamestate = "live"
+    if (actors.p1.pokemon.every(p => p.hp === 0)) 
     battlemessage = p1.pokemon.every(p => p.hp === 0) ? 'Du tapte!' : p2.pokemon.every(p => p.hp === 0) ? 'Du vant!' : ''
     buttonsenabled = battlemessage == '' ? true : false
     updateview()
-    if (battlemessage != '') return gameon = false
-    return gameon = true
+    if (battlemessage != '') return global.battleon = false
+    return global.battleon = true
+}
+
+async function changeto(who, switchmove) {
+    if (who != 0 && p1.pokemon[0].hp == 0) {            // død bytte
+        element = p1.pokemon.splice(who, 1)[0]
+        p1.pokemon.unshift(element)
+        resolvechange()
+    }
+    else if (who != 0 && p1.pokemon[who].hp != 0) {     // levende bytte 
+        battlemessage = p1.name + ' byttet ut ' + p1.pokemon[0].name + ' med ' + p1.pokemon[who].name + '!'
+        buttonsenabled = false
+        updateview()
+        await delay(2000)
+        resetstats(player, p1.pokemon[0])
+        item = p1.pokemon.splice(who, 1)[0]
+        p1.pokemon.unshift(item)
+        updateview()
+        await delay(2000)
+        resolvechange()
+        if (switchmove === 'undefined') {
+            assignpp('p1')
+            player.move = 'switch'
+            rival.move = setenemymove()
+            moved()
+        }
+    }
+}
+
+async function changepokemon(who, what, newmon) {
+    let deadname = who.pokemon.name
+    element = who.pokemon.splice(newmon, 1)[0]
+    who.pokemon.unshift(element)
+    resetstats(who.stats, who.pokemon[0])
+    if (what == "alive") battlemessage = `${who.name} byttet ut ${deadname} med ${who.pokemon[0].name}!`
+    else battlemessage = `${who.name} sendte ut ${who.pokemon[0].name}!`
 }

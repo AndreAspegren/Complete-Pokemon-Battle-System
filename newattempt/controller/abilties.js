@@ -18,3 +18,4 @@ async function sturdy() {
     updateview()
     await delay(2000)
 }
+
